@@ -18,7 +18,7 @@ from django.utils import timezone
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateMessengerUserView(CreateView):
     model = User
-    fields = ('channel_id', 'bot_id')
+    fields = ('channel_id', 'bot_id', 'first_name', 'last_name')
 
     def form_valid(self, form):
         form.instance.last_channel_id = form.data['channel_id']

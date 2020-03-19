@@ -1,0 +1,15 @@
+{% load widget_tweaks %}
+{% for field in form %}
+    <div class="form-group mb-4 mr-2">
+        {{ field.errors }}
+        {% if field.type == 'checkbox' %}
+        {{ field.label_tag }}
+        {% render_field field %}
+        {% else %}
+        {% render_field field class='form-control' placeholder=field.label %}
+        {% endif %}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+{% endfor %}

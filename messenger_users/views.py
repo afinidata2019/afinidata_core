@@ -1,32 +1,50 @@
-from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from messenger_users.models import User, UserData
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib import messages
-from instances.models import Instance
-import random
+from messenger_users import forms
 import os
 
 
 class HomeView(LoginRequiredMixin, ListView):
-
-    template_name = 'messenger_users/index.html'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
-    context_object_name = 'users'
+    login_url = reverse_lazy('pages:login')
     paginate_by = 30
     model = User
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(HomeView, self).get_context_data()
+        c['form'] = forms.SearchUserForm(self.request.GET or None)
+        c['get_params'] = self.request.GET.copy()
+        if 'page' in c['get_params']:
+            del c['get_params']['page']
+        c['get_params'] = c['get_params'].urlencode()
+        return c
+
+    def get_queryset(self):
+        queryset = super(HomeView, self).get_queryset()
+        print(queryset.count())
+        form = forms.SearchUserForm(self.request.GET or None)
+        user = User.objects.all().last()
+        if form.is_valid():
+            if form.cleaned_data['id']:
+                queryset = queryset.filter(id=form.cleaned_data['id'])
+            if form.cleaned_data['bot']:
+                queryset = queryset.filter(bot_id=form.cleaned_data['bot'].pk)
+            if form.cleaned_data['name']:
+                queryset = queryset.filter(first_name__contains=form.cleaned_data['name'])
+            if form.cleaned_data['last_name']:
+                queryset = queryset.filter(last_name__contains=form.cleaned_data['last_name'])
+                print(queryset.count())
+        return queryset
 
 
 class ByGroupView(LoginRequiredMixin, ListView):
     template_name = 'messenger_users/by_group.html'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
     context_object_name = 'users'
     paginate_by = 300
     model = User

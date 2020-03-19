@@ -21,7 +21,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class HomeView(LoginRequiredMixin, ListView):
-    template_name = 'instances/index.html'
     model = Instance
     paginate_by = 30
     login_url = reverse_lazy('pages:login')
