@@ -30,7 +30,7 @@ class EditMilestoneView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Milestone with Code: "%s" has been updated.' % self.object.code)
-        return reverse_lazy('milestones:milestone', kwargs={'id': self.object.pk})
+        return reverse_lazy('milestones:milestone', kwargs={'milestone_id': self.object.pk})
 
     def get_context_data(self, **kwargs):
         c = super(EditMilestoneView, self).get_context_data()
@@ -46,7 +46,7 @@ class NewMilestoneView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Milestone with Code: "%s" has been created.' % self.object.code)
-        return reverse_lazy('milestones:milestone', kwargs={'id': self.object.pk})
+        return reverse_lazy('milestones:milestone', kwargs={'milestone_id': self.object.pk})
 
     def get_context_data(self, **kwargs):
         c = super(NewMilestoneView, self).get_context_data()
