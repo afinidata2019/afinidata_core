@@ -51,12 +51,21 @@
                                 <td>{{ milestone.value }}</td>
                                 <td>
                                     <div class="btn-group">
-                                    <a class="btn btn-primary" href="{% url 'milestones:milestone' id=milestone.pk %}">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a class="btn btn-success" href="{% url 'milestones:edit' id=milestone.pk %}">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
+                                        {% if perms.milestones.view_milestone %}
+                                            <a class="btn btn-primary" href="{% url 'milestones:milestone' milestone_id=milestone.pk %}">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.milestones.change_milestone %}
+                                            <a class="btn btn-success" href="{% url 'milestones:edit' milestone_id=milestone.pk %}">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.milestones.delete_milestone %}
+                                            <a class="btn btn-danger" href="{% url 'milestones:delete' milestone_id=milestone.pk %}">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -66,10 +75,10 @@
               </div>
                 {% if is_paginated %}
                   <div class="row">
-                      <div class="col-8">
+                      <div class="col-4">
                         <h6>Page {{ page_obj.number }} of {{ paginator.num_pages }}</h6>
                       </div>
-                      <div class="col-4">
+                      <div class="col-8 d-flex justify-content-end">
                         <div>
                           <div class="btn-group">
                             {% if page_obj.has_previous %}
@@ -109,5 +118,4 @@
             </div>
         </div>
     </div>
-
 {% endblock %}
