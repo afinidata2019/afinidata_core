@@ -1,23 +1,20 @@
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, View
+from instances.models import Instance, AttributeValue, InstanceSection, Response
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
-from instances.models import Instance,  Score, ScoreTracking, AttributeValue, InstanceSection, Response
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, DetailView
-from django.views import View
-from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
-from instances.forms import ScoreTrackingModelForm, InstanceAttributeValueForm, \
-     InstanceSectionForm
-from django.contrib import messages
-from areas.models import Area, Section
-from levels.models import Level
 from datetime import datetime, timedelta
+from messenger_users.models import User
 from milestones.models import Milestone
 from attributes.models import Attribute
-from messenger_users.models import User
+from areas.models import Area, Section
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.contrib import messages
 from django.conf import settings
+from levels.models import Level
+from instances import forms
 import requests
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class HomeView(LoginRequiredMixin, ListView):
@@ -39,31 +36,62 @@ class InstanceView(LoginRequiredMixin, DetailView):
 
 class NewInstanceView(LoginRequiredMixin, CreateView):
     model = Instance
-    template_name = 'instances/new.html'
-    fields = ('entity', 'name', 'user_id')
+    form_class = forms.InstanceModelForm
     login_url = reverse_lazy('pages:login')
-    success_url = reverse_lazy('instances:index')
+
+    def get_context_data(self, **kwargs):
+        c = super(NewInstanceView, self).get_context_data()
+        c['action'] = 'Create'
+        return c
+
+    def form_valid(self, form):
+        users = User.objects.filter(id=form.cleaned_data['user_id'])
+        if not users.count() > 0:
+            form.add_error('user_id', 'User ID is not valid')
+            messages.error(self.request, 'User ID is not valid')
+            return super(NewInstanceView, self).form_invalid(form)
+        
+        return super(NewInstanceView, self).form_valid(form)
+
+    def get_success_url(self):
+        self.object.instanceassociationuser_set.create(user_id=self.request.POST['user_id'])
+        messages.success(self.request, 'Instance with name: "%s" has been created.' % self.object.name)
+        return reverse_lazy('instances:instance', kwargs={'id': self.object.pk})
 
 
 class EditInstanceView(LoginRequiredMixin, UpdateView):
     model = Instance
-    fields = ('entity', 'name', 'user_id')
-    template_name = 'instances/edit.html'
+    fields = ('name',)
     pk_url_kwarg = 'id'
     context_object_name = 'instance'
     login_url = reverse_lazy('pages:login')
 
-    def form_valid(self, form):
-        entity = form.save()
-        return redirect('instances:edit', entity.pk)
+    def get_context_data(self, **kwargs):
+        c = super(EditInstanceView, self).get_context_data()
+        c['action'] = 'Edit'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'Instance with name "%s" has been updated.' % self.object.name)
+        return reverse_lazy('instances:instance', kwargs={'id': self.object.pk})
 
 
 class DeleteInstanceView(LoginRequiredMixin, DeleteView):
     model = Instance
-    template_name = 'instances/delete.html'
+    template_name = 'instances/instance_form.html'
     pk_url_kwarg = 'id'
     success_url = reverse_lazy('instances:index')
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(DeleteInstanceView, self).get_context_data()
+        c['action'] = 'Delete'
+        c['delete_message'] = 'Are you sure to delete instance with name: "%s"?' % self.object.name
+        return c
+    
+    def get_success_url(self):
+        messages.success(self.request, 'Instance with name: "%s" has been deleted.' % self.object.name)
+        return super(DeleteInstanceView, self).get_success_url()
 
 
 class AddAttributeToInstance(LoginRequiredMixin, View):
@@ -74,7 +102,7 @@ class AddAttributeToInstance(LoginRequiredMixin, View):
         instance = get_object_or_404(Instance, id=kwargs['id'])
         exclude_arr = [item.pk for item in instance.attributes.all()]
         queryset = instance.entity.attributes.all().exclude(id__in=exclude_arr)
-        form = InstanceAttributeValueForm(request.GET or None, queryset=queryset)
+        form = forms.InstanceAttributeValueForm(request.GET or None, queryset=queryset)
         return render(self.request, 'instances/add_attribute_value.html', dict(form=form))
 
     def post(self, request, *args, **kwargs):
@@ -82,7 +110,7 @@ class AddAttributeToInstance(LoginRequiredMixin, View):
         attribute = get_object_or_404(instance.entity.attributes, id=request.POST['attribute'])
         if attribute:
             queryset = instance.entity.attributes.filter(id=request.POST['attribute'])
-        form = InstanceAttributeValueForm(request.POST, queryset=queryset)
+        form = forms.InstanceAttributeValueForm(request.POST, queryset=queryset)
 
         if form.is_valid():
             attr = AttributeValue.objects.create(instance=instance, attribute=attribute, value=request.POST['value'])
@@ -101,13 +129,13 @@ class InstanceSectionView(LoginRequiredMixin, View):
         instance = get_object_or_404(Instance, id=kwargs['id'])
         exclude_arr = [item.pk for item in instance.areas.all()]
         queryset = Area.objects.all().exclude(id__in=exclude_arr)
-        form = InstanceSectionForm(None, queryset=queryset)
+        form = forms.InstanceSectionForm(None, queryset=queryset)
         return render(request, 'instances/section_to_instance.html', dict(form=form))
 
     def post(self, request, *args, **kwargs):
         instance = get_object_or_404(Instance, id=kwargs['id'])
         queryset = Area.objects.filter(id=request.POST['area'])
-        form = InstanceSectionForm(request.POST, queryset=queryset)
+        form = forms.InstanceSectionForm(request.POST, queryset=queryset)
 
         if form.is_valid():
             level = Level.objects.get(max__gte=int(request.POST['value_to_init']),

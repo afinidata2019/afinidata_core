@@ -12,6 +12,7 @@ class ScoreTrackingModelForm(forms.ModelForm):
 
 
 class InstanceModelForm(forms.ModelForm):
+    user_id = forms.IntegerField()
 
     class Meta:
         model = Instance
