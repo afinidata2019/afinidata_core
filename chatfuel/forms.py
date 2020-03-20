@@ -21,7 +21,7 @@ class VerifyCodeForm(forms.Form):
 
 
 class InstanceModelForm(forms.ModelForm):
-    user_id = forms.ModelChoiceField(queryset=User.objects.all())
+    user_id = forms.ModelChoiceField(queryset=User.objects.all().only('id'))
 
     class Meta:
         model = Instance

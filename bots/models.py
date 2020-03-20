@@ -10,3 +10,19 @@ class Bot(models.Model):
     def __str__(self):
         return self.name
 
+
+class Interaction(models.Model):
+    name = models.CharField(max_length=30)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class UserInteraction(models.Model):
+    Interaction = models.ForeignKey(Interaction, on_delete=models.DO_NOTHING)
+    bot = models.ForeignKey(Bot, on_delete=models.DO_NOTHING)
+    user_id = models.IntegerField()
+    value = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+

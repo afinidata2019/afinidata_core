@@ -21,6 +21,7 @@
                 <strong class="text-gray-900">Last Updated At: </strong>{{ object.updated_at }}<br>
                 <strong class="text-gray-900">Actions: </strong>
                 <div class="btn-group">
+                    <a href="{% url 'messenger_users:index' %}?bot={{ object.pk }}" class="btn btn-primary">View Users</a>
                     <a href="{% url 'bots:edit' id=object.pk %}" class="btn btn-success"><i class="fas fa-pen"></i></a>
                     <a href="{% url 'bots:delete' id=object.pk %}" class="btn btn-danger"><i class="fas fa-times"></i></a>
                 </div>

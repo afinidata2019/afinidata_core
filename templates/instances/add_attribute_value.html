@@ -1,11 +1,11 @@
-{% extends 'instances/base.html' %}
+{% extends 'base/private.html' %}
 
 {% block title %}Afinidata | Add attribute for instance{% endblock %}
 
 {% block content %}
     <h1>Instance | Add attribute value</h1>
 
-    <form action="../../instances/templates/instances" method="post">
+    <form action="." method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Set Value">

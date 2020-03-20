@@ -43,7 +43,9 @@
                         <tr>
                             <td>{{ bot.name }}</td>
                             <td>{{ bot.description }}</td>
-                            <td></td>
+                            <td>
+                                <a href="{% url 'messenger_users:index' %}?bot={{ bot.pk }}" class="btn btn-primary">View</a>
+                            </td>
                             <td>{{ bot.created_at }}</td>
                             <td>
                                 <div class="btn-group">
