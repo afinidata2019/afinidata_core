@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'posts.apps.PostsConfig',
     'utilities.apps.UtilitiesConfig',
-    'groups.apps.GroupsConfig'
+    'groups.apps.GroupsConfig',
+    'languages.apps.LanguagesConfig'
 ]
 
 MIDDLEWARE = [
