@@ -36,21 +36,31 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        {% for area in areas %}
+                        {% for area in area_list %}
                             <tr>
                                 <td>{{ area.name }}</td>
-                                <td>{{ area.milestone_set.all.count }}</td>
+                                <td>
+                                    <a href="{% url 'milestones:index' %}?area={{ area.name }}" class="btn btn-primary">View</a>
+                                    Count: {{ area.milestone_set.all.count }}
+                                </td>
                                 <td>{{ area.created_at }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <a class="btn btn-primary" href="{% url 'areas:area' id=area.pk %}">
-                                            <i class="fas fa-eye"></i></a>
-                                        <a class="btn btn-success" href="{% url 'areas:edit' id=area.pk %}">
-                                            <i class="fas fa-pen"></i>
-                                        </a>
-                                        <a class="btn btn-danger" href="{% url 'areas:delete' id=area.pk %}">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+                                        {% if perms.areas.view_area %}
+                                            <a class="btn btn-primary" href="{% url 'areas:area' area_id=area.pk %}">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.areas.change_area %}
+                                            <a class="btn btn-success" href="{% url 'areas:edit' area_id=area.pk %}">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.areas.delete_area %}
+                                            <a class="btn btn-danger" href="{% url 'areas:delete' area_id=area.pk %}">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
