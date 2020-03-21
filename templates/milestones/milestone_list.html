@@ -17,6 +17,10 @@
               <h6 class="m-0 font-weight-bold text-primary">List</h6>
             </div>
             <div class="card-body">
+                <form action="." class="form-inline" method="get">
+                    {% include 'base/inline_form.html' %}
+                    <button class="btn btn-primary mb-4" type="submit">Search</button>
+                </form>
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -46,7 +50,7 @@
                                 <td>{{ milestone.second_code }}</td>
                                 <td>{{ milestone.name }}</td>
                                 <td>
-                                    <a href="{% url 'areas:area' id=milestone.area_id %}">{{ milestone.area.name }}</a>
+                                    <a href="{% url 'areas:area' area_id=milestone.area_id %}">{{ milestone.area.name }}</a>
                                 </td>
                                 <td>{{ milestone.value }}</td>
                                 <td>
@@ -82,16 +86,16 @@
                         <div>
                           <div class="btn-group">
                             {% if page_obj.has_previous %}
-                              <a class="btn btn-light" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+                              <a class="btn btn-light" href="?page={{ page_obj.previous_page_number }}&{{ get_params }}">&laquo;</a>
                             {% else %}
                               <button class="btn btn-light" disabled>&laquo;</button>
                             {% endif %}
                             {% for i in paginator.page_range %}
                               {% if page_obj.previous_page_number == i and page_obj.previous_page_number != 1 %}
-                                <a class="btn btn-light" href="?page={{ 1 }}">{{ 1 }}</a>
+                                <a class="btn btn-light" href="?page={{ 1 }}&{{ get_params }}">{{ 1 }}</a>
                               {% endif %}
                               {% if page_obj.previous_page_number == i %}
-                                <a class="btn btn-light" href="?page={{ i }}">{{ i }}</a>
+                                <a class="btn btn-light" href="?page={{ i }}&{{ get_params }}">{{ i }}</a>
                               {% endif %}
                               {% if page_obj.number == i %}
                                   <button class="btn btn-primary" disabled>
@@ -99,14 +103,14 @@
                                   </button>
                               {% endif %}
                               {% if page_obj.next_page_number == i %}
-                                <a class="btn btn-light" href="?page={{ i }}">{{ i }}</a>
+                                <a class="btn btn-light" href="?page={{ i }}&{{ get_params }}">{{ i }}</a>
                               {% endif %}
                               {% if page_obj.next_page_number == i and page_obj.next_page_number != paginator.num_pages %}
-                                <a class="btn btn-light" href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                                <a class="btn btn-light" href="?page={{ paginator.num_pages }}&{{ get_params }}">{{ paginator.num_pages }}</a>
                               {% endif %}
                             {% endfor %}
                             {% if page_obj.has_next %}
-                              <a class="btn btn-light" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+                              <a class="btn btn-light" href="?page={{ page_obj.next_page_number }}&{{ get_params }}">&raquo;</a>
                             {% else %}
                               <button class="btn btn-light" disabled><span>&raquo;</span></button>
                             {% endif %}

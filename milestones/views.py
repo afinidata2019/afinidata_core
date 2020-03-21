@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from milestones.models import Milestone
 from django.urls import reverse_lazy
 from django.contrib import messages
+from milestones import forms
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -10,7 +11,31 @@ class HomeView(PermissionRequiredMixin, ListView):
     permission_required = 'milestones.view_milestone'
     model = Milestone
     context_object_name = 'milestones'
-    paginate_by = 50
+    paginate_by = 20
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(HomeView, self).get_context_data()
+        c['form'] = forms.MilestoneSearchForm(self.request.GET or None)
+        c['get_params'] = self.request.GET.copy()
+        if 'page' in c['get_params']:
+            del c['get_params']['page']
+        c['get_params'] = c['get_params'].urlencode()
+        return c
+
+    def get_queryset(self):
+        qs = super(HomeView, self).get_queryset()
+        form = forms.MilestoneSearchForm(self.request.GET or None)
+        if form.is_valid():
+            if 'area' in form.data:
+                if form.data['area']:
+                    qs = qs.filter(area__name=form.data['area'])
+            if 'code' in form.data:
+                if form.data['code']:
+                    qs = qs.filter(code=form.data['code'])
+            if 'second_code' in form.data:
+                if form.data['second_code']:
+                    qs = qs.filter(second_code=form.data['second_code'])
+        return qs
 
 
 class MilestoneView(PermissionRequiredMixin, DetailView):

@@ -66,10 +66,10 @@
               </div>
                 {% if is_paginated %}
                   <div class="row">
-                      <div class="col-8">
+                      <div class="col-4">
                         <h6>Page {{ page_obj.number }} of {{ paginator.num_pages }}</h6>
                       </div>
-                      <div class="col-4">
+                      <div class="col-8 d-flex justify-content-end">
                         <div>
                           <div class="btn-group">
                             {% if page_obj.has_previous %}

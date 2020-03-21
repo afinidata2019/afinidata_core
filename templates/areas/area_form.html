@@ -1,0 +1,27 @@
+{% extends 'base/private.html' %}
+
+{% block title %}New Area{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Area</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {% include 'base/default_form.html' %}
+                    {% if delete_message %}
+                        <strong>{{ delete_message }}</strong><br><br>
+                    {% endif %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ action }} Area</button>
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}
