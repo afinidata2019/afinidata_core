@@ -1,12 +1,26 @@
 from utilities.models import InteractionInstanceMigrations
 from messenger_users.models import Child, User, ChildData
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView, View
 from instances.models import Instance, Response
-from django.views.generic import TemplateView
 from milestones.models import Milestone
+from django.http import JsonResponse
 from posts.models import Interaction
 from entities.models import Entity
 from bots.models import Bot
+import boto3
+import os
+
+
+class TranslateView(View):
+
+    def get(self, request, *args, **kwargs):
+        region = os.getenv('region')
+        translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
+        result = translate.translate_text(Text="Hello, World",
+                                          SourceLanguageCode="en", TargetLanguageCode="es")
+        print('TranslatedText: ' + result.get('TranslatedText'))
+        return JsonResponse(dict(h='w'))
 
 
 class GetChildrenView(LoginRequiredMixin, TemplateView):
