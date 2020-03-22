@@ -32,5 +32,6 @@ urlpatterns = [
     path('levels/', include('levels.urls', namespace='levels')),
     path('sections/', include('sections.urls', namespace='sections')),
     path('utilities/', include('utilities.urls', namespace='utilities')),
-    path('groups/', include('groups.urls', namespace='groups'))
+    path('groups/', include('groups.urls', namespace='groups')),
+    path('languages/', include('languages.urls', namespace='languages'))
 ]
