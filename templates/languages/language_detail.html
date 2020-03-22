@@ -21,9 +21,25 @@
             </div>
             <div class="card-body">
                 <strong class="text-gray-900">Description: </strong><span>{{ object.description }}</span><br>
-                <strong class="text-gray-900">Available: </strong><span>{{ object.available }}</span><br>
+                <strong class="text-gray-900">Available: </strong>
+                {% if object.available %}
+                     <i class="fas fa-check-circle text-success"></i>
+                {% endif %}
+                {% if not object.available %}
+                    <i class="fas fa-times-circle text-danger"></i>
+                {% endif %}<br>
+                {% if object.redirect %}
+                    <strong class="text-gray-900">Available: </strong>
+                    <a href="{% url 'languages:language_detail' language_id=object.redirect_id %}">{{object.redirect.name}}</a><br>
+                {% endif %}
                 <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong class="text-gray-900">Updated At: </strong><span>{{ object.updated_at }}</span><br>
+                <strong class="text-gray-900">Actions: </strong>
+                <div class="btn btn-group">
+                    {% if perms.languages.change_languate %}
+                        <a href="{% url 'languages:language_edit' language_id=object.pk %}" class="btn btn-success">Edit</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

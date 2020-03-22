@@ -6,7 +6,7 @@
         {% if field.type == 'checkbox' %}
         {% render_field field required='required' %}
         {% else %}
-        {% render_field field class='form-control' required='required' %}
+        {% render_field field class='form-control' %}
         {% endif %}
         {% if field.help_text %}
         <p class="help">{{ field.help_text|safe }}</p>

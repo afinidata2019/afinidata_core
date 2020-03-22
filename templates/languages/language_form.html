@@ -14,6 +14,12 @@
             <div class="card-body">
                 <form action="." method="post">
                     {% csrf_token %}
+                    {% if object.name %}
+                        <div class="form-group">
+                            <label for="">Name: </label>
+                            <input type="text" class="form-control" disabled value="{{ object.name }}">
+                        </div>
+                    {% endif %} 
                     {% if delete_message %}
                         <strong class="text-gray-800">{{ delete_message }}</strong><br><br>
                     {% endif %}
