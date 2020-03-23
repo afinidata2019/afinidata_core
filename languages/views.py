@@ -62,11 +62,22 @@ class LanguageCodeListView(PermissionRequiredMixin, ListView):
     login_url = reverse_lazy('pages:login')
     paginate_by = 20
 
+    def get_queryset(self):
+        qs = super(LanguageCodeListView, self).get_queryset()
+        qs.filter(language_id=self.kwargs['language_id'])
+        return qs
+
 
 class LanguageCodeView(PermissionRequiredMixin, DetailView):
     permission_required = 'languages.view_languagecode'
     model = LanguageCode
     pk_url_kwarg = 'language_code_id'
+    login_url = reverse_lazy('pages:login')
+
+
+class LanguageCodeCreateView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'languages.add_languagecode'
+    model = LanguageCode
     login_url = reverse_lazy('pages:login')
 
 
