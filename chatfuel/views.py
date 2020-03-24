@@ -8,8 +8,9 @@ from messenger_users.models import User, UserData
 from django.http import JsonResponse, Http404
 from attributes.models import Attribute
 from groups import forms as group_forms
-from chatfuel import forms
 from django.utils import timezone
+from dateutil import parser
+from chatfuel import forms
 
 
 ''' MESSENGER USERS VIEWS '''
@@ -305,3 +306,88 @@ class CreateInstanceInteractionView(CreateView):
         return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                      status_error='Invalid params'), messages=[]))
 
+
+''' CHILDREN '''
+
+# FIX LATER, maybe not necessary in a future
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetFavoriteChildView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404
+
+    def post(self, request, *args, **kwargs):
+
+        form = forms.UserForm(request.POST)
+        day_first = True
+
+        if 'en' in form.data:
+            if form.data['en'] == 'true':
+                day_first = False
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         status_error='Invalid params',
+                                                         favorite_status_error='invalid params'), messages=[]))
+
+        user = User.objects.get(id=form.data['user_id'])
+        instances = user.get_instances()
+        children = instances.filter(entity_id=1)
+
+        if not children.count() > 0:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         status_error='User has not children',
+                                                         favorite_status_error='User has not children'), messages=[]))
+
+        if children.count() == 1:
+            birthdays = children.first().attributevalue_set.filter(attribute__name='birthday')
+            birth = None
+
+            if not birthdays.count() > 0:
+                return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                             status_error='Unique child has not birthday',
+                                                             favorite_status_error='Unique child has not birthday'),
+                                         messages=[]))
+
+            birth = birthdays.last().value
+
+            return JsonResponse(dict(set_attributes=dict(request_status='done',
+                                                         favorite_instance=children.first().pk,
+                                                         favorite_instance_name=children.first().name,
+                                                         favorite_birthday=birth), messages=[]))
+        dates = set()
+        for child in children:
+            child_birthdays = child.attributevalue_set.filter(attribute__name='birthday')
+            if child_birthdays.count() > 0:
+                dates.add(child_birthdays.last().pk)
+
+        if not len(dates) > 0:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         status_error='Neither child has birthday property',
+                                                         favorite_status_error='Neither child has birthday property'),
+                                     messages=[]))
+
+        registers = AttributeValue.objects.filter(id__in=dates)
+
+        favorite = dict(id=registers.first().instance_id, value=parser.parse(registers.first().value,
+                                                                             dayfirst=day_first))
+
+        for register in registers:
+            print(register.value)
+            register.value = parser.parse(register.value, dayfirst=day_first)
+            print(register.value)
+            if register.value < favorite['value']:
+                favorite = dict(id=register.instance_id, value=register.value)
+
+        return JsonResponse(dict(
+            set_attributes=dict(
+                request_status='done',
+                favorite_instace=favorite['id'],
+                favorite_instance_name=Instance.objects.get(id=favorite['id']).name,
+                favorite_birthday=favorite['value'].strftime('%d/%m/%Y')\
+                    if day_first else favorite['value'].strftime('%m/%d/%Y')
+            ),
+            messages=[]
+        ))

@@ -52,3 +52,8 @@ class InstanceInteractionForm(forms.ModelForm):
     class Meta:
         model = PostInteraction
         fields = ('instance', 'type', 'value')
+
+
+class UserForm(forms.Form):
+    user_id = forms.ModelChoiceField(queryset=User.objects.all())
+    en = forms.BooleanField(required=False)
