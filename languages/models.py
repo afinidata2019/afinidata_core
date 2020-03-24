@@ -15,7 +15,7 @@ class Language(models.Model):
 
 class LanguageCode(models.Model):
     language = models.ForeignKey(Language, on_delete=models.DO_NOTHING)
-    code = models.CharField(max_length=5)
+    code = models.CharField(max_length=5, unique=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
