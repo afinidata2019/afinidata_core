@@ -88,6 +88,8 @@
                                     <div class="btn-group">
                                         <a href="{% url 'languages:language_code' language_id=object.pk language_code_id=code.pk %}"
                                            class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'languages:language_code_edit' language_id=object.pk language_code_id=code.pk %}"
+                                           class="btn btn-success"><i class="fas fa-pen"></i></a>
                                     </div>
                                 </td>
                             </tr>

@@ -91,12 +91,13 @@ class LanguageCodeCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'languages.add_languagecode'
     model = LanguageCode
     login_url = reverse_lazy('pages:login')
-    fields = ('code', 'description')
+    fields = ('code', 'origin', 'description')
 
     def get_context_data(self, **kwargs):
         c = super(LanguageCodeCreateView, self).get_context_data()
         c['language'] = get_object_or_404(Language, id=self.kwargs['language_id'])
         c['action'] = 'Create'
+        c['form'].fields['origin'].choices = (('created', 'Created'),)
         return c
 
     def form_valid(self, form):
@@ -119,7 +120,24 @@ class LanguageCodeEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'languages.change_languagecode'
     model = LanguageCode
     pk_url_kwarg = 'language_code_id'
+    fields = ('description',)
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(LanguageCodeEditView, self).get_context_data()
+        c['language'] = get_object_or_404(Language, id=self.kwargs['language_id'])
+        c['action'] = 'Edit'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'Language code: "%s" for language: "%s" has been Updated.' % (
+            self.object.code, self.object.language.name
+        ))
+        return reverse_lazy('languages:language_code',
+                            kwargs=dict(
+                                language_id=self.object.language_id,
+                                language_code_id=self.object.pk
+                            ))
 
 
 class LanguageCodeDeleteView(PermissionRequiredMixin, DeleteView):

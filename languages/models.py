@@ -1,5 +1,7 @@
 from django.db import models
 
+CODE_ORIGIN = (('generated', 'Generated'), ('created', 'Created'))
+
 
 class Language(models.Model):
     name = models.CharField(max_length=2, unique=True)
@@ -16,7 +18,8 @@ class Language(models.Model):
 class LanguageCode(models.Model):
     language = models.ForeignKey(Language, on_delete=models.DO_NOTHING)
     code = models.CharField(max_length=5, unique=True)
-    description = models.TextField()
+    origin = models.CharField(max_length=15, choices=CODE_ORIGIN, default='generated')
+    description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
