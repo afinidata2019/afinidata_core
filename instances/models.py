@@ -12,8 +12,6 @@ class Instance(models.Model):
     entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     attributes = models.ManyToManyField(Attribute, through='AttributeValue')
-    sections = models.ManyToManyField(Section, through='InstanceSection')
-    areas = models.ManyToManyField(Area, through='InstanceSection')
     milestones = models.ManyToManyField(Milestone, through='Response')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -74,18 +72,6 @@ class InstanceAssociationUser(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     user_id = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-class InstanceSection(models.Model):
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    value_to_init = models.IntegerField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "%s__%s__%s" % (self.pk, self.instance.pk, self.section.pk)
 
 
 class Score(models.Model):

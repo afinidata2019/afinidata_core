@@ -1,13 +1,11 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from levels.models import Level
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ListLevelView(LoginRequiredMixin, ListView):
-    template_name = 'levels/index.html'
     model = Level
     context_object_name = 'levels'
     login_url = '/admin/login/'

@@ -3,10 +3,9 @@ from django.db import models
 
 class Level(models.Model):
     name = models.CharField(max_length=50)
-    min = models.IntegerField(default=0)
-    max = models.IntegerField(default=99999)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+    range_min = models.IntegerField(null=True, blank=True, default=0)
+    range_max = models.IntegerField(null=True, blank=True, default=1)
 
     def __str__(self):
         return self.name
