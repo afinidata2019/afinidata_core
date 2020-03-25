@@ -9,7 +9,7 @@ from django.contrib import messages
 class LanguageListView(PermissionRequiredMixin, ListView):
     model = Language
     permission_required = 'languages.view_language'
-    paginate_by = 1
+    paginate_by = 20
     login_url = reverse_lazy('pages:login')
 
 
@@ -83,6 +83,7 @@ class LanguageCodeView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(LanguageCodeView, self).get_context_data()
+        c['language'] = get_object_or_404(Language, id=self.kwargs['language_id'])
         return c
 
 
@@ -107,8 +108,11 @@ class LanguageCodeCreateView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, 'Language code: "%s" for language: "%s" has been added.' % (
             self.object.code, self.object.language.name
         ))
-        return reverse_lazy('languages:language_code', kwargs=dict(language_code_id=self.object.pk),
-                            language_id=self.object.language_id)
+        return reverse_lazy('languages:language_code',
+                            kwargs=dict(
+                                language_id=self.object.language_id,
+                                language_code_id=self.object.pk
+                            ))
 
 
 class LanguageCodeEditView(PermissionRequiredMixin, UpdateView):

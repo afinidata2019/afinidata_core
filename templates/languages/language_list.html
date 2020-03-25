@@ -7,9 +7,11 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Languages</h1>
             {% if perms.languages.add_language %}
-                <a href="{% url 'languages:language_create' %}"
-                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Create Language</a>
+                <div>
+                    <a href="{% url 'languages:language_create' %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Create Language</a>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -53,7 +55,17 @@
                                         <i class="fas fa-times-circle fa-2x text-danger"></i>
                                     {% endif %}
                                 </td>
-                                <td></td>
+                                <td>
+                                    {% if object.languagecode_set.all.count > 0 %}
+                                    <ul>
+                                        {% for code in object.languagecode_set.all %}
+                                            <li>
+                                                <a href="{% url 'languages:language_code' language_id=object.pk language_code_id=code.pk %}">{{ code.code }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="{% url 'languages:language_detail' language_id=object.pk %}" class="btn btn-primary">
