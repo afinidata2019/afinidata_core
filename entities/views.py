@@ -22,8 +22,7 @@ class EntityView(LoginRequiredMixin, DetailView):
     model = Entity
     pk_url_kwarg = 'id'
     context_object_name = 'entity'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
 
 
 class NewEntityView(LoginRequiredMixin, CreateView):
@@ -31,8 +30,7 @@ class NewEntityView(LoginRequiredMixin, CreateView):
     template_name = 'entities/new.html'
     fields = ('name', 'description')
     context_object_name = 'entity'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
 
     def form_valid(self, form):
         entity = form.save()
@@ -46,8 +44,7 @@ class EditEntityView(LoginRequiredMixin, UpdateView):
     template_name = 'entities/edit.html'
     pk_url_kwarg = 'id'
     context_object_name = 'entity'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
 
     def form_valid(self, form):
         entity = form.save()
@@ -59,21 +56,20 @@ class DeleteEntityView(LoginRequiredMixin, DeleteView):
     model = Entity
     template_name = 'entities/delete.html'
     pk_url_kwarg = 'id'
-    login_url = '/admin/login/'
+    login_url = reverse_lazy('pages:login')
     redirect_field_name = 'redirect_to'
     success_url = reverse_lazy('entities:index')
 
 
 class AddAttributeToEntityView(LoginRequiredMixin, View):
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
 
     def get(self, request, *args, **kwargs):
         entity = get_object_or_404(Entity, id=kwargs['id'])
         exclude_arr = [item.pk for item in entity.attributes.all()]
         queryset = Attribute.objects.all().exclude(id__in=exclude_arr)
         form = EntityAttributeForm(request.POST or None, queryset=queryset)
-        return render(request, 'entities/add_attribute.html', dict(form=form))
+        return render(request, 'entities/new.html', dict(form=form, action='Set attribute to'))
 
     def post(self, request, *args, **kwargs):
 

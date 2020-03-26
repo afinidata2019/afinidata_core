@@ -52,9 +52,37 @@
     </a>
     <div id="collapseAreas" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Attributes:</h6>
+        <h6 class="collapse-header">Areas:</h6>
         <a class="collapse-item" href="{% url 'areas:index' %}">All Areas</a>
           <a class="collapse-item" href="{% url 'areas:new' %}">Add New</a>
+      </div>
+    </div>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
+      <i class="fas fa-university"></i>
+      <span>Programs</span>
+    </a>
+    <div id="collapseLevels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header"><i class="fas fa-university"></i> Programs:</h6>
+        <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
+        <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+      </div>
+    </div>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLanguages" aria-expanded="true" aria-controls="collapseTwo">
+      <i class="fas fa-language"></i>
+      <span>Languages</span>
+    </a>
+    <div id="collapseLanguages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Languages:</h6>
+        <a class="collapse-item" href="{% url 'languages:language_list' %}">All Languages</a>
+          <a class="collapse-item" href="{% url 'languages:language_create' %}">Add Language</a>
       </div>
     </div>
 </li>

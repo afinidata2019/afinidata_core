@@ -1,0 +1,33 @@
+{% extends 'base/private.html' %}
+
+{% block title %}{{ action }} Language{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Language</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {% if object.name %}
+                        <div class="form-group">
+                            <label for="">Name: </label>
+                            <input type="text" class="form-control" disabled value="{{ object.name }}">
+                        </div>
+                    {% endif %} 
+                    {% if delete_message %}
+                        <strong class="text-gray-800">{{ delete_message }}</strong><br><br>
+                    {% endif %}
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ action }} Language</button>
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}

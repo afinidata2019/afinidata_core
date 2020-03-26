@@ -1,5 +1,5 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, View
-from instances.models import Instance, AttributeValue, InstanceSection, Response
+from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt

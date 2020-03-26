@@ -1,4 +1,9 @@
 {% load widget_tweaks %}
+
+{% if delete_message %}
+    <strong class="text-gray-800">{{ delete_message }}</strong><br><br>
+{% endif %}
+
 {% for field in form %}
     <div class="form-group">
         {{ field.errors }}
@@ -6,7 +11,7 @@
         {% if field.type == 'checkbox' %}
         {% render_field field required='required' %}
         {% else %}
-        {% render_field field class='form-control' required='required' %}
+        {% render_field field class='form-control' %}
         {% endif %}
         {% if field.help_text %}
         <p class="help">{{ field.help_text|safe }}</p>

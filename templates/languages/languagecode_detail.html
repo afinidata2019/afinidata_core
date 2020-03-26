@@ -1,0 +1,38 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Language Code: {{ object.code }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Language Code: {{ object.code }}</h1>
+            {% if perms.languages.view_languagecode %}
+                <a href="{% url 'languages:language_code_list' language_id=object.language_id %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-list fa-sm text-white-50"></i> All Language Codes</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+            </div>
+            <div class="card-body">
+                <strong class="text-gray-900">Language: </strong>
+                <a href="{% url 'languages:language_detail' language_id=object.language_id %}">{{ object.language.name }}</a>
+                <br>
+                <strong class="text-gray-900">Description: </strong><span>{{ object.description }}</span><br>
+                <strong class="text-gray-900">Origin: </strong><span>{{ object.origin.title }}</span><br>
+                <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                <strong class="text-gray-900">Updated At: </strong><span>{{ object.updated_at }}</span><br>
+                <strong class="text-gray-900">Actions: </strong>
+                {% if perms.languages.change_languagecode %}
+                    <a href="{% url 'languages:language_code_edit' language_id=object.language_id language_code_id=object.pk %}"
+                       class="btn btn-success">Edit</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

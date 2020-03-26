@@ -1,0 +1,86 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Languages{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Languages</h1>
+            {% if perms.languages.add_language %}
+                <div>
+                    <a href="{% url 'languages:language_create' %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Create Language</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Language List</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Enabled</th>
+                          <th>Codes</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Enabled</th>
+                          <th>Codes</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for object in object_list %}
+                            <tr>
+                                <td>{{ object.name }}</td>
+                                <td>{{ object.description }}</td>
+                                <td>
+                                    {% if object.available %}
+                                         <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    {% endif %}
+                                    {% if not object.available %}
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if object.languagecode_set.all.count > 0 %}
+                                    <ul>
+                                        {% for code in object.languagecode_set.all %}
+                                            <li>
+                                                <a href="{% url 'languages:language_code' language_id=object.pk language_code_id=code.pk %}">{{ code.code }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'languages:language_detail' language_id=object.pk %}" class="btn btn-primary">
+                                            <i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'languages:language_edit' language_id=object.pk %}" class="btn btn-success">
+                                            <i class="fas fa-pen"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+              {% include 'base/pagination.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

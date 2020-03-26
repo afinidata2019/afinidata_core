@@ -1,4 +1,4 @@
-from instances.models import Score, ScoreTracking, Instance
+from instances.models import ScoreTracking, Instance
 from attributes.models import Attribute
 from areas.models import Area
 from django import forms

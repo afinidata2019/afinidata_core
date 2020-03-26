@@ -17,9 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('', include('pages.urls', namespace='pages')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('pages.urls', namespace='pages')),
     path('areas/', include('areas.urls', namespace='areas')),
     path('milestones/', include('milestones.urls', namespace='milestones')),
     path('entities/', include('entities.urls', namespace='entities')),
@@ -32,5 +32,7 @@ urlpatterns = [
     path('levels/', include('levels.urls', namespace='levels')),
     path('sections/', include('sections.urls', namespace='sections')),
     path('utilities/', include('utilities.urls', namespace='utilities')),
-    path('groups/', include('groups.urls', namespace='groups'))
+    path('groups/', include('groups.urls', namespace='groups')),
+    path('languages/', include('languages.urls', namespace='languages')),
+    path('programs/', include('programs.urls', namespace='programs'))
 ]
