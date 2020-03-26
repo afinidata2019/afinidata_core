@@ -36,4 +36,78 @@
             </div>
         </div>
     </div>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Levels</h1>
+            <div>
+                {% if perms.programs.add_level %}
+                    <a href="{% url 'programs:level_create' program_id=object.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Level</a>
+                {% endif %}
+                {% if perms.programs.view_program %}
+                    <a href="{% url 'programs:level_list' program_id=object.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-list fa-sm text-white-50"></i> View all levels</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Level List</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for level in levels %}
+                        <tr>
+                            <td>{{ level.name }}</td>
+                            <td>{{ level.description }}</td>
+                            <td>{{ level.created_at }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    {% if perms.programs.view_level %}
+                                        <a href="{% url 'programs:level_detail' program_id=object.pk level_id=level.pk %}"
+                                           class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                    {% endif %}
+                                    {% if perms.programs.change_level %}
+                                        <a href="{% url 'programs:level_edit' program_id=object.pk level_id=level.pk %}"
+                                           class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                    {% endif %}
+                                    {% if perms.programs.delete_level %}
+                                        <a href="{% url 'programs:level_delete' program_id=object.pk level_id=level.pk %}"
+                                           class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+                {% include 'base/pagination.html' %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

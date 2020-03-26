@@ -1,24 +1,26 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Programs{% endblock %}
+{% block title %}Levels for {{ program.name }}{% endblock %}
 
 {% block content %}
-
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Programs</h1>
-            {% if perms.programs.add_program %}
-                <a href="{% url 'programs:program_create' %}"
+            <h1 class="h3 mb-0 text-gray-800">Levels for {{ program.name }}</h1>
+            <div>
+                <a href="{% url 'programs:level_create' program_id=program.pk %}"
                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add Program</a>
-            {% endif %}
+                <i class="fas fa-plus fa-sm text-white-50"></i> Create Level</a>
+                <a href="{% url 'programs:program_detail' program_id=program.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-eye fa-sm text-white-50"></i> View Program</a>
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Level List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -27,7 +29,6 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Levels</th>
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -36,7 +37,6 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Levels</th>
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -46,23 +46,19 @@
                         <tr>
                             <td>{{ object.name }}</td>
                             <td>{{ object.description }}</td>
-                            <td>
-                                Count: {{ object.level_set.all.count }}
-                                <a href="{% url 'programs:level_list' program_id=object.pk %}">View</a>
-                            </td>
                             <td>{{ object.created_at }}</td>
                             <td>
                                 <div class="btn-group">
-                                    {% if perms.programs.view_program %}
-                                        <a href="{% url 'programs:program_detail' program_id=object.pk %}"
-                                           class="btn btn-primary"><i class="fas fa-eye fa-fw"></i></a>
+                                    {% if perms.programs.view_level %}
+                                        <a href="{% url 'programs:level_detail' program_id=object.program_id level_id=object.pk %}"
+                                           class="btn btn-primary"><i class="fas fa-eye"></i></a>
                                     {% endif %}
-                                    {% if perms.programs.change_program %}
-                                        <a href="{% url 'programs:program_edit' program_id=object.pk %}"
-                                           class="btn btn-success"><i class="fas fa-pen fa-fw"></i></a>
+                                    {% if perms.programs.change_level %}
+                                        <a href="{% url 'programs:level_edit' program_id=object.program_id level_id=object.pk %}"
+                                           class="btn btn-success"><i class="fas fa-pen"></i></a>
                                     {% endif %}
-                                    {% if perms.programs.delete_program %}
-                                        <a href="{% url 'programs:program_delete' program_id=object.pk %}"
+                                    {% if perms.programs.delete_level %}
+                                        <a href="{% url 'programs:level_delete' program_id=object.program_id level_id=object.pk %}"
                                            class="btn btn-danger"><i class="fas fa-times"></i></a>
                                     {% endif %}
                                 </div>
