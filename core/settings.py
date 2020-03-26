@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     'utilities.apps.UtilitiesConfig',
     'groups.apps.GroupsConfig',
     'languages.apps.LanguagesConfig',
-    'programs.apps.ProgramsConfig'
+    'programs.apps.ProgramsConfig',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
