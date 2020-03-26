@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'utilities.apps.UtilitiesConfig',
     'groups.apps.GroupsConfig',
-    'languages.apps.LanguagesConfig'
+    'languages.apps.LanguagesConfig',
+    'programs.apps.ProgramsConfig'
 ]
 
 MIDDLEWARE = [

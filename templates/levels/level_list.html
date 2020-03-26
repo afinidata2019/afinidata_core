@@ -1,7 +1,11 @@
 {% extends 'base/private.html' %}
 
 {% block content %}
-    <h1>Levels | List</h1>
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Levels</h1>
+        </div>
+    </div>
 
     <ul>
         {% for level in levels %}

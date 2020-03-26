@@ -1,4 +1,9 @@
 {% load widget_tweaks %}
+
+{% if delete_message %}
+    <strong class="text-gray-800">{{ delete_message }}</strong><br><br>
+{% endif %}
+
 {% for field in form %}
     <div class="form-group">
         {{ field.errors }}

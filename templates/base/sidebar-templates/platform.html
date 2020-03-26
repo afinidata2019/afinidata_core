@@ -61,12 +61,15 @@
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
-      <i class="fas fa-puzzle-piece"></i>
-      <span>Levels</span>
+      <i class="fas fa-university"></i>
+      <span>Programs</span>
     </a>
     <div id="collapseLevels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Levels:</h6>
+        <h6 class="collapse-header"><i class="fas fa-university"></i> Programs:</h6>
+        <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
+        <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+
         <a class="collapse-item" href="{% url 'levels:index' %}">All Levels</a>
           <a class="collapse-item" href="{% url 'levels:new' %}">Add New</a>
       </div>
