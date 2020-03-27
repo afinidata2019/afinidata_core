@@ -76,7 +76,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Messenger Users</h1>
+            <h1 class="h3 mb-0 text-gray-800">Last Messenger Users</h1>
             <a href="{% url 'groups:add__messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
         </div>
@@ -93,7 +93,7 @@
                     <thead>
                         <tr>
                           <th>Messenger User</th>
-                          <th>Childs</th>
+                          <th>Instances</th>
                           <th>Created At</th>
                           <th>Assigned Date</th>
                           <th>Code</th>
@@ -111,11 +111,11 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        {% for assignation in object.assignationmessengeruser_set.all %}
+                        {% for assignation in last_assignations %}
                             <tr>
                                 <td>
                                     (<a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.messenger_user_id }}</a>)
-                                    {{ assignation.get_messenger_user.get_first_name }} {{ assignation.get_messenger_user.get_last_name }}
+                                    {{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}
                                 </td>
                                 <td>
                                     {% for instance in assignation.get_messenger_user.get_instances %}
@@ -132,6 +132,8 @@
                                     <div class="btn-group">
                                         <a href="" class="btn btn-primary"><i class="fas fa-eye"></i></a>
                                         <a href="" class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                        <a href="{% url 'groups:remove_user_to_group' group_id=object.pk assignation_id=assignation.pk %}"
+                                           class="btn btn-danger"><i class="fas fa-times"></i></a>
                                     </div>
                                 </td>
                             </tr>

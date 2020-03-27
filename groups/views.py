@@ -20,6 +20,11 @@ class GroupView(PermissionRequiredMixin, DetailView):
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
 
+    def get_context_data(self, **kwargs):
+        c = super(GroupView, self).get_context_data()
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all()[:5]
+        return c
+
 
 class CreateGroupView(PermissionRequiredMixin, CreateView):
     model = models.Group
