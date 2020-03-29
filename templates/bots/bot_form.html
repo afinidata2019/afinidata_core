@@ -6,6 +6,16 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">{{action}} Bot</h1>
+            <div>
+                {% if perms.bots.view_all_bots %}
+                    <a href="{% url 'bots:bot_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-list fa-sm text-white-50"></i> View All Bots</a>
+                {% endif %}
+                {% if perms.bots.view_user_bots %}
+                    <a href="{% url 'bots:bots_in_group_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-list fa-sm text-white-50"></i> View Group Bots</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -16,7 +26,7 @@
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button role="submit" class="btn btn-primary">{{ action }} Bot</button>
+                    <button type="submit" class="btn btn-primary">{{ action }} Bot</button>
                 </form>
             </div>
         </div>

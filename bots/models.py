@@ -10,6 +10,12 @@ class Bot(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        permissions = (
+            ("view_all_bots", "Can view all bots in platform"),
+            ("view_user_bots", "Can view property user bots in platform")
+        )
+
 
 class Interaction(models.Model):
     name = models.CharField(max_length=30)

@@ -1,6 +1,7 @@
-from django.contrib.auth.models import User
 from messenger_users.models import User as MessengerUser
+from django.contrib.auth.models import User
 from django.db import models
+from bots.models import Bot
 
 
 ROLE_CHOICES = (('administrator', 'Administrator'), ('collaborator', 'Collaborator'))
@@ -44,3 +45,10 @@ class AssignationMessengerUser(models.Model):
 
     def get_messenger_user(self):
         return MessengerUser.objects.get(id=self.messenger_user_id)
+
+
+class BotAssignation(models.Model):
+    bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
