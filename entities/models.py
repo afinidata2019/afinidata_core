@@ -11,3 +11,8 @@ class Entity(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        permissions = (
+            ('view_all_entities', 'View all entities types for instances.'),
+        )

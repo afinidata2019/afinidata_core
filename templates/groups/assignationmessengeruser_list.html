@@ -60,7 +60,7 @@
                                     {% for instance in assignation.get_messenger_user.get_instances %}
                                         (<a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.pk }}</a>)
                                         <span>{{ instance.name }}</span>
-                                        (<a href="{% url 'entities:entity' id=instance.entity_id %}">{{ instance.entity.name }}</a>)
+                                        (<a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a>)
                                         <br>
                                     {% endfor %}
                                 </td>

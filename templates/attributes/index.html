@@ -46,7 +46,7 @@
                                 <td>{{ attribute.type }}</td>
                                 <td>
                                     {% for entity in attribute.entity_set.all %}
-                                        (<a href="{% url 'entities:entity' id=entity.pk %}">#{{ entity.pk }}</a>)
+                                        (<a href="{% url 'entities:entity_detail' entity_id=entity.pk %}">#{{ entity.pk }}</a>)
                                         <span>{{ entity.name }}</span><br>
                                     {% endfor %}
                                 </td>
