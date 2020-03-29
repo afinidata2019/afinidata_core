@@ -1,5 +1,6 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from groups import models
@@ -22,7 +23,7 @@ class GroupView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(GroupView, self).get_context_data()
-        c['last_assignations'] = self.object.assignationmessengeruser_set.all()[:5]
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
         return c
 
 
@@ -41,3 +42,21 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, 'Group with name: "%s" has been created.' % self.object.name)
         print(self.object.pk, self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
+
+
+class MessengerUsersListView(PermissionRequiredMixin, ListView):
+    model = models.AssignationMessengerUser
+    permission_required = 'groups.view_assignationmessengeruser'
+    login_url = reverse_lazy('pages:login')
+    paginate_by = 20
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(MessengerUsersListView, self).get_context_data()
+        c['group'] = get_object_or_404(models.Group, id=self.kwargs['group_id'])
+        print(c)
+        return c
+
+    def get_queryset(self):
+        qs = super(MessengerUsersListView, self).get_queryset()
+        qs = qs.filter(group_id=self.kwargs['group_id']).order_by('-pk')
+        return qs
