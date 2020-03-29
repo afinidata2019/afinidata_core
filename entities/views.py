@@ -21,39 +21,55 @@ class EntityView(PermissionRequiredMixin, DetailView):
     login_url = reverse_lazy('pages:login')
 
 
-class NewEntityView(LoginRequiredMixin, CreateView):
-    model = Entity
-    template_name = 'entities/new.html'
-    fields = ('name', 'description')
+class NewEntityView(PermissionRequiredMixin, CreateView):
+    permission_required = 'entities.add_entity'
     login_url = reverse_lazy('pages:login')
+    fields = ('name', 'description')
+    model = Entity
+
+    def get_context_data(self, **kwargs):
+        c = super(NewEntityView, self).get_context_data()
+        c['action'] = 'Create'
+        return c
 
     def get_success_url(self):
         messages.success(self.request, 'Entity with name: %s has been created.' % self.object.name)
-        return redirect('entities:entity_detail', kwargs=dict(entity_id=self.object.pk))
+        return reverse_lazy('entities:entity_detail', kwargs=dict(entity_id=self.object.pk))
 
 
-class EditEntityView(LoginRequiredMixin, UpdateView):
+class EditEntityView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'entities.change_entity'
     model = Entity
     fields = ('name', 'description')
-    template_name = 'entities/edit.html'
     pk_url_kwarg = 'entity_id'
-    context_object_name = 'entity'
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(EditEntityView, self).get_context_data()
+        c['action'] = 'Edit'
+        return c
 
     def get_success_url(self):
         messages.success(self.request, 'Entity with name: %s has been updated.' % self.object.name)
-        return redirect('entities:entity_detail', kwargs=dict(entity_id=self.object.pk))
+        return reverse_lazy('entities:entity_detail', kwargs=dict(entity_id=self.object.pk))
 
 
-class DeleteEntityView(LoginRequiredMixin, DeleteView):
-    model = Entity
-    template_name = 'entities/delete.html'
-    pk_url_kwarg = 'entity_id'
+class DeleteEntityView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'entities.delete_entity'
+    template_name = 'entities/entity_form.html'
     login_url = reverse_lazy('pages:login')
+    pk_url_kwarg = 'entity_id'
+    model = Entity
+
+    def get_context_data(self, **kwargs):
+        c = super(DeleteEntityView, self).get_context_data()
+        c['action'] = 'Delete'
+        c['delete_message'] = 'Are you sure to delete entity with name: "%s"?' % self.object.name
+        return c
 
     def get_success_url(self):
         messages.success(self.request, 'Entity with name: %s has been deleted.' % self.object.name)
-        return redirect('entities:entity_list')
+        return reverse_lazy('entities:entity_list')
 
 
 class AddAttributeToEntityView(LoginRequiredMixin, View):
