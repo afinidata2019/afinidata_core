@@ -42,10 +42,10 @@
                             <tr>
                               <td>{{ instance.pk }}</td>
                               <td>{{ instance.name.capitalize }}</td>
-                              <td><a href="{% url 'entities:entity' id=instance.entity.pk %}">{{ instance.entity.name.title }}</a></td>
+                              <td><a href="{% url 'entities:entity_detail' entity_id=instance.entity.pk %}">{{ instance.entity.name.title }}</a></td>
                               <td>
                                   {% for user in instance.get_users %}
-                                      (<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.get_first_name }} {{ user.get_last_name }}</span>
+                                      (<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.first_name }} {{ user.last_name }}</span>
                                       <br>
                                   {% endfor %}
                               </td>
