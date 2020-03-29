@@ -32,4 +32,5 @@ class LogoutView(AuthLogoutView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'pages/dashboard.html'
+    login_url = reverse_lazy('pages:login')
 
