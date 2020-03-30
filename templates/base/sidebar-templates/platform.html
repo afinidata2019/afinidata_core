@@ -88,6 +88,8 @@
 
 {% endif %}
 
+{% if perms.programs.view_program %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
       <i class="fas fa-university"></i>
@@ -96,11 +98,20 @@
     <div id="collapseLevels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header"><i class="fas fa-university"></i> Programs:</h6>
-        <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
-        <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+          {% if perms.programs.view_all_programs %}
+            <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
+          {% endif %}
+          {% if perms.programs.view_user_programs %}
+            <a class="collapse-item" href="{% url 'programs:program_list' %}">Group Programs</a>
+          {% endif %}
+          {% if perms.programs.add_program %}
+            <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+          {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLanguages" aria-expanded="true" aria-controls="collapseTwo">
