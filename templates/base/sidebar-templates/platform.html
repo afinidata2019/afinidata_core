@@ -66,6 +66,8 @@
 
 {% endif %}
 
+{% if perms.areas.view_all_areas %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAreas" aria-expanded="true" aria-controls="collapseTwo">
       <i class="fas fa-chart-area"></i>
@@ -74,11 +76,17 @@
     <div id="collapseAreas" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Areas:</h6>
-        <a class="collapse-item" href="{% url 'areas:index' %}">All Areas</a>
-          <a class="collapse-item" href="{% url 'areas:new' %}">Add New</a>
+          {% if perms.areas.view_all_areas %}
+            <a class="collapse-item" href="{% url 'areas:area_list' %}">All Areas</a>
+          {% endif %}
+          {% if perms.areas.add_area %}
+            <a class="collapse-item" href="{% url 'areas:create_area' %}">Add New</a>
+          {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
