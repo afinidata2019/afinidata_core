@@ -17,3 +17,8 @@ class Attribute(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        permissions = (
+            ('view_all_attributes', 'User can view all attributes for entities'),
+        )

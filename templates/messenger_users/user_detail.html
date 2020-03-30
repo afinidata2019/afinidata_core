@@ -16,8 +16,10 @@
             </div>
             <div class="card-body">
                 <strong class="text-gray-900">ID: </strong>{{ object.pk }}<br>
+                <strong class="text-gray-900">First Name: </strong>{{ object.first_name }}<br>
+                <strong class="text-gray-900">Last Name: </strong>{{ object.last_name }}<br>
                 <strong class="text-gray-900">Username: </strong>{{ object.username }}<br>
-                <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot' id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
+                <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
                 <strong class="text-gray-900">Channel ID: </strong>{{ object.last_channel_id }}<br>
                 <strong class="text-gray-900">Email: </strong>{{ object.get_email }}<br>
                 <strong class="text-gray-900">Country: </strong>{{ object.get_country }}<br>
@@ -55,7 +57,7 @@
                                     <tr>
                                         <td>{{ instance.pk }}</td>
                                         <td>{{ instance.name }}</td>
-                                        <td><a href="{% url 'entities:entity' id=instance.entity_id %}">{{ instance.entity.name }}</a></td>
+                                        <td><a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a></td>
                                         <td>{{ instance.created_at }}</td>
                                         <td>
                                             <div class="btn-group">

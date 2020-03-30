@@ -1,0 +1,89 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Attributes{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Attributes</h1>
+            <div>
+                {% if perms.attributes.add_attribute %}
+                    <a href="{% url 'attributes:create_attribute' %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Create Attribute</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">List</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Type</th>
+                          {% if perms.entities.view_entity %}
+                            <th>Entities</th>
+                          {% endif %}
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Name</th>
+                          <th>Type</th>
+                          {% if perms.entities.view_entity %}
+                            <th>Entities</th>
+                          {% endif %}
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for attribute in object_list %}
+                            <tr>
+                                <td>{{ attribute.name }}</td>
+                                <td>{{ attribute.type }}</td>
+                                {% if perms.entities.view_entity %}
+                                    <td>
+                                        {% for entity in attribute.entity_set.all %}
+                                            (<a href="{% url 'entities:entity_detail' entity_id=entity.pk %}">#{{ entity.pk }}</a>)
+                                            <span>{{ entity.name }}</span><br>
+                                        {% endfor %}
+                                    </td>
+                                {% endif %}
+                                <td>{{ attribute.created_at }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        {% if perms.attributes.view_attribute %}
+                                            <a href="{% url 'attributes:attribute_detail' attribute_id=attribute.pk %}"
+                                               class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        {% endif %}
+                                        {% if perms.attributes.change_attribute %}
+                                            <a href="{% url 'attributes:edit_attribute' attribute_id=attribute.pk %}"
+                                               class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                        {% endif %}
+                                        {% if perms.attributes.delete_attribute %}
+                                            <a href="{% url 'attributes:delete_attribute' attribute_id=attribute.pk %}"
+                                               class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+                {% include 'base/pagination.html' %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
