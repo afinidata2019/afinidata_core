@@ -135,7 +135,7 @@ class LevelUpdateView(PermissionRequiredMixin, UpdateView):
     model = Level
     login_url = reverse_lazy('pages:login')
     fields = ('name', 'description', 'assign_min', 'assign_max')
-    pk_url_kwarg = 'program_id'
+    pk_url_kwarg = 'level_id'
 
     def get_context_data(self, **kwargs):
         c = super(LevelUpdateView, self).get_context_data()
@@ -156,7 +156,7 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'programs/level_form.html'
     model = Level
     login_url = reverse_lazy('pages:login')
-    pk_url_kwarg = 'program_id'
+    pk_url_kwarg = 'level_id'
 
     def get_context_data(self, **kwargs):
         c = super(LevelDeleteView, self).get_context_data()
