@@ -29,12 +29,14 @@
                 <strong class="text-gray-800">Milestones count: </strong><span>{{ object.milestone_set.all.count }}</span><br>
                 <strong class="text-gray-800">Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong class="text-gray-800">Updated At: </strong><span>{{ object.updated_at }}</span><br>
-                <strong class="text-gray-800">Actions :</strong>
-                {% if perms.areas.change_area %}
-                    <a class="btn btn-success" href="{% url 'areas:edit_area' area_id=area.pk %}">Edit</a>
-                {% endif %}
-                {% if perms.areas.delete_area %}
-                    <a class="btn btn-danger" href="{% url 'areas:delete_area' area_id=area.pk %}">Delete</a>
+                {% if perms.areas.change_area or perms.areas.delete_area %}
+                    <strong class="text-gray-800">Actions :</strong>
+                    {% if perms.areas.change_area %}
+                        <a class="btn btn-success" href="{% url 'areas:edit_area' area_id=area.pk %}">Edit</a>
+                    {% endif %}
+                    {% if perms.areas.delete_area %}
+                        <a class="btn btn-danger" href="{% url 'areas:delete_area' area_id=area.pk %}">Delete</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
