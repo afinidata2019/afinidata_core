@@ -44,6 +44,8 @@
 
 {% endif %}
 
+{% if perms.attributes.view_all_attributes %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAttributes" aria-expanded="true" aria-controls="collapseTwo">
       <i class="far fa-question-circle"></i>
@@ -52,11 +54,17 @@
     <div id="collapseAttributes" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Attributes:</h6>
-        <a class="collapse-item" href="{% url 'attributes:index' %}">All Attributes</a>
-          <a class="collapse-item" href="{% url 'attributes:new' %}">Add New</a>
+        {% if perms.attributes.view_all_attributes %}
+            <a class="collapse-item" href="{% url 'attributes:attribute_list' %}">All Attributes</a>
+        {% endif %}
+        {% if perms.attributes.add_attribute %}
+          <a class="collapse-item" href="{% url 'attributes:create_attribute' %}">Add New</a>
+        {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAreas" aria-expanded="true" aria-controls="collapseTwo">
