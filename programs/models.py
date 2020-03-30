@@ -10,6 +10,12 @@ class Program(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        permissions = (
+            ('view_all_programs', 'User can view all programs'),
+            ('view_user_programs', 'User can view programs in your groups')
+        )
+
 
 class Level(models.Model):
     name = models.CharField(max_length=50)
