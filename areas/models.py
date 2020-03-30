@@ -13,6 +13,11 @@ class Area(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        permissions = (
+            ('view_all_areas', 'User can view all areas.'),
+        )
+
 
 class Section(models.Model):
     area = models.ForeignKey(Area, on_delete=models.CASCADE)
