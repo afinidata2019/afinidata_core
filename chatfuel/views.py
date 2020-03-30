@@ -363,6 +363,8 @@ class GetFavoriteChildView(View):
             if child_birthdays.count() > 0:
                 dates.add(child_birthdays.last().pk)
 
+        print(dates)
+
         if not len(dates) > 0:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          status_error='Neither child has birthday property',
@@ -378,7 +380,7 @@ class GetFavoriteChildView(View):
             print(register.value)
             register.value = parser.parse(register.value, dayfirst=day_first)
             print(register.value)
-            if register.value < favorite['value']:
+            if register.value > favorite['value']:
                 favorite = dict(id=register.instance_id, value=register.value)
 
         return JsonResponse(dict(
