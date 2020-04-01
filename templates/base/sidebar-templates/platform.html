@@ -113,6 +113,8 @@
 
 {% endif %}
 
+{% if perms.languages.view_language %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLanguages" aria-expanded="true" aria-controls="collapseTwo">
       <i class="fas fa-language"></i>
@@ -121,9 +123,14 @@
     <div id="collapseLanguages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Languages:</h6>
-        <a class="collapse-item" href="{% url 'languages:language_list' %}">All Languages</a>
-          <a class="collapse-item" href="{% url 'languages:language_create' %}">Add Language</a>
+          {% if perms.languages.view_language %}
+            <a class="collapse-item" href="{% url 'languages:language_list' %}">All Languages</a>
+          {% endif %}
+          {% if perms.languages.add_language %}
+            <a class="collapse-item" href="{% url 'languages:language_create' %}">Add Language</a>
+          {% endif %}
       </div>
     </div>
 </li>
 
+{% endif %}

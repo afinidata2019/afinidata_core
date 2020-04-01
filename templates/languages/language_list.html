@@ -6,13 +6,13 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Languages</h1>
-            {% if perms.languages.add_language %}
                 <div>
-                    <a href="{% url 'languages:language_create' %}"
-                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Create Language</a>
+                    {% if perms.languages.add_language %}
+                        <a href="{% url 'languages:language_create' %}"
+                           class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Create Language</a>
+                    {% endif %}
                 </div>
-            {% endif %}
         </div>
     </div>
 
@@ -68,10 +68,14 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{% url 'languages:language_detail' language_id=object.pk %}" class="btn btn-primary">
-                                            <i class="fas fa-eye"></i></a>
-                                        <a href="{% url 'languages:language_edit' language_id=object.pk %}" class="btn btn-success">
-                                            <i class="fas fa-pen"></i></a>
+                                        {% if perms.languages.view_language %}
+                                            <a href="{% url 'languages:language_detail' language_id=object.pk %}"
+                                               class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        {% endif %}
+                                        {% if  perms.languages.change_language %}
+                                            <a href="{% url 'languages:language_edit' language_id=object.pk %}"
+                                               class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
