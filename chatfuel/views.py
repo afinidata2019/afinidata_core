@@ -332,7 +332,7 @@ class GetFavoriteChildView(View):
                                                          status_error='Invalid params',
                                                          favorite_status_error='invalid params'), messages=[]))
 
-        user = User.objects.get(id=form.data['user_id'])
+        user = form.cleaned_data['user_id']
         instances = user.get_instances()
         children = instances.filter(entity_id=1)
 
@@ -393,3 +393,34 @@ class GetFavoriteChildView(View):
             ),
             messages=[]
         ))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetLastChildView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404
+
+    def post(self, request, *args, **kwargs):
+        form = forms.UserForm(self.request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='error',
+                request_error='Invalid params.'
+            ), messages=[]))
+
+        instances = form.cleaned_data['user_id'].get_instances()
+        children = instances.filter(entity_id=1).order_by('-id')
+
+        if not children.count() > 0:
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='error',
+                request_error='User has not children.'
+            ), messages=[]))
+
+        return JsonResponse(dict(set_attributes=dict(
+            instance=children.last().pk,
+            instance_name=children.last().name,
+            favorite_instance=children.last().pk,
+            favorite_instance_name=children.last().name,
+        ), messages=[]))
