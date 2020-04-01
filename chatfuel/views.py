@@ -423,4 +423,5 @@ class GetLastChildView(View):
             instance_name=children.last().name,
             favorite_instance=children.last().pk,
             favorite_instance_name=children.last().name,
+            request_status='done'
         ), messages=[]))
