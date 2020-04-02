@@ -28,7 +28,9 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Users</th>
+                            {% if perms.messenger_users.view_all_users %}
+                              <th>Users</th>
+                            {% endif %}
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -37,7 +39,9 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Users</th>
+                            {% if perms.messenger_users.view_all_users %}
+                              <th>Users</th>
+                            {% endif %}
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -47,9 +51,11 @@
                         <tr>
                             <td>{{ bot.name }}</td>
                             <td>{{ bot.description }}</td>
-                            <td>
-                                <a href="{% url 'messenger_users:index' %}?bot={{ bot.pk }}" class="btn btn-primary">View</a>
-                            </td>
+                            {% if perms.messenger_users.view_all_users %}
+                                <td>
+                                    <a href="{% url 'messenger_users:index' %}?bot={{ bot.pk }}" class="btn btn-primary">View</a>
+                                </td>
+                            {% endif %}
                             <td>{{ bot.created_at }}</td>
                             <td>
                                 <div class="btn-group">

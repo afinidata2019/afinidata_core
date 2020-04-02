@@ -2,6 +2,8 @@
 
 <div class="sidebar-heading">People</div>
 
+{% if perms.groups.view_all_groups or perms.groups.view_user_groups %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
       <i class="fas fa-fw fa-layer-group"></i>
@@ -10,11 +12,17 @@
     <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Groups:</h6>
-        <a class="collapse-item" href="{% url 'groups:groups' %}">All Groups</a>
-        <a class="collapse-item" href="#">My Groups</a>
+          {% if perms.groups.view_all_groups %}
+            <a class="collapse-item" href="{% url 'groups:groups' %}">All Groups</a>
+          {% endif %}
+          {% if perms.groups.view_user_groups %}
+            <a class="collapse-item" href="{% url 'groups:my_groups' %}">My Groups</a>
+          {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
 
 {% if perms.messenger_users.view_all_messenger_users or perms.groups.view_group %}
 
@@ -41,6 +49,8 @@
 
 {% endif %}
 
+{% if perms.instances.add_instance %}
+
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInstances" aria-expanded="true" aria-controls="collapseInstances">
       <i class="fas fa-fw fa-user"></i>
@@ -54,3 +64,6 @@
       </div>
     </div>
 </li>
+
+{% endif %}
+
