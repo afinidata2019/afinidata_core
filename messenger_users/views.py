@@ -1,16 +1,14 @@
-from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.shortcuts import get_object_or_404
 from messenger_users.models import User, UserData
-from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib import messages
 from messenger_users import forms
-import os
 
 
-class HomeView(LoginRequiredMixin, ListView):
+class HomeView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.view_all_messenger_users'
     login_url = reverse_lazy('pages:login')
     paginate_by = 30
     model = User
@@ -64,7 +62,8 @@ class ByGroupView(LoginRequiredMixin, ListView):
         return context
 
 
-class UserView(LoginRequiredMixin, DetailView):
+class UserView(PermissionRequiredMixin, DetailView):
+    permission_required = 'messenger_users.view_user'
     model = User
     pk_url_kwarg = 'id'
     login_url = reverse_lazy('pages:login')
@@ -76,17 +75,16 @@ class EditAttributeView(LoginRequiredMixin, UpdateView):
     fields = ('data_value',)
     template_name = 'messenger_users/data_edit.html'
     context_object_name = 'data'
-    login_url = '/admin/login/'
+    login_url = reverse_lazy('pages:login')
     redirect_field_name = 'redirect_to'
 
     def get_object(self, queryset=None):
         object = get_object_or_404(UserData, user_id=self.kwargs['id'], id=self.kwargs['attribute_id'])
         return object
 
-    def form_valid(self, form):
-        data = form.save()
-        messages.success(self.request, 'Attribute with name: %s has been updated' % data.data_key)
-        return redirect('messenger_users:user', id=self.kwargs['id'])
+    def get_success_url(self):
+        messages.success(self.request, 'Attribute with name: %s has been updated' % self.object.data_key)
+        return reverse_lazy('messenger_users:user', id=self.kwargs['id'])
 
 
 class DeleteAttributeView(LoginRequiredMixin, DeleteView):
@@ -94,8 +92,7 @@ class DeleteAttributeView(LoginRequiredMixin, DeleteView):
     pk_url_kwarg = 'attribute_id'
     template_name = 'messenger_users/data_delete.html'
     context_object_name = 'data'
-    login_url = '/admin/login/'
-    redirect_field_name = 'redirect_to'
+    login_url = reverse_lazy('pages:login')
     success_url = reverse_lazy('messenger_users:index')
 
     def get_object(self, queryset=None):

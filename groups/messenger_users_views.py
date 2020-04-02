@@ -8,7 +8,7 @@ from groups import models
 
 
 class AddMessengerUserView(PermissionRequiredMixin, CreateView):
-    permission_required = 'posts.add_assignationmessengeruser'
+    permission_required = 'groups.add_assignationmessengeruser'
     model = models.AssignationMessengerUser
     fields = ('messenger_user_id',)
 
@@ -30,7 +30,7 @@ class AddMessengerUserView(PermissionRequiredMixin, CreateView):
 
 
 class RemoveMessengerUserView(PermissionRequiredMixin, DeleteView):
-    permission_required = 'posts.add_assignationmessengeruser'
+    permission_required = 'groups.delete_assignationmessengeruser'
     model = models.AssignationMessengerUser
     pk_url_kwarg = 'assignation_id'
     template_name = 'groups/group_form.html'
