@@ -11,12 +11,44 @@
     </div>
 
     <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+        <div class="row">
+            <div class="col-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+
+            <div class="col-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Bots: </strong>
+                        <ul>
+                            {% for bot_assign in object.botassignation_set.all %}
+                                <li>
+                                    <strong class="text-gray-900">{{ bot_assign.bot.name }}</strong>
+                                    <a href="{% url 'bots:bot_detail' bot_id=bot_assign.bot_id %}">View</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <strong class="text-gray-900">Programs: </strong>
+                        <ul>
+                            {% for program in object.programs.all %}
+                                <li>
+                                    <strong class="text-gray-900">{{ program.name }}</strong>
+                                    <a href="{% url 'programs:program_detail' program_id=program.pk %}">View</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -24,8 +56,10 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Users</h1>
-            <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            {% if perms.groups.add_rolegroupuser %}
+                <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
+            {% endif %}
         </div>
     </div>
 
@@ -80,8 +114,10 @@
             <div>
                 <a href="{% url 'groups:messenger_user_list' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-list fa-sm text-white-50"></i> View Messenger Users</a>
-                <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
+                {% if permsgroups.add_assignationmessengeruser %}
+                    <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -150,8 +186,12 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Codes</h1>
-            <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
+            <div>
+                {% if perms.groups.add_code %}
+                    <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
