@@ -24,9 +24,15 @@
                     </ul>
                 <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong class="text-gray-900">Last updated At: </strong><span>{{ object.updated_at }}</span><br>
+                {% if perms.instances.change_instance or perms.instances.delete_instance %}
                 <strong class="text-gray-900">Actions: </strong>
-                <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
-                <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
+                    {% if perms.instances.change_instance %}
+                        <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
+                    {% endif %}
+                    {% if perms.instances.delete_instance %}
+                        <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>

@@ -49,7 +49,7 @@
 
 {% endif %}
 
-{% if perms.instances.add_instance %}
+{% if perms.instances.view_all_instances %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInstances" aria-expanded="true" aria-controls="collapseInstances">
@@ -59,8 +59,12 @@
     <div id="collapseInstances" class="collapse" aria-labelledby="headingInstances" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Instances:</h6>
-        <a class="collapse-item" href="{% url 'instances:index' %}">All Instances</a>
-        <a class="collapse-item" href="{% url 'instances:new' %}">New Instance</a>
+          {% if perms.instances.view_all_instances %}
+            <a class="collapse-item" href="{% url 'instances:index' %}">All Instances</a>
+          {% endif %}
+          {% if perms.instances.add_instance %}
+            <a class="collapse-item" href="{% url 'instances:new' %}">New Instance</a>
+          {% endif %}
       </div>
     </div>
 </li>
