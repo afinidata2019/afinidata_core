@@ -24,6 +24,11 @@ class Instance(models.Model):
     def __str__(self):
         return self.name
 
+    def get_time_interactions(self, first_limit, last_limit):
+        interactions = self.postinteraction_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
+        print(interactions)
+        return interactions
+
     def get_users(self):
         return user_models.User.objects\
             .filter(id__in=set(assoc.user_id for assoc in self.instanceassociationuser_set.all()))

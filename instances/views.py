@@ -4,6 +4,10 @@ from messenger_users.models import User
 from instances.models import Instance
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.utils import timezone
+from dateutil.parser import parse
+from areas.models import Area
+from posts.models import Post
 from instances import forms
 
 
@@ -24,6 +28,18 @@ class InstanceView(PermissionRequiredMixin, DetailView):
     model = Instance
     pk_url_kwarg = 'id'
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceView, self).get_context_data()
+        c['areas'] = Area.objects.all()
+        c['today'] = timezone.now()
+        c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
+        c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
+        filters = [x.post_id for x in c['interactions'].all()]
+        print(filters)
+        '''c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions'].all()])
+        print(c['posts'])'''
+        return c
 
 
 class NewInstanceView(PermissionRequiredMixin, CreateView):

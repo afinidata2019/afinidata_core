@@ -6,33 +6,52 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">{{ object.name }}</h1>
+            <div>
+                <span>{{ first_month }}</span>
+                <span>{{ today }}</span>
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+        <div class="row">
+            <div class="col-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
+                        <strong class="text-gray-900">Users: </strong>
+                            <ul>
+                                {% for user in instance.get_users %}
+                                  <li>(<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.get_first_name }} {{ user.get_last_name }}</span></li>
+                              {% endfor %}
+                            </ul>
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        <strong class="text-gray-900">Last updated At: </strong><span>{{ object.updated_at }}</span><br>
+                        {% if perms.instances.change_instance or perms.instances.delete_instance %}
+                        <strong class="text-gray-900">Actions: </strong>
+                            {% if perms.instances.change_instance %}
+                                <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
+                            {% endif %}
+                            {% if perms.instances.delete_instance %}
+                                <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
-                <strong class="text-gray-900">Users: </strong>
-                    <ul>
-                        {% for user in instance.get_users %}
-                          <li>(<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.get_first_name }} {{ user.get_last_name }}</span></li>
-                      {% endfor %}
-                    </ul>
-                <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
-                <strong class="text-gray-900">Last updated At: </strong><span>{{ object.updated_at }}</span><br>
-                {% if perms.instances.change_instance or perms.instances.delete_instance %}
-                <strong class="text-gray-900">Actions: </strong>
-                    {% if perms.instances.change_instance %}
-                        <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
-                    {% endif %}
-                    {% if perms.instances.delete_instance %}
-                        <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
-                    {% endif %}
-                {% endif %}
+
+            <div class="col-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Areas</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas class="areas-charts" id="areasCharts" style="width: 100%" height="174"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -295,4 +314,48 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let ctx = document.getElementById('areasCharts');
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    {% for area in areas %}
+                        '{{ area.name }}',
+                        '{{ area.name }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Activities',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        {% for area in areas %}
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        {% endfor %}
+                    ],
+                    borderColor: [
+                        {% for area in areas %}
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        {% endfor %}
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 {% endblock %}
