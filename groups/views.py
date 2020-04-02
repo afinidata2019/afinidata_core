@@ -8,10 +8,22 @@ from groups import models
 
 class GroupListView(PermissionRequiredMixin, ListView):
     model = models.Group
-    permission_required = 'groups.view_group'
+    permission_required = 'groups.view_all_groups'
     paginate_by = 30
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
+
+
+class MyGroupsListView(PermissionRequiredMixin, ListView):
+    model = models.Group
+    permission_required = 'groups.view_user_groups'
+    paginate_by = 30
+    login_url = reverse_lazy('pages:login')
+
+    def get_queryset(self):
+        qs = super(MyGroupsListView, self).get_queryset()
+        qs = qs.filter(rolegroupuser__user=self.request.user)
+        return qs
 
 
 class GroupView(PermissionRequiredMixin, DetailView):

@@ -17,6 +17,15 @@ class Group(models.Model):
     programs = models.ManyToManyField(Program, through='ProgramAssignation')
     users = models.ManyToManyField(User, through='RoleGroupUser')
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        permissions = (
+            ('view_all_groups', 'User can view all groups'),
+            ('view_user_groups', 'User can view only property groups')
+        )
+
 
 class RoleGroupUser(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

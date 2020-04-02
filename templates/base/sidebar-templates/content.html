@@ -1,6 +1,8 @@
+{% if perms.milestones.view_milestone %}
+
 <hr class="sidebar-divider">
 
-<div class="sidebar-heading">Milestones</div>
+<div class="sidebar-heading">Content</div>
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMilestones" aria-expanded="true" aria-controls="collapseMilestones">
@@ -15,3 +17,5 @@
       </div>
     </div>
 </li>
+
+{% endif %} 
