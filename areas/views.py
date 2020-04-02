@@ -6,19 +6,18 @@ from areas.models import Area
 
 
 class HomeView(PermissionRequiredMixin, ListView):
-    model = Area
-    paginate_by = 10
+    permission_required = 'areas.view_all_areas'
     login_url = reverse_lazy('pages:login')
-    permission_required = 'areas.view_area'
+    paginate_by = 10
+    model = Area
 
 
 class EditAreaView(PermissionRequiredMixin, UpdateView):
     permission_required = 'areas.change_area'
-    model = Area
+    login_url = reverse_lazy('pages:login')
     fields = ('name', 'description')
     pk_url_kwarg = 'area_id'
-    context_object_name = 'area'
-    login_url = reverse_lazy('pages:login')
+    model = Area
 
     def get_context_data(self, **kwargs):
         c = super(EditAreaView, self).get_context_data()
@@ -27,15 +26,15 @@ class EditAreaView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Area with name: %s has been updated.' % self.object.name)
-        return reverse_lazy('areas:area', kwargs=dict(area_id=self.object.pk))
+        return reverse_lazy('areas:area_detail', kwargs=dict(area_id=self.object.pk))
 
 
 class AreaView(PermissionRequiredMixin, DetailView):
     permission_required = 'areas.view_area'
-    model = Area
-    pk_url_kwarg = 'area_id'
-    context_object_name = 'area'
     login_url = reverse_lazy('pages:login')
+    context_object_name = 'area'
+    pk_url_kwarg = 'area_id'
+    model = Area
 
 
 class NewAreaView(PermissionRequiredMixin, CreateView):
@@ -51,7 +50,7 @@ class NewAreaView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Area with name: %s has been created.' % self.object.name)
-        return reverse_lazy('areas:area', kwargs=dict(area_id=self.object.pk))
+        return reverse_lazy('areas:area_detail', kwargs=dict(area_id=self.object.pk))
 
 
 class DeleteAreaView(PermissionRequiredMixin, DeleteView):
@@ -60,11 +59,10 @@ class DeleteAreaView(PermissionRequiredMixin, DeleteView):
     model = Area
     pk_url_kwarg = 'area_id'
     login_url = reverse_lazy('pages:login')
-    success_url = reverse_lazy('areas:index')
 
     def get_success_url(self):
         messages.success(self.request, 'Area with name: %s has been deleted.' % self.object.name)
-        return reverse_lazy('areas:index')
+        return reverse_lazy('areas:area_list')
 
     def get_context_data(self, **kwargs):
         c = super(DeleteAreaView, self).get_context_data()

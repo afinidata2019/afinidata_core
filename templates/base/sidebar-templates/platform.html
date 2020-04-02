@@ -2,19 +2,30 @@
 
 <div class="sidebar-heading">Platform</div>
 
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBots" aria-expanded="true" aria-controls="collapseTwo">
-      <i class="fas fa-robot"></i>
-      <span>Bots</span>
-    </a>
-    <div id="collapseBots" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-      <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Bots:</h6>
-        <a class="collapse-item" href="{% url 'bots:index' %}">All Bots</a>
-          <a class="collapse-item" href="{% url 'bots:new' %}">Add New</a>
-      </div>
-    </div>
-</li>
+{% if perms.bots.view_bot %}
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBots" aria-expanded="true" aria-controls="collapseTwo">
+          <i class="fas fa-robot"></i>
+          <span>Bots</span>
+        </a>
+        <div id="collapseBots" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Bots:</h6>
+                {% if perms.bots.view_all_bots %}
+                    <a class="collapse-item" href="{% url 'bots:bot_list' %}">All Bots</a>
+                {% endif %}
+                {% if perms.bots.view_user_bots %}
+                    <a class="collapse-item" href="{% url 'bots:bots_in_group_list' %}">Group Bots</a>
+                {% endif %}
+                {% if perms.bots.add_bot %}
+                    <a class="collapse-item" href="{% url 'bots:create_bot' %}">Add New</a>
+                {% endif %}
+          </div>
+        </div>
+    </li>
+{% endif %}
+
+{% if perms.entities.view_all_entities %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEntities" aria-expanded="true" aria-controls="collapseTwo">
@@ -25,11 +36,15 @@
     <div id="collapseEntities" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Entities:</h6>
-        <a class="collapse-item" href="{% url 'entities:index' %}">All Entities</a>
-          <a class="collapse-item" href="{% url 'entities:new' %}">Add New</a>
+        <a class="collapse-item" href="{% url 'entities:entity_list' %}">All Entities</a>
+          <a class="collapse-item" href="{% url 'entities:create_entity' %}">Add New</a>
       </div>
     </div>
 </li>
+
+{% endif %}
+
+{% if perms.attributes.view_all_attributes %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAttributes" aria-expanded="true" aria-controls="collapseTwo">
@@ -39,11 +54,19 @@
     <div id="collapseAttributes" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Attributes:</h6>
-        <a class="collapse-item" href="{% url 'attributes:index' %}">All Attributes</a>
-          <a class="collapse-item" href="{% url 'attributes:new' %}">Add New</a>
+        {% if perms.attributes.view_all_attributes %}
+            <a class="collapse-item" href="{% url 'attributes:attribute_list' %}">All Attributes</a>
+        {% endif %}
+        {% if perms.attributes.add_attribute %}
+          <a class="collapse-item" href="{% url 'attributes:create_attribute' %}">Add New</a>
+        {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
+
+{% if perms.areas.view_all_areas %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAreas" aria-expanded="true" aria-controls="collapseTwo">
@@ -53,11 +76,19 @@
     <div id="collapseAreas" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Areas:</h6>
-        <a class="collapse-item" href="{% url 'areas:index' %}">All Areas</a>
-          <a class="collapse-item" href="{% url 'areas:new' %}">Add New</a>
+          {% if perms.areas.view_all_areas %}
+            <a class="collapse-item" href="{% url 'areas:area_list' %}">All Areas</a>
+          {% endif %}
+          {% if perms.areas.add_area %}
+            <a class="collapse-item" href="{% url 'areas:create_area' %}">Add New</a>
+          {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
+
+{% if perms.programs.view_program %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
@@ -67,11 +98,22 @@
     <div id="collapseLevels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header"><i class="fas fa-university"></i> Programs:</h6>
-        <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
-        <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+          {% if perms.programs.view_all_programs %}
+            <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
+          {% endif %}
+          {% if perms.programs.view_user_programs %}
+            <a class="collapse-item" href="{% url 'programs:program_list' %}">Group Programs</a>
+          {% endif %}
+          {% if perms.programs.add_program %}
+            <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>
+          {% endif %}
       </div>
     </div>
 </li>
+
+{% endif %}
+
+{% if perms.languages.view_language %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLanguages" aria-expanded="true" aria-controls="collapseTwo">
@@ -81,9 +123,14 @@
     <div id="collapseLanguages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Languages:</h6>
-        <a class="collapse-item" href="{% url 'languages:language_list' %}">All Languages</a>
-          <a class="collapse-item" href="{% url 'languages:language_create' %}">Add Language</a>
+          {% if perms.languages.view_language %}
+            <a class="collapse-item" href="{% url 'languages:language_list' %}">All Languages</a>
+          {% endif %}
+          {% if perms.languages.add_language %}
+            <a class="collapse-item" href="{% url 'languages:language_create' %}">Add Language</a>
+          {% endif %}
       </div>
     </div>
 </li>
 
+{% endif %}

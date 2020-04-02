@@ -7,15 +7,19 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Bots</h1>
-                <a href="{% url 'bots:new' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Create Bot</a>
+            <div>
+                {% if perms.bots.add_bot %}
+                    <a href="{% url 'bots:create_bot' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Create Bot</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Entity List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -24,7 +28,9 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Users</th>
+                            {% if perms.messenger_users.view_all_users %}
+                              <th>Users</th>
+                            {% endif %}
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -33,7 +39,9 @@
                         <tr>
                           <th>Name</th>
                           <th>Description</th>
-                          <th>Users</th>
+                            {% if perms.messenger_users.view_all_users %}
+                              <th>Users</th>
+                            {% endif %}
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -43,21 +51,29 @@
                         <tr>
                             <td>{{ bot.name }}</td>
                             <td>{{ bot.description }}</td>
-                            <td>
-                                <a href="{% url 'messenger_users:index' %}?bot={{ bot.pk }}" class="btn btn-primary">View</a>
-                            </td>
+                            {% if perms.messenger_users.view_all_users %}
+                                <td>
+                                    <a href="{% url 'messenger_users:index' %}?bot={{ bot.pk }}" class="btn btn-primary">View</a>
+                                </td>
+                            {% endif %}
                             <td>{{ bot.created_at }}</td>
                             <td>
                                 <div class="btn-group">
-                                    <a class="btn btn-primary" href="{% url 'bots:bot' id=bot.pk %}">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a class="btn btn-success" href="{% url 'bots:edit' id=bot.pk %}">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                    <a class="btn btn-danger" href="{% url 'bots:delete' id=bot.pk %}">
-                                        <i class="fas fa-times"></i>
-                                    </a>
+                                    {% if perms.bots.view_bot %}
+                                        <a class="btn btn-primary" href="{% url 'bots:bot_detail' bot_id=bot.pk %}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if perms.bots.change_bot %}
+                                        <a class="btn btn-success" href="{% url 'bots:edit_bot' bot_id=bot.pk %}">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if perms.bots.delete_bot %}
+                                        <a class="btn btn-danger" href="{% url 'bots:delete_bot' bot_id=bot.pk %}">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>

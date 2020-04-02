@@ -1,6 +1,8 @@
-from django.contrib.auth.models import User
 from messenger_users.models import User as MessengerUser
+from django.contrib.auth.models import User
+from programs.models import Program
 from django.db import models
+from bots.models import Bot
 
 
 ROLE_CHOICES = (('administrator', 'Administrator'), ('collaborator', 'Collaborator'))
@@ -11,7 +13,18 @@ class Group(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     available = models.BooleanField(default=True)
+    bots = models.ManyToManyField(Bot, through='BotAssignation')
+    programs = models.ManyToManyField(Program, through='ProgramAssignation')
     users = models.ManyToManyField(User, through='RoleGroupUser')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        permissions = (
+            ('view_all_groups', 'User can view all groups'),
+            ('view_user_groups', 'User can view only property groups')
+        )
 
 
 class RoleGroupUser(models.Model):
@@ -44,3 +57,17 @@ class AssignationMessengerUser(models.Model):
 
     def get_messenger_user(self):
         return MessengerUser.objects.get(id=self.messenger_user_id)
+
+
+class BotAssignation(models.Model):
+    bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ProgramAssignation(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -15,7 +15,7 @@
               <h6 class="m-0 font-weight-bold text-primary">Info</h6>
             </div>
             <div class="card-body">
-                <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity' id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
+                <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
                 <strong class="text-gray-900">Users: </strong>
                     <ul>
                         {% for user in instance.get_users %}

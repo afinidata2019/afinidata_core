@@ -8,8 +8,14 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Area: {{ object.name }}</h1>
-            <a href="{% url 'areas:index' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-list fa-sm text-white-50"></i> All Areas</a>
+            <div>
+                {% if perms.areas.view_all_areas %}
+                    <a href="{% url 'areas:area_list' %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-list fa-sm text-white-50"></i> View All Areas
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -23,19 +29,15 @@
                 <strong class="text-gray-800">Milestones count: </strong><span>{{ object.milestone_set.all.count }}</span><br>
                 <strong class="text-gray-800">Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong class="text-gray-800">Updated At: </strong><span>{{ object.updated_at }}</span><br>
-                <strong class="text-gray-800">Actions :</strong>
-                <div class="btn-group">
+                {% if perms.areas.change_area or perms.areas.delete_area %}
+                    <strong class="text-gray-800">Actions :</strong>
                     {% if perms.areas.change_area %}
-                        <a class="btn btn-success" href="{% url 'areas:edit' area_id=area.pk %}">
-                            <i class="fas fa-pen"></i>
-                        </a>
+                        <a class="btn btn-success" href="{% url 'areas:edit_area' area_id=area.pk %}">Edit</a>
                     {% endif %}
                     {% if perms.areas.delete_area %}
-                        <a class="btn btn-danger" href="{% url 'areas:delete' area_id=area.pk %}">
-                            <i class="fas fa-times"></i>
-                        </a>
+                        <a class="btn btn-danger" href="{% url 'areas:delete_area' area_id=area.pk %}">Delete</a>
                     {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

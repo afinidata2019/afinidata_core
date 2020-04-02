@@ -1,22 +1,27 @@
 {% extends 'base/private.html' %}
 
-{% block title %}
-    Afinidata | Attributes
-{% endblock %}
+{% block title %}Afinidata | Bots{% endblock %}
 
 {% block content %}
+
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Attributes</h1>
-            <a href="{% url 'attributes:new' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Create Attribute</a>
+            <h1 class="h3 mb-0 text-gray-800">Entities</h1>
+                <div>
+                    {% if perms.entities.add_entity %}
+                        <a href="{% url 'entities:create_entity' %}"
+                           class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Create Entity
+                        </a>
+                    {% endif %}
+                </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Attributes List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -24,8 +29,8 @@
                     <thead>
                         <tr>
                           <th>Name</th>
-                          <th>Type</th>
-                          <th>Entities</th>
+                          <th>Description</th>
+                          <th>Instances</th>
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
@@ -33,34 +38,39 @@
                     <tfoot>
                         <tr>
                           <th>Name</th>
-                          <th>Type</th>
-                          <th>Entities</th>
+                          <th>Description</th>
+                          <th>Instances</th>
                           <th>Created At</th>
                           <th>Actions</th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        {% for attribute in attributes %}
+                        {% for entity in object_list %}
                             <tr>
-                                <td>{{ attribute.name }}</td>
-                                <td>{{ attribute.type }}</td>
-                                <td>
-                                    {% for entity in attribute.entity_set.all %}
-                                        (<a href="{% url 'entities:entity' id=entity.pk %}">#{{ entity.pk }}</a>)
-                                        <span>{{ entity.name }}</span><br>
-                                    {% endfor %}
-                                </td>
-                                <td>{{ attribute.created_at }}</td>
+                                <td>{{ entity.name }}</td>
+                                <td>{{ entity.description }}</td>
+                                <td>{{ entity.instance_set.all.count }}</td>
+                                <td>{{ entity.created_at }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{% url 'attributes:attribute' id=attribute.pk %}" class="btn btn-primary">
-                                            <i class="fas fa-eye"></i></a>
-                                        <a href="{% url 'attributes:edit' id=attribute.pk %}" class="btn btn-success">
-                                            <i class="fas fa-pen"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-danger">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+                                        {% if perms.entities.view_entity %}
+                                            <a href="{% url 'entities:entity_detail' entity_id=entity.pk %}"
+                                               class="btn btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.entities.change_entity %}
+                                            <a href="{% url 'entities:edit_entity' entity_id=entity.pk %}"
+                                               class="btn btn-success">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if perms.entities.delete_entity %}
+                                            <a href="{% url 'entities:delete_entity' entity_id=entity.pk %}"
+                                               class="btn btn-danger">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

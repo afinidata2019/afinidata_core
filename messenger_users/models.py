@@ -60,6 +60,11 @@ class User(models.Model):
     bot_id = models.IntegerField(default=1)
     username = models.CharField(max_length=100, null=True, unique=True)
 
+    class Meta:
+        permissions = (
+            ('view_all_messenger_users', 'Platform User can view all Messenger Users.'),
+        )
+
     def __str__(self):
         return self.username
 
