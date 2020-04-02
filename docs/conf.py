@@ -10,10 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
 
 # -- Project information -----------------------------------------------------
 
@@ -28,6 +32,10 @@ author = 'Afinidata'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',         # The autodoc core!
+
+    # 'celery.contrib.sphinx',      # Celery improvements!
+    'sphinxcontrib_django',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

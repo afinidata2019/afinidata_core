@@ -5,4 +5,4 @@ __pycache__
 *.sqlite3
 *.sqlite3-journal
 .env
-static/
+static/docs/_build/

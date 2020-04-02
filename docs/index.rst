@@ -10,7 +10,30 @@ Welcome to Afinidata Core's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Views
+======
 
+
+.. automodule:: attributes.views
+    :members:
+
+.. automodule:: areas.views
+    :members:
+
+.. automodule:: chatfuel.views
+    :members:
+
+.. automodule:: milestones.views
+    :members:
+
+.. automodule:: instances.views
+    :members:
+
+.. automodule:: entities.views
+    :members:
+    
+.. automodule:: posts.views
+    :members:
 
 Indices and tables
 ==================
