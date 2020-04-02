@@ -1,0 +1,17 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Unauthorized{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Unauthorized</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <p>You dont have permissions to view this section. </p>
+        <p>You can go back <a href="{{request.META.HTTP_REFERER}}">here</a>.</p>
+    </div>
+{% endblock %}

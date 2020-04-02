@@ -16,6 +16,11 @@ class Instance(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        permissions = (
+            ('view_all_instances', 'User can view all instances'),
+        )
+
     def __str__(self):
         return self.name
 

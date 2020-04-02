@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button role="submit" class="btn btn-primary">{{ action }} Instance</button>
+                    <button type="submit" class="btn btn-primary">{{ action }} Instance</button>
                 </form>
             </div>
         </div>
