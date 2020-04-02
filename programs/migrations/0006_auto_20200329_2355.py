@@ -22,8 +22,8 @@ def set_first_program_permissions_to_company(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('programs', '0005_auto_20200329_2342'),
         ('pages', '0001_initial'),
+        ('programs', '0005_auto_20200329_2342'),
         ('groups', '0007_auto_20200329_2345')
     ]
 

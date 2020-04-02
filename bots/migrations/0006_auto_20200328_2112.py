@@ -22,8 +22,7 @@ def set_first_bot_permissions_to_company(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bots', '0005_auto_20200328_2040'),
-        ('pages', '0001_initial')
+        ('bots', '0005_auto_20200328_2040')
     ]
 
     operations = [
