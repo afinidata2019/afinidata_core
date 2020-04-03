@@ -19,7 +19,6 @@ class HomeView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomeView, self).get_context_data()
-        print(self.paginator_class)
         return context
 
 
@@ -31,14 +30,32 @@ class InstanceView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(InstanceView, self).get_context_data()
-        c['areas'] = Area.objects.all()
         c['today'] = timezone.now()
         c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
-        filters = [x.post_id for x in c['interactions'].all()]
-        print(filters)
-        '''c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions'].all()])
-        print(c['posts'])'''
+        c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
+        c['completed_activities'] = 0
+        c['assigned_activities'] = 0
+        c['areas'] = Area.objects.all()
+        for area in c['areas']:
+            area.assigned_activities = 0
+            area.completed_activities = 0
+        for post in c['posts']:
+            post.last_assignation = post.get_user_last_dispatched_interaction(self.object, c['first_month'], c['today'])
+            post.last_session = post.get_user_last_session_interaction(self.object, c['first_month'], c['today'])
+            if post.last_session:
+                c['completed_activities'] = c['completed_activities'] + 1
+            if post.last_assignation:
+                c['assigned_activities'] = c['assigned_activities'] + 1
+            for area in c['areas']:
+                if post.last_assignation:
+                    if area.pk == post.area_id:
+                        area.assigned_activities = area.assigned_activities + 1
+                if post.last_session:
+                    if area.pk == post.area_id:
+                        area.completed_activities = area.completed_activities + 1
+        for area in c['areas']:
+            print(area.name, area.assigned_activities, area.completed_activities)
         return c
 
 

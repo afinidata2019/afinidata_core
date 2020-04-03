@@ -1,3 +1,4 @@
+from instances import models as instance_models
 from django.db import models
 
 STATUS_CHOICES = (
@@ -20,26 +21,7 @@ POST_TYPE_CHOICES = (
 
 
 class Post(models.Model):
-    """
-    Post Model
 
-    Post has some properties related to a post on a web, a generic container for content in Afinidata.
-
-    Args:
-        name: Nombre del post.
-        status: Puede ser: draft, review, rejected, need_changes, published. Donde “draft” representa que aún está en borrador, “review” que se encuentra en revisión, “rejected” que ha sido rechazado, “need_changes” que hay cambios por realizar y “published”, que representa que el servicio que distribuye los posts lo tomará en cuenta.
-        type: Puede ser: embeded, youtube. Donde embeded muestra en un iframe que ocupa toda la pantalla el contenido de un link, y youtube muestra un vídeo de youtube a través de su ID. (Próximo paso, un editor WYSIWYG y un type extra llamado “content”).
-        content: Dependiendo del type, debería ser un link en el type “embeded”, y el ID del vídeo de Youtube en el type “youtube”. (Próximo paso, contenido resultante del editor WYSIWYG en el type “content”).
-        content_activity: Contenido que es enviado al usuario del bot cuando este por problemas de conexión no puede ver el enlace o el vídeo del post. Se utiliza este signo “|” para delimitar el contenido de cada mensaje a través del chatbot.
-        user: Usuario creador del post.
-        min_range: El servicio que devuelve actividades se basa en un value para devolver un post dentro del rango, si value es mayor a este atributo el post es candidato para ser enviado.
-        max_range: El servicio que devuelve actividades se basa en un value para devolver un post dentro del rango, si value es menor a este atributo el post es candidato para ser enviado.
-        preview: El servicio que devuelve actividades, devuelve un pequeño resumen de qué trata esta actividad para llamar la atención del usuario, es este atributo.
-        new (Por eliminar): Delimitaba en cierta fecha si el servicio debía de tomar en cuenta el post para enviarse a usuarios.
-        thumbnail: El servicio que devuelve actividades, devuelve una imagen relacionada a la actividad. La url de la imagen debe guardarse en este atributo.
-        area_id (Para uso próximo): En idea, guarda el id del área al que pertenecen (Áreas basadas en el proyecto Core (cognitivo, motor, emocional)). Para que el servicio basado en el área solicitada devuelva únicamente posts de esa área. Por defecto se están solicitando a través del chatbot únicamente posts con área 1, mismo valor que se está guardando automáticamente en el modelo.
-        created_at, updated_at: (Uso general, fecha de creación, fecha de última actualización).
-    """
     name = models.CharField(max_length=255)
     status = models.CharField(choices=STATUS_CHOICES, max_length=255, default='draft')
     type = models.CharField(max_length=255, default='embeded', choices=POST_TYPE_CHOICES)
@@ -57,6 +39,30 @@ class Post(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_user_dispatched_interactions(self, instance, first_limit, last_limit):
+        return instance_models.PostInteraction.objects.filter(post_id=self.pk, instance=instance,
+                                                              created_at__gte=first_limit,
+                                                              created_at__lte=last_limit,
+                                                              type='dispatched')
+
+    def get_user_last_dispatched_interaction(self, instance, first_limit, last_limit):
+        interactions = self.get_user_dispatched_interactions(instance, first_limit, last_limit)
+        if not interactions.count() > 0:
+            return None
+        return interactions.last()
+
+    def get_user_session_interactions(self, instance, first_limit, last_limit):
+        return instance_models.PostInteraction.objects.filter(post_id=self.pk, instance=instance,
+                                                              created_at__gte=first_limit,
+                                                              created_at__lte=last_limit,
+                                                              type='session')
+
+    def get_user_last_session_interaction(self, instance, first_limit, last_limit):
+        interactions = self.get_user_session_interactions(instance, first_limit, last_limit)
+        if not interactions.count() > 0:
+            return None
+        return interactions.last()
 
 
 class Interaction(models.Model):

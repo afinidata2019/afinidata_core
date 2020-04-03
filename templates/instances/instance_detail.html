@@ -71,7 +71,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent Activities (Monthly)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_activities.count }}</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assigned_activities }}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -81,6 +81,38 @@
               </div>
 
             </div>
+            <div class="col-3 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Completed (Monthly)</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{ completed_activities }}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="col-3 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent Activities</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_activities.count }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="col-3 mb-4">
                 <div class="card border-left-warning shadow h-100 py-2">
                     <div class="card-body">
@@ -100,7 +132,7 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Assigned Activities</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Assigned Activities (Monthly)</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -115,21 +147,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for i in instance.get_activities %}
+                                {% for post in posts %}
                                     <tr>
-                                        <td>{{ i.pk }}</td>
-                                        <td>{{ i.name }}</td>
+                                        <td>{{ post.pk }}</td>
+                                        <td>{{ post.name }}</td>
                                         <td>
-                                            {% if i.completed %}
-                                                 <i class="fas fa-check-circle fa-2x text-success"></i>
+                                            {% if post.last_session %}
+                                                <i class="fas fa-check-circle fa-2x text-success"></i>
                                             {% else %}
-                                                <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                            <i class="fas fa-times-circle fa-2x text-danger"></i>
                                             {% endif %}
                                         </td>
-                                        <td>{{ i.assign.created_at }}</td>
                                         <td>
-                                            {% if i.completed %}
-                                                 {{ i.completed.created_at }}
+                                            {% if post.last_assignation %}
+                                                {{ post.last_assignation.created_at }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.last_session %}
+                                                {{ post.last_session.created_at }}
                                             {% endif %}
                                         </td>
                                         <td>
@@ -331,7 +367,12 @@
                 ],
                 datasets: [{
                     label: 'Activities',
-                    data: [12, 19, 3, 5, 2, 3],
+                    data: [
+                        {% for area in areas %}
+                            {{ area.assigned_activities }},
+                            {{ area.completed_activities }},
+                        {% endfor %}
+                    ],
                     backgroundColor: [
                         {% for area in areas %}
                             'rgba(255, 99, 132, 0.2)',
@@ -349,10 +390,11 @@
             },
             options: {
                 scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
                     yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
+                        stacked: true
                     }]
                 }
             }

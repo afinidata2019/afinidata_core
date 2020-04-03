@@ -26,7 +26,6 @@ class Instance(models.Model):
 
     def get_time_interactions(self, first_limit, last_limit):
         interactions = self.postinteraction_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
-        print(interactions)
         return interactions
 
     def get_users(self):
@@ -136,4 +135,4 @@ class PostInteraction(models.Model):
     created_at = models.DateTimeField()
 
     def __str__(self):
-        return "%s %s %s" % (self.instance, self.post_id, self.type)
+        return "%s %s %s %s" % (self.pk, self.instance, self.post_id, self.type)
