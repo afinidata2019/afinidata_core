@@ -362,31 +362,48 @@
                 labels: [
                     {% for area in areas %}
                         '{{ area.name }}',
-                        '{{ area.name }}',
                     {% endfor %}
                 ],
-                datasets: [{
-                    label: 'Activities',
-                    data: [
-                        {% for area in areas %}
-                            {{ area.assigned_activities }},
-                            {{ area.completed_activities }},
-                        {% endfor %}
-                    ],
-                    backgroundColor: [
-                        {% for area in areas %}
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                        {% endfor %}
-                    ],
-                    borderColor: [
-                        {% for area in areas %}
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                        {% endfor %}
-                    ],
-                    borderWidth: 1
-                }]
+                datasets: [
+                    {
+                        label: 'Assigned',
+                        data: [
+                            {% for area in areas %}
+                                {{ area.assigned_activities }},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            {% for area in areas %}
+                                'rgba(255, 99, 132, 0.2)',
+                            {% endfor %}
+                        ],
+                        borderColor: [
+                            {% for area in areas %}
+                                'rgba(255, 99, 132, 1)',
+                            {% endfor %}
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Completed',
+                        data: [
+                            {% for area in areas %}
+                                {{ area.completed_activities }},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            {% for area in areas %}
+                                'rgba(54, 162, 235, 0.2)',
+                            {% endfor %}
+                        ],
+                        borderColor: [
+                            {% for area in areas %}
+                                'rgba(54, 162, 235, 1)',
+                            {% endfor %}
+                        ],
+                        borderWidth: 1
+                    }
+                ]
             },
             options: {
                 scales: {
