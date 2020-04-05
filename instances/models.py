@@ -1,7 +1,7 @@
 from django.db import models
 from entities.models import Entity
 from bots import models as bot_models
-from areas.models import Area, Section
+from areas.models import Area
 from milestones.models import Milestone
 from attributes.models import Attribute
 from messenger_users import models as user_models

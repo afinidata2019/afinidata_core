@@ -15,7 +15,7 @@ class HomeView(PermissionRequiredMixin, ListView):
 class EditAreaView(PermissionRequiredMixin, UpdateView):
     permission_required = 'areas.change_area'
     login_url = reverse_lazy('pages:login')
-    fields = ('name', 'description')
+    fields = ('name', 'description', 'background_color', 'point_color', 'another_color')
     pk_url_kwarg = 'area_id'
     model = Area
 
@@ -40,7 +40,7 @@ class AreaView(PermissionRequiredMixin, DetailView):
 class NewAreaView(PermissionRequiredMixin, CreateView):
     permission_required = 'areas.add_area'
     model = Area
-    fields = ('name', 'description')
+    fields = ('name', 'description', 'background_color', 'point_color', 'another_color')
     login_url = reverse_lazy('pages:login')
 
     def get_context_data(self, **kwargs):

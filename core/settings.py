@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'groups.apps.GroupsConfig',
     'languages.apps.LanguagesConfig',
     'programs.apps.ProgramsConfig',
-    'django_extensions'
+    'django_extensions',
+    'colorfield'
 ]
 
 MIDDLEWARE = [
@@ -163,10 +164,6 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-DOMAIN_URL = os.getenv('CORE_DOMAIN_URL')
-CONTENT_MANAGER_URL = os.getenv('CONTENT_MANAGER_URL')
-CORE_ADMIN_ADMIN = os.getenv('CORE_ADMIN_ADMIN')
-CORE_ADMIN_PASSWORD = os.getenv('CORE_ADMIN_PASSWORD')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
