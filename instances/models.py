@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from entities.models import Entity
 from bots import models as bot_models
@@ -136,3 +137,12 @@ class PostInteraction(models.Model):
 
     def __str__(self):
         return "%s %s %s %s" % (self.pk, self.instance, self.post_id, self.type)
+
+
+class InstanceFeedback(models.Model):
+    instance = models.ForeignKey(Instance, on_delete=models.DO_NOTHING)
+    post_id = models.IntegerField()
+    area = models.ForeignKey(Area, on_delete=models.DO_NOTHING)
+    value = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    migration_field_id = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField()
