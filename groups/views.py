@@ -65,7 +65,7 @@ class MessengerUsersListView(PermissionRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         c = super(MessengerUsersListView, self).get_context_data()
         c['group'] = get_object_or_404(models.Group, id=self.kwargs['group_id'])
-        print(c)
+        c['count'] = self.get_queryset().count()
         return c
 
     def get_queryset(self):

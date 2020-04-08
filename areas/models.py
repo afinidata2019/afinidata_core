@@ -1,5 +1,6 @@
-from django.db import models
 from levels.models import Level
+from django.db import models
+from colorfield.fields import ColorField
 
 
 class Area(models.Model):
@@ -8,7 +9,9 @@ class Area(models.Model):
     description = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    levels = models.ManyToManyField(Level, through='Section')
+    background_color = ColorField(default='#ff0000', null=True, blank=True)
+    point_color = ColorField(default='#ff0000', null=True, blank=True)
+    another_color = ColorField(default='#ff0000', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -17,16 +20,4 @@ class Area(models.Model):
         permissions = (
             ('view_all_areas', 'User can view all areas.'),
         )
-
-
-class Section(models.Model):
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    instance_name = models.CharField(max_length=50, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "%s" % self.name
 

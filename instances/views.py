@@ -4,7 +4,13 @@ from messenger_users.models import User
 from instances.models import Instance
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.utils import timezone
+from dateutil.parser import parse
+from areas.models import Area
+from posts.models import Post
 from instances import forms
+import datetime
+import calendar
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -15,7 +21,6 @@ class HomeView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomeView, self).get_context_data()
-        print(self.paginator_class)
         return context
 
 
@@ -24,6 +29,40 @@ class InstanceView(PermissionRequiredMixin, DetailView):
     model = Instance
     pk_url_kwarg = 'id'
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceView, self).get_context_data()
+        c['today'] = timezone.now()
+        c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
+        c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
+        c['feeds'] = self.object.get_time_feeds(c['first_month'], c['today'])
+        c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
+        c['completed_activities'] = 0
+        c['assigned_activities'] = 0
+        c['areas'] = Area.objects.all()
+        for area in c['areas']:
+            area.assigned_activities = 0
+            area.completed_activities = 0
+            area.feeds = c['feeds'].filter(area=area).order_by('created_at')
+            print(area.feeds)
+        for post in c['posts']:
+            post.last_assignation = post.get_user_last_dispatched_interaction(self.object, c['first_month'], c['today'])
+            post.last_session = post.get_user_last_session_interaction(self.object, c['first_month'], c['today'])
+            if post.last_session:
+                c['completed_activities'] = c['completed_activities'] + 1
+            if post.last_assignation:
+                c['assigned_activities'] = c['assigned_activities'] + 1
+            for area in c['areas']:
+                if post.last_assignation:
+                    if area.pk == post.area_id:
+                        area.assigned_activities = area.assigned_activities + 1
+                if post.last_session:
+                    if area.pk == post.area_id:
+                        area.completed_activities = area.completed_activities + 1
+
+        c['labels'] = [parse("%s-%s-%s" %
+                             (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
+        return c
 
 
 class NewInstanceView(PermissionRequiredMixin, CreateView):

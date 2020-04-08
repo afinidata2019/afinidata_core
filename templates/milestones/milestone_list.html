@@ -50,7 +50,7 @@
                                 <td>{{ milestone.second_code }}</td>
                                 <td>{{ milestone.name }}</td>
                                 <td>
-                                    <a href="{% url 'areas:area' area_id=milestone.area_id %}">{{ milestone.area.name }}</a>
+                                    <a href="{% url 'areas:area_detail' area_id=milestone.area_id %}">{{ milestone.area.name }}</a>
                                 </td>
                                 <td>{{ milestone.value }}</td>
                                 <td>

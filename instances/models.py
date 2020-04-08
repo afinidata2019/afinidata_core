@@ -1,7 +1,8 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from entities.models import Entity
 from bots import models as bot_models
-from areas.models import Area, Section
+from areas.models import Area
 from milestones.models import Milestone
 from attributes.models import Attribute
 from messenger_users import models as user_models
@@ -23,6 +24,14 @@ class Instance(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_time_feeds(self, first_limit, last_limit):
+        feeds = self.instancefeedback_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
+        return feeds
+
+    def get_time_interactions(self, first_limit, last_limit):
+        interactions = self.postinteraction_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
+        return interactions
 
     def get_users(self):
         return user_models.User.objects\
@@ -131,4 +140,25 @@ class PostInteraction(models.Model):
     created_at = models.DateTimeField()
 
     def __str__(self):
-        return "%s %s %s" % (self.instance, self.post_id, self.type)
+        return "%s %s %s %s" % (self.pk, self.instance, self.post_id, self.type)
+
+
+REGISTER_TYPE_CHOICES = (
+    (0, "Script with number"),
+    (1, "Script with text")
+)
+
+
+class InstanceFeedback(models.Model):
+    instance = models.ForeignKey(Instance, on_delete=models.DO_NOTHING)
+    post_id = models.IntegerField()
+    area = models.ForeignKey(Area, on_delete=models.DO_NOTHING)
+    value = models.IntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    reference_text = models.CharField(max_length=50)
+    register_id = models.IntegerField(null=True)
+    register_type = models.CharField(max_length=20, default=0)
+    migration_field_id = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField()
+
+    def __str__(self):
+        return "%s %s %s %s" % (self.pk, self.instance_id, self.area, self.value)

@@ -6,33 +6,53 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">{{ object.name }}</h1>
+            <div>
+                {% if perms.instances.view_all_instances %}
+
+                {% endif %} 
+            </div>
         </div>
     </div>
 
     <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+        <div class="row">
+            <div class="col-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
+                        <strong class="text-gray-900">Users: </strong>
+                            <ul>
+                                {% for user in instance.get_users %}
+                                  <li>(<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.get_first_name }} {{ user.get_last_name }}</span></li>
+                              {% endfor %}
+                            </ul>
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        <strong class="text-gray-900">Last updated At: </strong><span>{{ object.updated_at }}</span><br>
+                        {% if perms.instances.change_instance or perms.instances.delete_instance %}
+                        <strong class="text-gray-900">Actions: </strong>
+                            {% if perms.instances.change_instance %}
+                                <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
+                            {% endif %}
+                            {% if perms.instances.delete_instance %}
+                                <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <strong class="text-gray-900">Entity: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
-                <strong class="text-gray-900">Users: </strong>
-                    <ul>
-                        {% for user in instance.get_users %}
-                          <li>(<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.get_first_name }} {{ user.get_last_name }}</span></li>
-                      {% endfor %}
-                    </ul>
-                <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
-                <strong class="text-gray-900">Last updated At: </strong><span>{{ object.updated_at }}</span><br>
-                {% if perms.instances.change_instance or perms.instances.delete_instance %}
-                <strong class="text-gray-900">Actions: </strong>
-                    {% if perms.instances.change_instance %}
-                        <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
-                    {% endif %}
-                    {% if perms.instances.delete_instance %}
-                        <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
-                    {% endif %}
-                {% endif %}
+
+            <div class="col-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Areas</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas class="areas-charts" id="areasCharts" style="width: 100%" height="174"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -52,7 +72,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent Activities (Monthly)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_activities.count }}</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assigned_activities }}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -62,6 +82,38 @@
               </div>
 
             </div>
+            <div class="col-3 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Completed (Monthly)</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{ completed_activities }}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="col-3 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent Activities</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_activities.count }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="col-3 mb-4">
                 <div class="card border-left-warning shadow h-100 py-2">
                     <div class="card-body">
@@ -81,7 +133,7 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Assigned Activities</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Assigned Activities (Monthly)</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -96,21 +148,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for i in instance.get_activities %}
+                                {% for post in posts %}
                                     <tr>
-                                        <td>{{ i.pk }}</td>
-                                        <td>{{ i.name }}</td>
+                                        <td>{{ post.pk }}</td>
+                                        <td>{{ post.name }}</td>
                                         <td>
-                                            {% if i.completed %}
-                                                 <i class="fas fa-check-circle fa-2x text-success"></i>
+                                            {% if post.last_session %}
+                                                <i class="fas fa-check-circle fa-2x text-success"></i>
                                             {% else %}
-                                                <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                            <i class="fas fa-times-circle fa-2x text-danger"></i>
                                             {% endif %}
                                         </td>
-                                        <td>{{ i.assign.created_at }}</td>
                                         <td>
-                                            {% if i.completed %}
-                                                 {{ i.completed.created_at }}
+                                            {% if post.last_assignation %}
+                                                {{ post.last_assignation.created_at }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.last_session %}
+                                                {{ post.last_session.created_at }}
                                             {% endif %}
                                         </td>
                                         <td>
@@ -130,122 +186,12 @@
     </div>
 
     <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Milestones</h1>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="row">
-
-            <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Last Assigned milestones</h6>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                  <th>Code</th>
-                                  <th>Milestone</th>
-                                  <th>Last Assigned</th>
-                                  <th>Status</th>
-                                  <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for milestone in instance.get_assigned_milestones %}
-                                    <tr>
-                                        <td>{{ milestone.code }}</td>
-                                        <td>{{ milestone }}</td>
-                                        <td>{{ milestone.assign.created_at }}</td>
-                                        <td>
-                                            {% if milestone.assign.response == 'done' %}
-                                                 <i class="fas fa-check-circle fa-2x text-success"></i>
-                                            {% endif %}
-                                            {% if milestone.assign.response == 'failed' %}
-                                                <i class="fas fa-times-circle fa-2x text-danger"></i>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="{% url 'milestones:milestone' milestone_id=milestone.pk %}" class="btn btn-primary">
-                                                    <i class="fa fa-eye"></i></a>
-                                                <a href="{% url 'milestones:edit' milestone_id=milestone.pk %}" class="btn btn-success">
-                                                    <i class="fa fa-pen"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Month Progress</h6>
             </div>
-
-            <div class="col-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Completed milestones</h6>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                  <th>Milestone</th>
-                                  <th>Date assigned</th>
-                                  <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for milestone in instance.get_completed_milestones %}
-                                    <tr>
-                                        <td>{{ milestone.name }}</td>
-                                        <td>{{ milestone.assign.created_at }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="#" class="btn btn-primary"><i class="fa fa-eye"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Failed milestones</h6>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                  <th>Milestone</th>
-                                  <th>Date Assigned</th>
-                                  <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for milestone in instance.get_failed_milestones %}
-                                    <tr>
-                                        <td>{{ milestone.name }}</td>
-                                        <td>{{ milestone.assign.created_at }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="#" class="btn btn-primary"><i class="fa fa-eye"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="card-body">
+                <canvas class="past-months-charts" id="pastMonthsCharts" style="width: 100%" height="400"></canvas>
             </div>
         </div>
     </div>
@@ -294,5 +240,148 @@
                 </div>
             </div>
         </div>
+
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let ctx = document.getElementById('areasCharts');
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    {% for area in areas %}
+                        '{{ area.name }}',
+                    {% endfor %}
+                ],
+                datasets: [
+                    {
+                        label: 'Assigned',
+                        data: [
+                            {% for area in areas %}
+                                {{ area.assigned_activities }},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            {% for area in areas %}
+                                'rgba(255, 99, 132, 0.2)',
+                            {% endfor %}
+                        ],
+                        borderColor: [
+                            {% for area in areas %}
+                                'rgba(255, 99, 132, 1)',
+                            {% endfor %}
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Completed',
+                        data: [
+                            {% for area in areas %}
+                                {{ area.completed_activities }},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            {% for area in areas %}
+                                'rgba(54, 162, 235, 0.2)',
+                            {% endfor %}
+                        ],
+                        borderColor: [
+                            {% for area in areas %}
+                                'rgba(54, 162, 235, 1)',
+                            {% endfor %}
+                        ],
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+        });
+    </script>
+
+    <script>
+        let newCtx = document.getElementById('pastMonthsCharts');
+        let fakeMetrics = {
+            1: [{y: 25, x: '02-04-2020'}, {y: 23, x: '04-04-2020'}, {y: 10, x: '07-04-2020'}],
+            2: [66, 21, 34],
+            3: [34, 34, 20]
+        }
+
+        let myLineChart = new Chart(newCtx, {
+            type: 'line',
+            data: {
+                labels: [
+                    {% for label in labels %}
+                        "{{ label | date:"d-m-yy" }}",
+                    {% endfor %}
+                ],
+                datasets: [
+                    {% for area in areas %}
+                        {
+                            label: '{{ area.name }}',
+                            data: [
+                                {% for feed in area.feeds %}
+                                    {y: {{ feed.value }}, x: '{{ feed.created_at|date:"d-m-yy" }}' },
+                                {% endfor %}
+                            ],
+                            backgroundColor: '{{ area.background_color }}',
+                            borderColor: '{{ area.point_color }}',
+                            fill: false
+                        },
+                    {% endfor %}
+                ]
+            },
+            options: {
+				responsive: true,
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					x: {
+						display: true,
+						scaleLabel: {
+							display: true,
+                            labelString: 'Days of month'
+						},
+                        xAxes: [{
+                            stacked: true
+                        }]
+					},
+					y: {
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						},
+                        yAxes: [{
+                            stacked: true,
+                            ticks: {
+                                max: 5,
+                                min: 0,
+                                stepSize: 1,
+                                suggestedMin: 0,
+                                suggestedMax: 5
+                            }
+                        }]
+					}
+				}
+			}
+        });
+    </script>
 {% endblock %}
