@@ -425,3 +425,24 @@ class GetLastChildView(View):
             favorite_instance_name=children.last().name,
             request_status='done'
         ), messages=[]))
+
+
+''' CHATFUEL UTILITIES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class BlockRedirectView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.BlockRedirectForm(self.request.POST or None)
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='Error',
+                                                         request_error='Next field not found.'),
+                                     messages=[]))
+
+        return JsonResponse(dict(
+            redirect_to_blocks=[form.cleaned_data['next']]
+        ))

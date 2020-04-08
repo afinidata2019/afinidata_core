@@ -16,5 +16,6 @@ urlpatterns = [
     path('exchange_code/', views.ExchangeCodeView.as_view(), name='exchange_code'),
     path('verify_code/', views.VerifyCodeView.as_view(), name='verify_code'),
     path('get_favorite_child/', views.GetFavoriteChildView.as_view(), name='get_favorite_child'),
-    path('get_last_child/', views.GetLastChildView.as_view(), name='get_last_child')
+    path('get_last_child/', views.GetLastChildView.as_view(), name='get_last_child'),
+    path('redirect_to_block/', views.BlockRedirectView.as_view(), name='redirect_to_block')
 ]
