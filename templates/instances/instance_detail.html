@@ -7,8 +7,9 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">{{ object.name }}</h1>
             <div>
-                <span>{{ first_month }}</span>
-                <span>{{ today }}</span>
+                {% if perms.instances.view_all_instances %}
+
+                {% endif %} 
             </div>
         </div>
     </div>
@@ -373,7 +374,9 @@
                             ticks: {
                                 max: 5,
                                 min: 0,
-                                stepSize: 1
+                                stepSize: 1,
+                                suggestedMin: 0,
+                                suggestedMax: 5
                             }
                         }]
 					}
