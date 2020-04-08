@@ -1,11 +1,11 @@
 {% extends 'base/private.html' %}
 
-{% block title %}{{ user.get_first_name }} {{ user.get_last_name }}{% endblock %}
+{% block title %}{{ user.first_name }} {{ user.last_name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ object.get_first_name }} {{ object.get_last_name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ object.first_name }} {{ object.last_name }}</h1>
         </div>
     </div>
 
