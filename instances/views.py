@@ -9,6 +9,8 @@ from dateutil.parser import parse
 from areas.models import Area
 from posts.models import Post
 from instances import forms
+import datetime
+import calendar
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -33,6 +35,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         c['today'] = timezone.now()
         c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
+        c['feeds'] = self.object.get_time_feeds(c['first_month'], c['today'])
         c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
         c['completed_activities'] = 0
         c['assigned_activities'] = 0
@@ -40,6 +43,8 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         for area in c['areas']:
             area.assigned_activities = 0
             area.completed_activities = 0
+            area.feeds = c['feeds'].filter(area=area).order_by('created_at')
+            print(area.feeds)
         for post in c['posts']:
             post.last_assignation = post.get_user_last_dispatched_interaction(self.object, c['first_month'], c['today'])
             post.last_session = post.get_user_last_session_interaction(self.object, c['first_month'], c['today'])
@@ -54,8 +59,9 @@ class InstanceView(PermissionRequiredMixin, DetailView):
                 if post.last_session:
                     if area.pk == post.area_id:
                         area.completed_activities = area.completed_activities + 1
-        for area in c['areas']:
-            print(area.name, area.assigned_activities, area.completed_activities)
+
+        c['labels'] = [parse("%s-%s-%s" %
+                             (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
         return c
 
 

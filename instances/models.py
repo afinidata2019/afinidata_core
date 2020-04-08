@@ -25,6 +25,10 @@ class Instance(models.Model):
     def __str__(self):
         return self.name
 
+    def get_time_feeds(self, first_limit, last_limit):
+        feeds = self.instancefeedback_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
+        return feeds
+
     def get_time_interactions(self, first_limit, last_limit):
         interactions = self.postinteraction_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
         return interactions
