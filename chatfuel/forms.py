@@ -57,3 +57,7 @@ class InstanceInteractionForm(forms.ModelForm):
 class UserForm(forms.Form):
     user_id = forms.ModelChoiceField(queryset=User.objects.all())
     en = forms.BooleanField(required=False)
+
+
+class BlockRedirectForm(forms.Form):
+    next = forms.CharField(max_length=40)
