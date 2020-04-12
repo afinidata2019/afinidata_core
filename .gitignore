@@ -11,3 +11,7 @@ static/
 *.pem
 *.key
 *.csr
+
+id_rsa
+
+id_rsa.pub
