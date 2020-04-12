@@ -7,7 +7,3 @@ __pycache__
 .env
 static/docs/_build/
 static/
-
-id_rsa
-
-id_rsa.pub
