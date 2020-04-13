@@ -10,7 +10,7 @@ def run():
     key_string = str(key_file[0]).encode()
     payload = {'foo': 'bar', 'wup': 90}
     priv_key = jwk.JWK.from_pem(key_string)
-    token = jwt.generate_jwt(payload, priv_key, 'RS256', datetime.timedelta(minutes=5))
+    token = jwt.generate_jwt(payload, priv_key, 'RS256', datetime.timedelta(minutes=1))
     print('token: ', token)
     header, claims = jwt.verify_jwt(token, priv_key, ['RS256'])
     print(header, claims)
