@@ -1,11 +1,13 @@
+from django.contrib.auth.hashers import check_password
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import CreateView
+from django.views.generic import CreateView, View
 import json
 from app import (
     models,
-    decorators
+    decorators,
+    forms
 )
 
 
@@ -26,3 +28,23 @@ class SignUpView(CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
+
+
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class LoginView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Unauthorized', status=403)
+
+    def post(self, request):
+        form = forms.LoginForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
+
+        checker = check_password(form.cleaned_data['password'], form.cleaned_data['identifier'].password)
+        if not checker:
+            return JsonResponse(dict(status='error', errors=dict(
+                password=[dict(message='Invalid Password', code='required')]
+            )))
+        return JsonResponse(dict(h='w'))
