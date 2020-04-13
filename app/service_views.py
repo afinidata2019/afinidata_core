@@ -5,9 +5,10 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import CreateView, View
 import json
 from app import (
-    models,
     decorators,
-    forms
+    utilities,
+    models,
+    forms,
 )
 
 
@@ -47,4 +48,10 @@ class LoginView(View):
             return JsonResponse(dict(status='error', errors=dict(
                 password=[dict(message='Invalid Password', code='required')]
             )))
-        return JsonResponse(dict(h='w'))
+        token = utilities.generate_token(dict(user_id=form.cleaned_data['identifier'].pk))
+        return JsonResponse(dict(status='done', data=dict(
+            first_name=form.cleaned_data['identifier'].first_name,
+            last_name=form.cleaned_data['identifier'].last_name,
+            user_id=form.cleaned_data['identifier'].pk,
+            token=token
+        )))
