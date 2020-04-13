@@ -264,7 +264,7 @@ class CreateInstanceAttributeView(CreateView):
 
         if not form.instance.instance.entity.attributes.filter(id=form.instance.attribute.pk):
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         error_message='Attribute not in instance'), messages=[]))
+                                                         request_error='Attribute not in instance'), messages=[]))
 
         attribute_value = form.save()
 
@@ -275,7 +275,7 @@ class CreateInstanceAttributeView(CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                     status_error='Invalid params'), messages=[]))
+                                                     request_error='Invalid params'), messages=[]))
 
     def get(self, request, *args):
         raise Http404
@@ -296,7 +296,7 @@ class CreateInstanceInteractionView(CreateView):
 
         if not interaction:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         status_error='Invalid params'), messages=[]))
+                                                         request_error='Invalid params'), messages=[]))
 
         return JsonResponse(dict(set_attributes=dict(request_status='done',
                                                      request_interaction_id=interaction.pk),
@@ -304,7 +304,7 @@ class CreateInstanceInteractionView(CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                     status_error='Invalid params'), messages=[]))
+                                                     request_error='Invalid params'), messages=[]))
 
 
 ''' CHILDREN '''
@@ -329,8 +329,8 @@ class GetFavoriteChildView(View):
 
         if not form.is_valid():
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         status_error='Invalid params',
-                                                         favorite_status_error='invalid params'), messages=[]))
+                                                         request_error='Invalid params',
+                                                         favorite_request_error='invalid params'), messages=[]))
 
         user = form.cleaned_data['user_id']
         instances = user.get_instances()
@@ -338,8 +338,8 @@ class GetFavoriteChildView(View):
 
         if not children.count() > 0:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         status_error='User has not children',
-                                                         favorite_status_error='User has not children'), messages=[]))
+                                                         request_error='User has not children',
+                                                         favorite_request_error='User has not children'), messages=[]))
 
         if children.count() == 1:
             birthdays = children.first().attributevalue_set.filter(attribute__name='birthday')
@@ -347,8 +347,8 @@ class GetFavoriteChildView(View):
 
             if not birthdays.count() > 0:
                 return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                             status_error='Unique child has not birthday',
-                                                             favorite_status_error='Unique child has not birthday'),
+                                                             request_error='Unique child has not birthday',
+                                                             favorite_request_error='Unique child has not birthday'),
                                          messages=[]))
 
             birth = birthdays.last().value
@@ -367,8 +367,8 @@ class GetFavoriteChildView(View):
 
         if not len(dates) > 0:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         status_error='Neither child has birthday property',
-                                                         favorite_status_error='Neither child has birthday property'),
+                                                         request_error='Neither child has birthday property',
+                                                         favorite_request_error='Neither child has birthday property'),
                                      messages=[]))
 
         registers = AttributeValue.objects.filter(id__in=dates)
