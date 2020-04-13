@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from app.utilities import validate_token
+from app.models import User
 import base64
 import os
 
@@ -15,4 +17,15 @@ def check_authorization(view_func):
 
         return view_func(request, *args, **kwargs)
 
+    return wrap
+
+
+def verify_token(view_func):
+
+    def wrap(request, *args, **kwargs):
+        validate = validate_token(request.POST.token)
+        if not validate:
+            return HttpResponse('<h1>Unauthorized</h1>', status=403)
+        print(validate)
+        return view_func(request, *args, **kwargs)
     return wrap
