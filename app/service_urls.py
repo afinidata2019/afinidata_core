@@ -4,5 +4,6 @@ from django.urls import path
 app_name = 'app_services'
 
 urlpatterns = [
-    path('signup/', views.SignUpView.as_view(), name='login')
+    path('signup/', views.SignUpView.as_view(), name='signup'),
+    path('login/', views.LoginView.as_view(), name='login')
 ]
