@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'languages.apps.LanguagesConfig',
     'programs.apps.ProgramsConfig',
     'django_extensions',
-    'colorfield'
+    'colorfield',
+    'app.apps.AppConfig'
 ]
 
 MIDDLEWARE = [
