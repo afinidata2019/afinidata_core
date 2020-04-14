@@ -23,7 +23,6 @@ def validate_token(token):
     key = generate_key()
     try:
         header, claims = jwt.verify_jwt(token, key, ['RS256'])
-        print(claims['user_id'])
         return dict(
             user_id=claims['user_id']
         )

@@ -55,3 +55,16 @@ class LoginView(View):
             user_id=form.cleaned_data['identifier'].pk,
             token=token
         )))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class CreateInstanceView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Unauthorized', status=403)
+
+    def post(self, request, *args, **kwargs):
+        print(request.user)
+        return JsonResponse(dict(h='w'))

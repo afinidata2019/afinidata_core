@@ -23,9 +23,12 @@ def check_authorization(view_func):
 def verify_token(view_func):
 
     def wrap(request, *args, **kwargs):
-        validate = validate_token(request.POST.token)
+        if 'token' not in request.POST:
+            return HttpResponse('<h1>Unauthorized</h1>', status=403)
+        validate = validate_token(request.POST['token'])
         if not validate:
             return HttpResponse('<h1>Unauthorized</h1>', status=403)
-        print(validate)
+        user = User.objects.get(id=validate['user_id'])
+        request.user = user
         return view_func(request, *args, **kwargs)
     return wrap

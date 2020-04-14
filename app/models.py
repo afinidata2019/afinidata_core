@@ -17,3 +17,6 @@ class User(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.password = make_password(self.password)
         return super(User, self).save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return "%s %s " % (self.first_name, self.last_name)
