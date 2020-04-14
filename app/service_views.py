@@ -68,3 +68,16 @@ class CreateInstanceView(CreateView):
     def get(self, request, *args, **kwargs):
         return HttpResponse('Unauthorized', status=403)
 
+    def form_valid(self, form):
+        instance = form.save()
+        instance.userinstanceassociation_set.create(user=self.request.user)
+        return JsonResponse(dict(status='done', data=dict(
+            instance_name=instance.name,
+            instance_id=instance.pk,
+            instance_type=instance.entity.name,
+            token=utilities.generate_token(dict(user_id=self.request.user.pk))
+        )))
+
+    def form_invalid(self, form):
+        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                 data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
