@@ -1,8 +1,10 @@
-from django.db import models
 from django.contrib.auth.hashers import make_password
+from instances.models import Instance
+from django.db import models
 
 
 USER_TYPE_CHOICES = (('facebook', 'facebook'), ('google', 'google'), ('custom', 'custom'))
+USER_ROLE_CHOICES = (('parent', 'parent'),)
 
 
 class User(models.Model):
@@ -13,6 +15,8 @@ class User(models.Model):
     token = models.CharField(blank=True, unique=True, null=True, max_length=255)
     identifier = models.CharField(blank=True, unique=True, max_length=100)
     beta = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    instances = models.ManyToManyField(Instance, through='UserInstanceAssociation')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.password = make_password(self.password)
@@ -20,3 +24,10 @@ class User(models.Model):
 
     def __str__(self):
         return "%s %s " % (self.first_name, self.last_name)
+
+
+class UserInstanceAssociation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    role = models.CharField(max_length=20, choices=USER_ROLE_CHOICES, default='parent')
