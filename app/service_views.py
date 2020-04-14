@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import CreateView, View
+from instances.models import Instance
 import json
 from app import (
     decorators,
@@ -60,11 +61,10 @@ class LoginView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(decorators.check_authorization, name='dispatch')
 @method_decorator(decorators.verify_token, name='dispatch')
-class CreateInstanceView(View):
+class CreateInstanceView(CreateView):
+    model = Instance
+    fields = ('name', 'entity')
 
     def get(self, request, *args, **kwargs):
         return HttpResponse('Unauthorized', status=403)
 
-    def post(self, request, *args, **kwargs):
-        print(request.user)
-        return JsonResponse(dict(h='w'))
