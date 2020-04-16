@@ -81,3 +81,24 @@ class CreateInstanceView(CreateView):
     def form_invalid(self, form):
         return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
                                  data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class GetInstancesView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Unauthorized', status=403)
+
+    def post(self, request, *args, **kwargs):
+        form = forms.GetInstancesForm(self.request.POST)
+        if form.is_valid():
+            instances = request.user.instances.filter(entity=form.cleaned_data['entity'])
+            return JsonResponse(dict(status='done', data=dict(
+                instances=[dict(id=i.pk, name=i.name) for i in instances],
+                token=utilities.generate_token(dict(user_id=self.request.user.pk))
+            )))
+
+        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                 data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
