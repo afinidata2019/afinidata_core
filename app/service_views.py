@@ -1,9 +1,9 @@
 from django.contrib.auth.hashers import check_password
+from instances.models import Instance, AttributeValue
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import CreateView, View
-from instances.models import Instance
 import json
 from app import (
     decorators,
@@ -102,3 +102,60 @@ class GetInstancesView(View):
 
         return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
                                  data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class AddAttributeToInstanceView(CreateView):
+    model = AttributeValue
+    fields = ('attribute', 'instance', 'value')
+    template_name = 'app/form.html'
+
+    def get_form(self, form_class=None):
+        form = super(AddAttributeToInstanceView, self).get_form()
+        form.fields['attribute'].to_field_name = 'name'
+        return form
+
+    def form_valid(self, form):
+        instances = self.request.user.instances.filter(id=form.data['instance'])
+        if not instances.count() > 0:
+            return JsonResponse(dict(status='error',
+                                     errors=dict(instance=[
+                                         dict(message="This user has not this instance", code='required')
+                                     ]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))
+                                     ))
+        instance = instances.last()
+        attributes = instance.entity.attributes.filter(name=form.data['attribute'])
+        if not attributes.count() > 0:
+            return JsonResponse(dict(status='error',
+                                     errors=dict(attribute=[
+                                         dict(message="This attribute is not possible to add to instance",
+                                              code='required')
+                                     ]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))
+                                     ))
+        attribute = attributes.last()
+        new_attr = instance.attributevalue_set.create(attribute=attribute, value=form.data['value'])
+        if not new_attr:
+            return JsonResponse(dict(status='error',
+                                     errors=dict(value=[
+                                         dict(message="Not possible added value to this attribute to instance",
+                                              code='required')
+                                     ]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))
+                                     ))
+        return JsonResponse(dict(status='done',
+                                 data=dict(
+                                     operation_id=new_attr.pk,
+                                     token=utilities.generate_token(dict(user_id=self.request.user.pk)),
+                                     attribute=new_attr.attribute.name,
+                                     value=new_attr.value
+                                 )))
+
+    def form_invalid(self, form):
+        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                 data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+
