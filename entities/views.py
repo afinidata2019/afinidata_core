@@ -76,15 +76,15 @@ class AddAttributeToEntityView(LoginRequiredMixin, View):
     login_url = reverse_lazy('pages:login')
 
     def get(self, request, *args, **kwargs):
-        entity = get_object_or_404(Entity, id=kwargs['id'])
+        entity = get_object_or_404(Entity, id=kwargs['entity_id'])
         exclude_arr = [item.pk for item in entity.attributes.all()]
         queryset = Attribute.objects.all().exclude(id__in=exclude_arr)
         form = EntityAttributeForm(request.POST or None, queryset=queryset)
-        return render(request, 'entities/new.html', dict(form=form, action='Set attribute to'))
+        return render(request, 'entities/entity_form.html', dict(form=form, action='Set attribute to'))
 
     def post(self, request, *args, **kwargs):
 
-        entity = get_object_or_404(Entity, id=kwargs['id'])
+        entity = get_object_or_404(Entity, id=kwargs['entity_id'])
         queryset = Attribute.objects.filter(id=request.POST['attribute'])
         form = EntityAttributeForm(request.POST, queryset=queryset)
 
@@ -92,7 +92,7 @@ class AddAttributeToEntityView(LoginRequiredMixin, View):
             attribute = Attribute.objects.get(id=request.POST['attribute'])
             entity.attributes.add(attribute)
             messages.success(request, 'Attribute has been added to entity')
-            return redirect('entities:entity', id=entity.pk)
+            return redirect('entities:entity_detail', entity_id=entity.pk)
         else:
             messages.success(request, 'Invalid params.')
-            return redirect('entities:entity', id=entity.pk)
+            return redirect('entities:entity_detail', entity_id=entity.pk)
