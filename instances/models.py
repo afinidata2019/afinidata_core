@@ -81,6 +81,12 @@ class Instance(models.Model):
             attribute.assign = self.attributevalue_set.filter(attribute=attribute).last()
         return attributes
 
+    def get_attribute_values(self, name):
+        attribute = self.attributevalue_set.filter(attribute__name=name)
+        if not attribute.count() > 0:
+            return None
+        return attribute.last()
+
 
 class InstanceAssociationUser(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
