@@ -1,9 +1,10 @@
+from django.views.generic import CreateView, View, ListView
 from django.contrib.auth.hashers import check_password
 from instances.models import Instance, AttributeValue
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import CreateView, View
+from areas.models import Area
 import json
 from app import (
     decorators,
@@ -159,3 +160,18 @@ class AddAttributeToInstanceView(CreateView):
                                  data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class AreaListView(ListView):
+    model = Area
+
+    def post(self, request, *args, **kwargs):
+        results = self.get_queryset()
+        return JsonResponse(dict(
+            status='done',
+            data=dict(
+                areas=[dict(id=area.pk, name=area.name) for area in results],
+                token=utilities.generate_token(dict(user_id=self.request.user.pk))
+            )
+        ))
