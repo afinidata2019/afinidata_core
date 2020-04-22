@@ -4,7 +4,11 @@ from instances.models import Instance, AttributeValue
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
+from dateutil import relativedelta
+from dateutil.parser import parse
+from django.utils import timezone
 from areas.models import Area
+from posts.models import Post
 import json
 from app import (
     decorators,
@@ -175,3 +179,42 @@ class AreaListView(ListView):
                 token=utilities.generate_token(dict(user_id=self.request.user.pk))
             )
         ))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class GetPostsByAreaView(ListView):
+    model = Post
+
+    def get_queryset(self):
+        return Post.objects.all().only('id', 'name', 'min_range', 'max_range')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.GetActivitiesForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+        if not form.cleaned_data['instance'] in request.user.instances.all():
+            return JsonResponse(dict(status='error', errors=dict(instance=[dict(message='User has not instance',
+                                                                                code='required')]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+        limit = form.cleaned_data['instance'].get_attribute_values('birthday')
+
+        if not limit:
+            return JsonResponse(dict(status='error', errors=dict(birthday=[dict(message='instance has not birthday',
+                                                                                code='required')]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+        date = parse(limit.value)
+        rel = relativedelta.relativedelta(timezone.now(), date)
+        months = (rel.years * 12) + rel.months
+
+        posts = self.get_queryset().filter(area_id=form.data['area'], min_range__lte=months, max_range__gte=months)
+        print(posts)
+
+        return JsonResponse(dict(status='done', data=dict(
+            posts=[dict(id=post.pk, name=post.name, min=post.min_range, max=post.max_range) for post in posts])))
