@@ -188,7 +188,7 @@ class GetPostsByAreaView(ListView):
     model = Post
 
     def get_queryset(self):
-        return Post.objects.all().only('id', 'name', 'min_range', 'max_range')
+        return Post.objects.filter(status='published').only('id', 'name', 'min_range', 'max_range', 'thumbnail')
 
     def post(self, request, *args, **kwargs):
         form = forms.GetActivitiesForm(request.POST)
@@ -217,4 +217,5 @@ class GetPostsByAreaView(ListView):
         print(posts)
 
         return JsonResponse(dict(status='done', data=dict(
-            posts=[dict(id=post.pk, name=post.name, min=post.min_range, max=post.max_range) for post in posts])))
+            posts=[dict(id=post.pk, name=post.name, thumbnail=post.thumbnail, min=post.min_range, max=post.max_range)
+                   for post in posts])))
