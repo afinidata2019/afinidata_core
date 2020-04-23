@@ -214,7 +214,6 @@ class GetPostsByAreaView(ListView):
         months = (rel.years * 12) + rel.months
 
         posts = self.get_queryset().filter(area_id=form.data['area'], min_range__lte=months, max_range__gte=months)
-        print(posts)
 
         return JsonResponse(dict(status='done', data=dict(
             posts=[dict(id=post.pk, name=post.name, thumbnail=post.thumbnail, min=post.min_range, max=post.max_range)
