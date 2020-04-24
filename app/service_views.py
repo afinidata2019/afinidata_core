@@ -218,3 +218,24 @@ class GetPostsByAreaView(ListView):
         return JsonResponse(dict(status='done', data=dict(
             posts=[dict(id=post.pk, name=post.name, thumbnail=post.thumbnail, min=post.min_range, max=post.max_range)
                    for post in posts])))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class GetPostView(View):
+
+    def post(self, request, *args, **kwargs):
+        form = forms.GetPostForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(status='error', errors=dict(post=[dict(message='Post not exist',
+                                                                            code='required')]),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+        return JsonResponse(dict(
+            status='done', data=dict(post=dict(
+                    id=form.cleaned_data['post'].pk,
+                    name=form.cleaned_data['post'].name,
+                    thumbnail=form.cleaned_data['post'].thumbnail,
+                    content=form.cleaned_data['post'].content
+                ),
+                token=utilities.generate_token(dict(user_id=self.request.user.pk)))))

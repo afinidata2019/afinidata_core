@@ -1,6 +1,7 @@
 from instances.models import Instance
 from entities.models import Entity
 from areas.models import Area
+from posts.models import Post
 from app.models import User
 from django import forms
 
@@ -17,3 +18,7 @@ class GetInstancesForm(forms.Form):
 class GetActivitiesForm(forms.Form):
     instance = forms.ModelChoiceField(queryset=Instance.objects.all())
     area = forms.ModelChoiceField(queryset=Area.objects.all())
+
+
+class GetPostForm(forms.Form):
+    post = forms.ModelChoiceField(queryset=Post.objects.all().only('id', 'name', 'thumbnail', 'content'))
