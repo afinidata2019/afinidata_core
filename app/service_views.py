@@ -281,3 +281,33 @@ class GetPostView(View):
                     content=form.cleaned_data['post'].content
                 ),
                 token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class ExchangeCodeView(CreateView):
+    model = models.UserGroup
+    fields = ('code',)
+    template_name = 'app/form.html'
+
+    def get_form(self, form_class=None):
+        form = super(ExchangeCodeView, self).get_form()
+        form.fields['code'].to_field_name = 'code'
+        return form
+
+    def form_valid(self, form):
+        print(form.cleaned_data['code'].group)
+        form.instance.user = self.request.user
+        form.instance.group = form.cleaned_data['code'].group
+        exchange = form.save()
+        print(exchange)
+        return JsonResponse(dict(status='done', data=dict(
+            group_name=exchange.group.name,
+            operation_id=exchange.pk,
+            token=utilities.generate_token(dict(user_id=self.request.user.pk))
+        )))
+
+    def form_invalid(self, form):
+        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                 data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))

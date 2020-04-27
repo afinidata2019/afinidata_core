@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from instances.models import Instance
+from groups.models import Group, Code
 from django.db import models
 
 
@@ -34,4 +35,7 @@ class UserInstanceAssociation(models.Model):
 
 
 class UserGroup(models.Model):
-    pass
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    code = models.ForeignKey(Code, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)

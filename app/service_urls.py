@@ -12,5 +12,6 @@ urlpatterns = [
     path('add_attribute/', views.AddAttributeToInstanceView.as_view(), name='add_attribute_to_instance'),
     path('areas/', views.AreaListView.as_view(), name='areas'),
     path('posts_by_area/', views.GetPostsByAreaView.as_view(), name='posts_by_area'),
-    path('get_post/', views.GetPostView.as_view(), name='get_post')
+    path('get_post/', views.GetPostView.as_view(), name='get_post'),
+    path('exchange_code/', views.ExchangeCodeView.as_view(), name='exchange_code')
 ]
