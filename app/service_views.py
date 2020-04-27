@@ -4,6 +4,7 @@ from instances.models import Instance, AttributeValue
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
+from django.core.validators import EmailValidator
 from dateutil import relativedelta
 from dateutil.parser import parse
 from django.utils import timezone
@@ -22,7 +23,36 @@ from app import (
 @method_decorator(csrf_exempt, name='dispatch')
 class SignUpView(CreateView):
     model = models.User
-    fields = ('first_name', 'last_name', 'password', 'identifier')
+    fields = ('password', 'identifier')
+    template_name = 'app/form.html'
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Unauthorized', status=403)
+
+    def get_form(self, form_class=None):
+        form = super(SignUpView, self).get_form()
+        form.fields['identifier'].validators = [EmailValidator()]
+        form.fields['password'].required = True
+        return form
+
+    def form_valid(self, form):
+        user = form.save()
+        if user:
+            return JsonResponse(dict(status='done',
+                                     data=dict(
+                                         user_id=user.pk,
+                                         user_identifier=user.identifier,
+                                         token=utilities.generate_token(dict(user_id=user.pk)))))
+
+    def form_invalid(self, form):
+        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
+
+
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class AnonSignUpView(CreateView):
+    model = models.User
+    fields = ('password', 'identifier')
     template_name = 'app/form.html'
 
     def get(self, request, *args, **kwargs):
@@ -31,9 +61,21 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         if user:
-            return JsonResponse(dict(status='done', data=dict(user_id=user.pk, user_identifier=user.identifier)))
+            return JsonResponse(dict(status='done',
+                                     data=dict(
+                                         user_id=user.pk,
+                                         user_identifier=user.identifier,
+                                         token=utilities.generate_token(dict(user_id=user.pk)))))
 
     def form_invalid(self, form):
+        users = models.User.objects.filter(identifier=form.data['identifier'])
+        if users.count() > 0:
+            return JsonResponse(dict(status='done',
+                                     data=dict(
+                                         user_id=users.last().pk,
+                                         user_identifier=users.last().identifier,
+                                         token=utilities.generate_token(dict(user_id=users.last().pk)))))
+
         return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
 
 

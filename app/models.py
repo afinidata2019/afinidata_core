@@ -8,12 +8,12 @@ USER_ROLE_CHOICES = (('parent', 'parent'),)
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30, null=True, blank=True)
+    last_name = models.CharField(max_length=30, null=True, blank=True)
     password = models.TextField(blank=True, null=True)
     type = models.CharField(choices=USER_TYPE_CHOICES, default='custom', max_length=50)
     token = models.CharField(blank=True, unique=True, null=True, max_length=255)
-    identifier = models.CharField(blank=True, unique=True, max_length=100)
+    identifier = models.CharField(max_length=100, unique=True)
     beta = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     instances = models.ManyToManyField(Instance, through='UserInstanceAssociation')
@@ -31,3 +31,7 @@ class UserInstanceAssociation(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=20, choices=USER_ROLE_CHOICES, default='parent')
+
+
+class UserGroup(models.Model):
+    pass
