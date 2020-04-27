@@ -1,3 +1,4 @@
+from attributes.models import Attribute
 from instances.models import Instance
 from entities.models import Entity
 from areas.models import Area
@@ -22,3 +23,8 @@ class GetActivitiesForm(forms.Form):
 
 class GetPostForm(forms.Form):
     post = forms.ModelChoiceField(queryset=Post.objects.all().only('id', 'name', 'thumbnail', 'content'))
+
+
+class VerifyAttributeForm(forms.Form):
+    instance = forms.ModelChoiceField(queryset=Instance.objects.all())
+    attribute = forms.ModelChoiceField(queryset=Attribute.objects.all(), to_field_name='name')
