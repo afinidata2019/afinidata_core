@@ -331,4 +331,35 @@ class VerifyGroups(View):
                                          ]
                                      ),
                                      data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
-        return JsonResponse(dict(h='w'))
+        return JsonResponse(dict(
+            status='done',
+            data=dict(
+                groups=[dict(id=group.pk, name=group.name) for group in request.user.groups.all()],
+                token=utilities.generate_token(dict(user_id=self.request.user.pk))
+            )
+        ))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class VerifyAttributeView(View):
+
+    def post(self, request, *args, **kwargs):
+        form = forms.VerifyAttributeForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+        attributes = form.cleaned_data['instance'].attributevalue_set.filter(attribute=form.cleaned_data['attribute'])
+
+        if not attributes.count() > 0:
+            return JsonResponse(dict(status='error',
+                                     errors=dict(
+                                         attribute=[dict(message='Instance has not attribute', code='required')]
+                                     ),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+        print(attributes)
+        return JsonResponse(dict(status='done', data=dict(
+            value=attributes.last().value, token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
