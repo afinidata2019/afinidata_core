@@ -311,3 +311,24 @@ class ExchangeCodeView(CreateView):
     def form_invalid(self, form):
         return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json()),
                                  data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(decorators.check_authorization, name='dispatch')
+@method_decorator(decorators.verify_token, name='dispatch')
+class VerifyGroups(View):
+
+    def post(self, request, *args, **kwargs):
+        print(request.user.groups.all())
+        if not request.user.groups.all().count() > 0:
+            return JsonResponse(dict(status='error',
+                                     errors=dict(
+                                         groups=[
+                                            dict(
+                                                message='User has not groups',
+                                                code='required'
+                                            )
+                                         ]
+                                     ),
+                                     data=dict(token=utilities.generate_token(dict(user_id=self.request.user.pk)))))
+        return JsonResponse(dict(h='w'))

@@ -18,6 +18,8 @@ class User(models.Model):
     beta = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     instances = models.ManyToManyField(Instance, through='UserInstanceAssociation')
+    groups = models.ManyToManyField(Group, through='UserGroup')
+    codes = models.ManyToManyField(Code, through='UserGroup')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.password = make_password(self.password)
