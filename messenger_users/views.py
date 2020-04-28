@@ -1,6 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import  PermissionRequiredMixin
+from django.views.generic import ListView, DetailView
 from messenger_users.models import User, UserData
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -41,27 +40,6 @@ class HomeView(PermissionRequiredMixin, ListView):
         return queryset
 
 
-class ByGroupView(LoginRequiredMixin, ListView):
-    template_name = 'messenger_users/by_group.html'
-    login_url = reverse_lazy('pages:login')
-    context_object_name = 'users'
-    paginate_by = 300
-    model = User
-
-    def get_queryset(self):
-        return User.objects.filter(userdata__data_key='AB_group', userdata__data_value=self.kwargs['group'])
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(ByGroupView, self).get_context_data(**kwargs)
-        context['total'] = User.objects.filter(userdata__data_key='AB_group',
-                                               userdata__data_value=self.kwargs['group']).count()
-        months_group = set(item.data_value for item in UserData.objects.filter(data_key='months_group')
-                           .order_by('data_value'))
-        context['months_groups'] = months_group
-        print(context)
-        return context
-
-
 class UserView(PermissionRequiredMixin, DetailView):
     permission_required = 'messenger_users.view_user'
     model = User
@@ -69,32 +47,17 @@ class UserView(PermissionRequiredMixin, DetailView):
     login_url = reverse_lazy('pages:login')
 
 
-class EditAttributeView(LoginRequiredMixin, UpdateView):
+class UserDataListView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.view_userdata'
     model = UserData
-    pk_url_kwarg = 'attribute_id'
-    fields = ('data_value',)
-    template_name = 'messenger_users/data_edit.html'
-    context_object_name = 'data'
-    login_url = reverse_lazy('pages:login')
-    redirect_field_name = 'redirect_to'
+    paginate_by = 30
 
-    def get_object(self, queryset=None):
-        object = get_object_or_404(UserData, user_id=self.kwargs['id'], id=self.kwargs['attribute_id'])
-        return object
+    def get_queryset(self):
+        qs = super(UserDataListView, self).get_queryset()
+        qs = qs.filter(user_id=self.kwargs['user_id']).order_by('-created')
+        return qs
 
-    def get_success_url(self):
-        messages.success(self.request, 'Attribute with name: %s has been updated' % self.object.data_key)
-        return reverse_lazy('messenger_users:user', id=self.kwargs['id'])
-
-
-class DeleteAttributeView(LoginRequiredMixin, DeleteView):
-    model = UserData
-    pk_url_kwarg = 'attribute_id'
-    template_name = 'messenger_users/data_delete.html'
-    context_object_name = 'data'
-    login_url = reverse_lazy('pages:login')
-    success_url = reverse_lazy('messenger_users:index')
-
-    def get_object(self, queryset=None):
-        object = get_object_or_404(UserData, user_id=self.kwargs['id'], id=self.kwargs['attribute_id'])
-        return object
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super(UserDataListView, self).get_context_data()
+        ctx['user'] = User.objects.get(id=self.kwargs['user_id'])
+        return ctx
