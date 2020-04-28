@@ -1,0 +1,53 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Data for {{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Data for {{ user.first_name }} {{ user.last_name }}</h1>
+            <div>
+                <a href="{% url 'messenger_users:user' id=user.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-eye fa-sm text-white-50"></i> View User</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Instances List</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Key</th>
+                          <th>Value</th>
+                          <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Key</th>
+                          <th>Value</th>
+                          <th>Created At</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for object in object_list %}
+                            <tr>
+                                <td>{{ object.data_key }}</td>
+                                <td>{{ object.data_value }}</td>
+                                <td>{{ object.created }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+                {% include 'base/pagination.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
