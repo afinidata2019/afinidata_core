@@ -150,9 +150,9 @@ REGISTER_TYPE_CHOICES = (
 
 
 class InstanceFeedback(models.Model):
-    instance = models.ForeignKey(Instance, on_delete=models.DO_NOTHING)
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     post_id = models.IntegerField()
-    area = models.ForeignKey(Area, on_delete=models.DO_NOTHING)
+    area = models.ForeignKey(Area, on_delete=models.CASCADE)
     value = models.IntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(5)])
     reference_text = models.CharField(max_length=50)
     register_id = models.IntegerField(null=True)
