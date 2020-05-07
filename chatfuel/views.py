@@ -5,12 +5,17 @@ from messenger_users.models import User as MessengerUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from messenger_users.models import User, UserData
+from articles.models import Article, Interaction
 from django.http import JsonResponse, Http404
 from attributes.models import Attribute
 from groups import forms as group_forms
+from dateutil import relativedelta
 from django.utils import timezone
+from datetime import datetime
 from dateutil import parser
 from chatfuel import forms
+import random
+import os
 
 
 ''' MESSENGER USERS VIEWS '''
@@ -425,6 +430,75 @@ class GetLastChildView(View):
             favorite_instance_name=children.last().name,
             request_status='done'
         ), messages=[]))
+
+
+''' ARTICLES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetArticleView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.UserForm(request.POST)
+        articles = Article.objects.all().only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
+        article = articles[random.randrange(0, articles.count())]
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='error',
+                request_error='Invalid params.'
+            ), messages=[]))
+        instances = form.cleaned_data['user_id'].get_instances().filter(entity_id=1)
+        if not instances.count() > 0:
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='done',
+                article_id=article.pk,
+                article_name=article.name,
+                article_content=("%s/articles/%s/" % (os.getenv('CM_DOMAIN_URL'), article.pk)),
+                article_preview=article.preview,
+                article_thumbail=article.thumbnail,
+                article_instance="false",
+                article_instance_name="false"
+            ), messages=[]))
+        birthdays = []
+        for instance in instances:
+            birthday_list = instance.attributevalue_set.filter(attribute__name='birthday')
+            if birthday_list.count() > 0:
+                try:
+                    valid = parser.parse(birthday_list.last().value)
+                    if valid:
+                        birthdays.append(birthday_list.last())
+                except:
+                    pass
+        print(birthdays)
+        random_number = random.randrange(0, len(birthdays))
+        date = birthdays[random_number]
+        rel = relativedelta.relativedelta(datetime.now(), parser.parse(date.value))
+        months = (rel.years * 12) + rel.months
+        print(months)
+        filter_articles = articles.filter(min__lte=months, max__gte=months)
+        if not filter_articles.count() > 0:
+            if not articles.count() > 0:
+                return JsonResponse(dict(set_attributes=dict(
+                    request_status='error',
+                    request_error='Articles not exist.'
+                ), messages=[]))
+        else:
+            article = filter_articles[random.randrange(0, filter_articles.count())]
+        return JsonResponse(dict(
+            set_attributes=dict(
+                request_status='done',
+                article_id=article.pk,
+                article_name=article.name,
+                article_content=("%s/articles/%s/" % (os.getenv('CM_DOMAIN_URL'), article.pk)),
+                article_preview=article.preview,
+                article_thumbail=article.thumbnail,
+                article_instance=date.instance.pk,
+                article_instance_name=date.instance.name
+            ), messages=[]
+        ))
 
 
 ''' CHATFUEL UTILITIES '''
