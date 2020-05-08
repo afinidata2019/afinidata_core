@@ -5,7 +5,7 @@ from messenger_users.models import User as MessengerUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from messenger_users.models import User, UserData
-from articles.models import Article, Interaction
+from articles.models import Article, Interaction as ArticleInteraction
 from django.http import JsonResponse, Http404
 from attributes.models import Attribute
 from groups import forms as group_forms
@@ -452,6 +452,9 @@ class GetArticleView(View):
             ), messages=[]))
         instances = form.cleaned_data['user_id'].get_instances().filter(entity_id=1)
         if not instances.count() > 0:
+            new_interaction = ArticleInteraction.objects\
+                .create(user_id=form.data['user_id'], article=article, type='sent')
+            print(new_interaction)
             return JsonResponse(dict(set_attributes=dict(
                 request_status='done',
                 article_id=article.pk,
@@ -487,6 +490,9 @@ class GetArticleView(View):
                 ), messages=[]))
         else:
             article = filter_articles[random.randrange(0, filter_articles.count())]
+            new_interaction = ArticleInteraction.objects \
+                .create(user_id=form.data['user_id'], article=article, type='sent')
+            print(new_interaction)
         return JsonResponse(dict(
             set_attributes=dict(
                 request_status='done',
