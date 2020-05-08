@@ -28,3 +28,7 @@ class GetPostForm(forms.Form):
 class VerifyAttributeForm(forms.Form):
     instance = forms.ModelChoiceField(queryset=Instance.objects.all())
     attribute = forms.ModelChoiceField(queryset=Attribute.objects.all(), to_field_name='name')
+
+
+class AnonLoginForm(forms.Form):
+    identifier = forms.ModelChoiceField(queryset=User.objects.all(), to_field_name='identifier')

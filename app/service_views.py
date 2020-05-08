@@ -50,33 +50,20 @@ class SignUpView(CreateView):
 
 @method_decorator(decorators.check_authorization, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class AnonSignUpView(CreateView):
-    model = models.User
-    fields = ('password', 'identifier')
-    template_name = 'app/form.html'
+class AnonLoginView(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse('Unauthorized', status=403)
 
-    def form_valid(self, form):
-        user = form.save()
-        if user:
-            return JsonResponse(dict(status='done',
-                                     data=dict(
-                                         user_id=user.pk,
-                                         user_identifier=user.identifier,
-                                         token=utilities.generate_token(dict(user_id=user.pk)))))
+    def post(self, request):
+        form = forms.AnonLoginForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
 
-    def form_invalid(self, form):
-        users = models.User.objects.filter(identifier=form.data['identifier'])
-        if users.count() > 0:
-            return JsonResponse(dict(status='done',
-                                     data=dict(
-                                         user_id=users.last().pk,
-                                         user_identifier=users.last().identifier,
-                                         token=utilities.generate_token(dict(user_id=users.last().pk)))))
-
-        return JsonResponse(dict(status='error', errors=json.loads(form.errors.as_json())))
+        return JsonResponse(dict(status='done', data=dict(
+            user_id=form.cleaned_data['identifier'].pk,
+            token=utilities.generate_token(dict(user_id=form.cleaned_data['identifier'].pk))
+        )))
 
 
 @method_decorator(decorators.check_authorization, name='dispatch')
