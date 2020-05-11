@@ -5,8 +5,9 @@ app_name = 'app_services'
 
 urlpatterns = [
     path('signup/', views.SignUpView.as_view(), name='signup'),
-    path('anon_login/', views.AnonLoginView.as_view(), name='anon_signup'),
+    path('anon_signup/', views.AnonSignUpView.as_view(), name='anon_signup'),
     path('login/', views.LoginView.as_view(), name='login'),
+    path('anon_login/', views.AnonLoginView.as_view(), name='anon_signup'),
     path('create_instance/', views.CreateInstanceView.as_view(), name='create_instance'),
     path('get_instances/', views.GetInstancesView.as_view(), name='get_instances'),
     path('add_attribute/', views.AddAttributeToInstanceView.as_view(), name='add_attribute_to_instance'),
