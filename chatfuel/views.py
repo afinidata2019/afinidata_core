@@ -442,7 +442,7 @@ class GetArticleView(View):
         raise Http404('Not found')
 
     def post(self, request, *args, **kwargs):
-        form = forms.UserForm(request.POST)
+        form = forms.UserArticleForm(request.POST)
         articles = Article.objects.all().only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
         article = articles[random.randrange(0, articles.count())]
         if not form.is_valid():
@@ -459,7 +459,8 @@ class GetArticleView(View):
                 request_status='done',
                 article_id=article.pk,
                 article_name=article.name,
-                article_content=("%s/articles/%s/" % (os.getenv('CM_DOMAIN_URL'), article.pk)),
+                article_content=("%s/articles/%s/?licence=%s" % (os.getenv('CM_DOMAIN_URL'), article.pk,
+                                                                 form.cleaned_data['licence'])),
                 article_preview=article.preview,
                 article_thumbail=article.thumbnail,
                 article_instance="false",
@@ -498,7 +499,8 @@ class GetArticleView(View):
                 request_status='done',
                 article_id=article.pk,
                 article_name=article.name,
-                article_content=("%s/articles/%s/" % (os.getenv('CM_DOMAIN_URL'), article.pk)),
+                article_content=("%s/articles/%s/?licence=%s" % (os.getenv('CM_DOMAIN_URL'), article.pk,
+                                                                 form.cleaned_data['licence'])),
                 article_preview=article.preview,
                 article_thumbail=article.thumbnail,
                 article_instance=date.instance.pk,
