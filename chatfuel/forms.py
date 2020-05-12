@@ -61,3 +61,9 @@ class UserForm(forms.Form):
 
 class BlockRedirectForm(forms.Form):
     next = forms.CharField(max_length=40)
+
+
+class UserArticleForm(forms.Form):
+    user_id = forms.ModelChoiceField(queryset=User.objects.all())
+    licence = forms.CharField(max_length=30)
+    en = forms.BooleanField(required=False)

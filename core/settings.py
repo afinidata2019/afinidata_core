@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'languages.apps.LanguagesConfig',
     'programs.apps.ProgramsConfig',
     'django_extensions',
-    'colorfield'
+    'colorfield',
+    'articles.apps.ArticlesConfig'
 ]
 
 MIDDLEWARE = [
@@ -121,10 +122,19 @@ DATABASES = {
         'PASSWORD': os.getenv('CORE_POSTS_DATABASE_PASSWORD'),
         'HOST': os.getenv('CORE_POSTS_DATABASE_HOST'),
         'PORT': os.getenv('CORE_POSTS_DATABASE_PORT'),
+    },
+    'articles_db': {
+        'ENGINE': os.getenv('CORE_POSTS_DATABASE_ENGINE'),
+        'NAME': os.getenv('CORE_POSTS_DATABASE_NAME'),
+        'USER': os.getenv('CORE_POSTS_DATABASE_USER'),
+        'PASSWORD': os.getenv('CORE_POSTS_DATABASE_PASSWORD'),
+        'HOST': os.getenv('CORE_POSTS_DATABASE_HOST'),
+        'PORT': os.getenv('CORE_POSTS_DATABASE_PORT'),
     }
 }
 
-DATABASE_ROUTERS = ['messenger_users.routers.MessengerUsersRouter', 'posts.routers.PostsRouter']
+DATABASE_ROUTERS = ['messenger_users.routers.MessengerUsersRouter', 'posts.routers.PostsRouter',
+                    'articles.routers.ArticlesRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
