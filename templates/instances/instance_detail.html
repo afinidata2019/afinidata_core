@@ -199,6 +199,12 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Attributes</h1>
+            <div>
+                {% if perms.instances.add_attributevalue %}
+                    <a href="{% url 'instances:add_instance_attribute' instance_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Add attribute</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
