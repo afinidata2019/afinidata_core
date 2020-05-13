@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from instances.models import Instance, AttributeValue
 from messenger_users.models import User
-from instances.models import Instance
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils import timezone
@@ -126,3 +126,34 @@ class DeleteInstanceView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Instance with name: "%s" has been deleted.' % self.object.name)
         return super(DeleteInstanceView, self).get_success_url()
+
+
+class AddAttributeToInstanceView(PermissionRequiredMixin, CreateView):
+    permission_required = 'instances.add_attributevalue'
+    model = AttributeValue
+    fields = ('attribute', 'value')
+
+    def get_context_data(self, **kwargs):
+        instance = Instance.objects.get(id=self.kwargs['instance_id'])
+        c = super(AddAttributeToInstanceView, self).get_context_data()
+        c['instance'] = instance
+        c['action'] = 'Create'
+        c['form'].fields['attribute'].queryset = instance.entity.attributes.all()
+        return c
+
+    def form_valid(self, form):
+        form.instance.instance_id = self.kwargs['instance_id']
+        return super(AddAttributeToInstanceView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, 'The value "%s" for attribute "%s" for instance: "%s" has been added' % (
+            self.object.value, self.object.attribute.name, self.object.instance
+        ))
+        return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
+
+
+class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'instances.change_attributevalue'
+    model = AttributeValue
+    fields = ('value',)
+    pk_url_kwarg = 'attribute_id'

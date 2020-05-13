@@ -1,0 +1,36 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Add attribute to {{ instance.name }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} attribute value for {{ instance.name }}</h1>
+            <div>
+                {% if perms.instances.view_instances %}
+                    <a href="{% url 'instances:instance' id=instance.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-eye fa-sm text-white-50"></i> View Instance</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="post" action=".">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Instance: </label>
+                        <input type="text" class="form-control" disabled value="{{ instance.name }}">
+                    </div>
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ action }} attribute value</button>
+                </form>
+            </div>
+        </div>
+     </div>
+
+{% endblock %}
