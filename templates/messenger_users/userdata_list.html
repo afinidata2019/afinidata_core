@@ -26,6 +26,7 @@
                           <th>Key</th>
                           <th>Value</th>
                           <th>Created At</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -33,6 +34,7 @@
                           <th>Key</th>
                           <th>Value</th>
                           <th>Created At</th>
+                          <th>Actions</th>
                         </tr>
                     </tfoot>
                     <tbody>
@@ -41,6 +43,11 @@
                                 <td>{{ object.data_key }}</td>
                                 <td>{{ object.data_value }}</td>
                                 <td>{{ object.created }}</td>
+                                <td>
+                                    <a href="{% url 'messenger_users:user_edit_data' user_id=user.pk userdata_id=object.pk %}" class="btn btn-success">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -66,7 +66,7 @@ class User(models.Model):
         )
 
     def __str__(self):
-        return self.username
+        return "%s %s" % (self.first_name, self.last_name)
 
     def get_first_name(self):
         names = self.userdata_set.filter(data_key='channel_first_name')

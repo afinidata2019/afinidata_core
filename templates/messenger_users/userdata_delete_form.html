@@ -1,0 +1,40 @@
+{% extends 'base/private.html' %}
+
+{% block title %}
+    {{action}} data for user
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} user data for {{ object.user }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+
+        <p>Are you sure to delete this item?</p>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">User:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.user }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Data Key:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.data_key }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Data value:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.data_value }}">
+                    </div>
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ action }} User Data</button>
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}
