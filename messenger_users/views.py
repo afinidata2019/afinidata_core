@@ -1,5 +1,5 @@
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import  PermissionRequiredMixin
-from django.views.generic import ListView, DetailView
 from messenger_users.models import User, UserData
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -61,3 +61,62 @@ class UserDataListView(PermissionRequiredMixin, ListView):
         ctx = super(UserDataListView, self).get_context_data()
         ctx['user'] = User.objects.get(id=self.kwargs['user_id'])
         return ctx
+
+
+class UserDataCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'messenger_users.add_userdata'
+    model = UserData
+    fields = ('data_key', 'data_value')
+
+    def get_context_data(self, **kwargs):
+        c = super(UserDataCreateView, self).get_context_data()
+        c['ms_user'] = User.objects.get(id=self.kwargs['user_id'])
+        c['action'] = 'Create'
+        return c
+
+    def form_valid(self, form):
+        form.instance.user_id = self.kwargs['user_id']
+        return super(UserDataCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, 'User data with key: "%s" with data "%s" for user: "%s" has been created.' % (
+            self.object.data_key, self.object.data_value, self.object.user
+        ))
+        return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
+
+
+class UserDataUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'messenger_users.change_userdata'
+    model = UserData
+    fields = ('data_value', )
+    template_name = 'messenger_users/userdata_edit_form.html'
+    pk_url_kwarg = 'userdata_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(UserDataUpdateView, self).get_context_data()
+        c['action'] = 'Edit'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'User data with key: "%s" with data "%s" for user: "%s" has been updated.' % (
+            self.object.data_key, self.object.data_value, self.object.user
+        ))
+        return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
+
+
+class UserDataDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'messenger_users.delete_userdata'
+    model = UserData
+    template_name = 'messenger_users/userdata_delete_form.html'
+    pk_url_kwarg = 'userdata_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(UserDataDeleteView, self).get_context_data()
+        c['action'] = 'Delete'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'User data with key: "%s" with data "%s" for user: "%s" has been deleted.' % (
+            self.object.data_key, self.object.data_value, self.object.user
+        ))
+        return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
