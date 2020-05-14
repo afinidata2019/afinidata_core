@@ -1,8 +1,10 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import Instance, AttributeValue
+from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from django.urls import reverse_lazy
+from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
@@ -154,6 +156,19 @@ class AddAttributeToInstanceView(PermissionRequiredMixin, CreateView):
 
 class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'instances.change_attributevalue'
+    template_name = 'instances/attributevalue_edit_form.html'
     model = AttributeValue
     fields = ('value',)
     pk_url_kwarg = 'attribute_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(AttributeValueEditView, self).get_context_data()
+        print(self.kwargs['instance_id'], self.object.instance.pk)
+        c['action'] = 'Edit'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'The value "%s" for attribute "%s" for instance: "%s" has been updated' % (
+            self.object.value, self.object.attribute.name, self.object.instance
+        ))
+        return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
