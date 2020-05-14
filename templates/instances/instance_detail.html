@@ -234,8 +234,7 @@
                                         <td>{{ attribute.assign.created_at }}</td>
                                         <td>
                                             <div class="btn-group">
-                                                <a href="#" class="btn btn-primary"><i class="fa fa-eye"></i></a>
-                                                <a href="#" class="btn btn-success"><i class="fa fa-pen"></i></a>
+                                                <a href="{% url 'instances:edit_instance_attribute' instance_id=object.pk attribute_id=attribute.assign.pk %}" class="btn btn-success"><i class="fa fa-pen"></i></a>
                                             </div>
                                         </td>
                                     </tr>
