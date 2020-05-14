@@ -7,6 +7,11 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Data for {{ user.first_name }} {{ user.last_name }}</h1>
             <div>
+                {% if perms.messenger_users.add_userdata %}
+                    <a href="{% url 'messenger_users:user_create_data' user_id=user.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add User Data</a>
+                {% endif %}
                 <a href="{% url 'messenger_users:user' id=user.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-eye fa-sm text-white-50"></i> View User</a>
             </div>
@@ -44,9 +49,16 @@
                                 <td>{{ object.data_value }}</td>
                                 <td>{{ object.created }}</td>
                                 <td>
-                                    <a href="{% url 'messenger_users:user_edit_data' user_id=user.pk userdata_id=object.pk %}" class="btn btn-success">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
+                                    <div class="btn-group">
+                                        <a href="{% url 'messenger_users:user_edit_data' user_id=user.pk userdata_id=object.pk %}"
+                                           class="btn btn-success">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="{% url 'messenger_users:user_delete_data' user_id=user.pk userdata_id=object.pk %}"
+                                           class="btn btn-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
