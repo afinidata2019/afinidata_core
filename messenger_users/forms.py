@@ -32,7 +32,7 @@ class AfinidataUserForm(forms.ModelForm):
 
 
 class AfinidataChildForm(forms.ModelForm):
-    birthday = forms.DateTimeField()
+    birthday = forms.CharField(max_length=20)
 
     class Meta:
         model = Instance

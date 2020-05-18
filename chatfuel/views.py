@@ -58,6 +58,29 @@ class CreateMessengerUserDataView(CreateView):
                                                      request_message='Invalid params'), messages=[]))
 
 
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetInitialUserData(View):
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method'),
+                                 messages=[]))
+
+    def post(self, request):
+        form = forms.UserForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.'),
+                                     messages=[]))
+
+        attributes = dict()
+
+        for item in form.cleaned_data['user_id'].userdata_set.all():
+            attributes[item.data_key] = item.data_value
+
+        return JsonResponse(dict(set_attributes=attributes))
+
+
 ''' INSTANCES VIEWS '''
 
 
@@ -72,7 +95,7 @@ class GetInstancesByUserView(View):
         form = forms.GetInstancesForm(request.POST)
 
         if not form.is_valid():
-            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method'),
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.'),
                                      messages=[]))
 
         label = "Choice your instance: "
@@ -388,14 +411,16 @@ class GetFavoriteChildView(View):
             if register.value > favorite['value']:
                 favorite = dict(id=register.instance_id, value=register.value)
 
-        return JsonResponse(dict(
-            set_attributes=dict(
+        attributes= dict(
                 request_status='done',
                 favorite_instace=favorite['id'],
                 favorite_instance_name=Instance.objects.get(id=favorite['id']).name,
                 favorite_birthday=favorite['value'].strftime('%d/%m/%Y')\
                     if day_first else favorite['value'].strftime('%m/%d/%Y')
-            ),
+            )
+
+        return JsonResponse(dict(
+            set_attributes=attributes,
             messages=[]
         ))
 
@@ -423,13 +448,21 @@ class GetLastChildView(View):
                 request_error='User has not children.'
             ), messages=[]))
 
-        return JsonResponse(dict(set_attributes=dict(
+        attributes = dict(
             instance=children.last().pk,
             instance_name=children.last().name,
             favorite_instance=children.last().pk,
             favorite_instance_name=children.last().name,
             request_status='done'
-        ), messages=[]))
+        )
+
+        if children.last().attributevalue_set.filter(attribute__name='birthday'):
+            attributes['birthday'] = children.last().attributevalue_set.filter(attribute__name='birthday').\
+                last().value
+            attributes['favorite_birthday'] = children.last().attributevalue_set.filter(attribute__name='birthday'). \
+                last().value
+
+        return JsonResponse(dict(set_attributes=attributes, messages=[]))
 
 
 ''' ARTICLES '''

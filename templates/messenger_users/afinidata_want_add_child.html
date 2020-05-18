@@ -1,0 +1,24 @@
+{% extends 'base/private.html' %}
+
+{% block title %}
+    Want to add Child
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Add child to {{ ms_user }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <strong class="text-gray-800">Do you wanna to add child to {{ ms_user }}?</strong><br>
+                <a href="{% url 'messenger_users:user' id=ms_user.pk %}" class="btn btn-light">No</a>
+                <a href="{% url 'messenger_users:add_child' user_id=ms_user.pk %}" class="btn btn-primary">Yes</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
