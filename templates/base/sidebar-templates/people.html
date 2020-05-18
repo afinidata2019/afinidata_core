@@ -41,7 +41,9 @@
             {% for group in request.user.group_set.all %}
                 <a class="collapse-item" href="{% url 'groups:messenger_user_list' group_id=group.pk %}">View {{ group.name }} Users</a>
             {% endfor %}
-
+        {% endif %}
+        {% if perms.messenger_users.add_user %}
+            <a href="{% url 'messenger_users:create_afini_user' %}" class="collapse-item">Create Afini User</a>
         {% endif %}
       </div>
     </div>

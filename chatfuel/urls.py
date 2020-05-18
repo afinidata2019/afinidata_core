@@ -6,6 +6,7 @@ app_name = 'chatfuel'
 urlpatterns = [
     path('create_messenger_user_data/', views.CreateMessengerUserDataView.as_view(), name='create_messenger_user_data'),
     path('create_instance_attribute/', views.CreateInstanceAttributeView.as_view(), name='create_instance_attribute'),
+    path('get_initial_user_data/', views.GetInitialUserData.as_view(), name='get_initial_user_data'),
     path('get_instance_attribute/', views.GetInstanceAttributeView.as_view(), name='get_instance_attribute'),
     path('change_instance_name/', views.ChangeInstanceNameView.as_view(), name='change_instance_name'),
     path('create_instance_interaction_view/', views.CreateInstanceInteractionView.as_view(),
