@@ -440,7 +440,7 @@ class GetLastChildView(View):
             ), messages=[]))
 
         instances = form.cleaned_data['user_id'].get_instances()
-        children = instances.filter(entity_id=1).order_by('-id')
+        children = instances.filter(entity_id=1).order_by('id')
 
         if not children.count() > 0:
             return JsonResponse(dict(set_attributes=dict(
