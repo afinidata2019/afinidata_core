@@ -1,9 +1,12 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import  PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from messenger_users.models import User, UserData
+from attributes.models import Attribute
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 from messenger_users import forms
+from dateutil.parser import parse
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -120,3 +123,74 @@ class UserDataDeleteView(PermissionRequiredMixin, DeleteView):
             self.object.data_key, self.object.data_value, self.object.user
         ))
         return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
+
+
+class CreateAfinidataUser(PermissionRequiredMixin, TemplateView):
+    permission_required = 'messenger_users.add_user'
+    template_name = 'messenger_users/afinidata_user_form.html'
+    login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(CreateAfinidataUser, self).get_context_data()
+        c['form'] = forms.AfinidataUserForm(self.request.POST or None)
+        return c
+
+    def post(self, request, *args, **kwargs):
+        user_form = forms.AfinidataUserForm(self.request.POST)
+        if user_form.is_valid():
+            user_form.instance.last_channel_id = user_form.data['channel_id']
+            user_form.instance.username = user_form.data['channel_id']
+            user_form.instance.backup_key = user_form.data['channel_id']
+            user = user_form.save()
+            if user:
+                messages.success(request, 'User with name: "%s" has been created.' % user)
+                for data in user_form.data:
+                    if data not in ['first_name', 'last_name', 'channel_id', 'bot_id', 'name', 'birthday',
+                                    'csrfmiddlewaretoken']:
+                        print(data, user_form.data[data])
+                        user.userdata_set.create(data_key=data, data_value=user_form.data[data])
+
+                return redirect('messenger_users:want_add_child', user_id=user.pk)
+            else:
+                messages.error('An error ocurred and the user has not been created, try again.')
+        else:
+            messages.error(request, 'Check again the data for user.')
+
+        return super(CreateAfinidataUser, self).get(request)
+
+
+class WantAddChildView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'messenger_users.add_user'
+    template_name = 'messenger_users/afinidata_want_add_child.html'
+    login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(WantAddChildView, self).get_context_data()
+        c['ms_user'] = User.objects.get(id=self.kwargs['user_id'])
+        return c
+
+
+class AddChildView(PermissionRequiredMixin, CreateView):
+    form_class = forms.AfinidataChildForm
+    permission_required = 'instances.add_instance'
+    template_name = 'messenger_users/add_child_form.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(AddChildView, self).get_context_data()
+        c['ms_user'] = User.objects.get(id=self.kwargs['user_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.entity_id = 1
+        return super(AddChildView, self).form_valid(form)
+
+    def get_success_url(self):
+        user = User.objects.get(id=self.kwargs['user_id'])
+        self.object.instanceassociationuser_set.create(user_id=user.pk)
+        self.object.attributevalue_set.create(attribute=Attribute.objects.get(name='birthday'),
+                                              value=parse(self.request.POST['birthday'], dayfirst=True))
+        messages.success(self.request, 'The child with name "%s" has been created for user "%s".' % (
+            self.object.name,
+            user
+        ))
+        return reverse_lazy('messenger_users:want_add_child', kwargs=dict(user_id=user.pk))
