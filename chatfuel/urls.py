@@ -19,5 +19,6 @@ urlpatterns = [
     path('get_favorite_child/', views.GetFavoriteChildView.as_view(), name='get_favorite_child'),
     path('get_last_child/', views.GetLastChildView.as_view(), name='get_last_child'),
     path('redirect_to_block/', views.BlockRedirectView.as_view(), name='redirect_to_block'),
-    path('get_article/', views.GetArticleView.as_view(), name='get_article')
+    path('get_article/', views.GetArticleView.as_view(), name='get_article'),
+    path('validates_date/', views.ValidatesDateView.as_view(), name='validates_date')
 ]
