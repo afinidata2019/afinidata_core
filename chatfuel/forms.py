@@ -67,3 +67,10 @@ class UserArticleForm(forms.Form):
     user_id = forms.ModelChoiceField(queryset=User.objects.all())
     licence = forms.CharField(max_length=30)
     en = forms.BooleanField(required=False)
+
+
+class ValidatesDateForm(forms.Form):
+    date = forms.CharField(max_length=40)
+    locale = forms.CharField(max_length=10)
+    variant = forms.ChoiceField(choices=(('true', 'true'), ('false', 'false')))
+
