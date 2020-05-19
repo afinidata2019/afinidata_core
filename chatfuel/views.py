@@ -1,20 +1,20 @@
 from instances.models import InstanceAssociationUser, Instance, AttributeValue, PostInteraction
 from django.views.generic import View, CreateView, TemplateView, UpdateView
+from articles.models import Article, Interaction as ArticleInteraction
 from groups.models import Code, AssignationMessengerUser
 from messenger_users.models import User as MessengerUser
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from messenger_users.models import User, UserData
-from articles.models import Article, Interaction as ArticleInteraction
 from django.http import JsonResponse, Http404
+from dateutil import relativedelta, parser
 from attributes.models import Attribute
 from groups import forms as group_forms
-from dateutil import relativedelta
 from django.utils import timezone
 from datetime import datetime
-from dateutil import parser
 from chatfuel import forms
 import random
+import boto3
 import os
 
 
@@ -561,3 +561,49 @@ class BlockRedirectView(View):
         return JsonResponse(dict(
             redirect_to_blocks=[form.cleaned_data['next']]
         ))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ValidatesDateView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request):
+        form = forms.ValidatesDateForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_message='Invalid params')))
+
+        months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+                  'november', 'december']
+
+        region = os.getenv('region')
+        translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
+        result = translate.translate_text(Text=form.data['date'],
+                                          SourceLanguageCode="auto", TargetLanguageCode="en")
+        try:
+            if form.data['variant'] == 'true':
+                date = parser.parse(result.get('TranslatedText'))
+            else:
+                date = parser.parse(result.get('TranslatedText'), dayfirst=True)
+        except Exception as e:
+            print(e)
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_message='Not a valid string date')))
+
+        rel = relativedelta.relativedelta(datetime.now(), date)
+        child_months = (rel.years * 12) + rel.months
+        if child_months > 72:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_message='The child have more to 72 months.')))
+
+        lang = form.data['locale'][0:2]
+        month = months[date.month - 1]
+        date_result = translate.translate_text(Text="%s %s, %s" % (month, date.day, date.year), SourceLanguageCode="en",
+                                               TargetLanguageCode=lang)
+        locale_date = date_result.get('TranslatedText')
+        return JsonResponse(dict(set_attributes=dict(
+            childDOB=date,
+            locale_date=locale_date,
+            childMonths=child_months
+        )))
