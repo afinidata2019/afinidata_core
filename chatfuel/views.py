@@ -605,5 +605,6 @@ class ValidatesDateView(View):
         return JsonResponse(dict(set_attributes=dict(
             childDOB=date,
             locale_date=locale_date,
-            childMonths=child_months
+            childMonths=child_months,
+            request_status='done'
         )))
