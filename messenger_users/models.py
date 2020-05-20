@@ -90,7 +90,6 @@ class User(models.Model):
 
     def get_email(self):
         keys = self.userdata_set.filter(data_key='email')
-        print(keys)
         if keys.count() > 0:
             return keys.last().data_value
         else:
@@ -98,7 +97,6 @@ class User(models.Model):
 
     def get_country(self):
         keys = self.userdata_set.filter(data_key='Pais')
-        print(keys)
         if keys.count() > 0:
             return keys.last().data_value
         else:

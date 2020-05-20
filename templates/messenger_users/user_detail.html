@@ -1,4 +1,5 @@
 {% extends 'base/private.html' %}
+{% load last_value %}
 
 {% block title %}{{ user.first_name }} {{ user.last_name }}{% endblock %}
 
@@ -30,11 +31,19 @@
                 <strong class="text-gray-900">First Name: </strong>{{ object.first_name }}<br>
                 <strong class="text-gray-900">Last Name: </strong>{{ object.last_name }}<br>
                 <strong class="text-gray-900">Username: </strong>{{ object.username }}<br>
-                <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
-                <strong class="text-gray-900">Channel ID: </strong>{{ object.last_channel_id }}<br>
-                <strong class="text-gray-900">Email: </strong>{{ object.get_email }}<br>
-                <strong class="text-gray-900">Country: </strong>{{ object.get_country }}<br>
                 <strong class="text-gray-900">Created At: </strong>{{ object.created_at }}<br>
+                <strong class="text-gray-900">Channel ID: </strong>{{ object.last_channel_id }}<br>
+                <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
+                <strong class="text-gray-900">Email: </strong>{{ user|get_last_value:'email' }}<br>
+                <strong class="text-gray-900">Country: </strong>{{  user|get_last_value:'Pais' }}<br>
+                <strong class="text-gray-900">Tipo de licencia: </strong>{{  user|get_last_value:'tipo_de_licencia' }}<br>
+                <strong class="text-gray-900">User Type: </strong>{{  user|get_last_value:'user_type' }}<br>
+                <strong class="text-gray-900">User Rol: </strong>{{  user|get_last_value:'user_rol' }}<br>
+                <strong class="text-gray-900">User Reg: </strong>{{  user|get_last_value:'user_reg' }}<br>
+                <strong class="text-gray-900">Premium: </strong>{{  user|get_last_value:'premium' }}<br>
+                <strong class="text-gray-900">Locale: </strong>{{  user|get_last_value:'user_locale' }}<br>
+                <strong class="text-gray-900">Child Type: </strong>{{  user|get_last_value:'childtype' }}<br>
+                <strong class="text-gray-900">Child Months: </strong>{{  user|get_last_value:'childMonths' }}<br>
             </div>
         </div>
     </div>
