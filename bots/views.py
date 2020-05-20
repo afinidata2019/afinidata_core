@@ -1,5 +1,6 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from messenger_users.models import User
 from django.urls import reverse_lazy
 from django.contrib import messages
 from bots.models import Bot
@@ -17,6 +18,11 @@ class BotView(LoginRequiredMixin, DetailView):
     model = Bot
     pk_url_kwarg = 'bot_id'
     login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(BotView, self).get_context_data()
+        c['users'] = User.objects.filter(bot_id=self.kwargs['bot_id'])
+        return c
 
 
 class CreateBotView(LoginRequiredMixin, CreateView):
