@@ -603,5 +603,7 @@ class ValidatesDateView(View):
             childDOB=date,
             locale_date=locale_date,
             childMonths=child_months,
-            request_status='done'
+            request_status='done',
+            childYears=rel.years,
+            childExceedMonths=rel.months
         )))
