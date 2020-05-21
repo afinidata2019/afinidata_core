@@ -21,7 +21,25 @@ class BotView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(BotView, self).get_context_data()
-        c['users'] = User.objects.filter(bot_id=self.kwargs['bot_id'])
+        users = User.objects.filter(bot_id=self.kwargs['bot_id'])
+        registered = set(user.pk for user in users.filter(userdata__data_key='user_reg',
+                                                          userdata__data_value='registered'))
+        unregistered = set(user.pk for user in users.filter(userdata__data_key='user_reg',
+                                                            userdata__data_value='unregistered')
+                           .exclude(id__in=registered))
+        with_licence = set(user.pk for user in users.filter(userdata__data_key='tipo_de_licencia'))
+        with_rol = set(user.pk for user in users.filter(userdata__data_key='user_rol'))
+        with_cname = set(user.pk for user in users.filter(userdata__data_key='childName'))
+        with_cdob = set(user.pk for user in users.filter(userdata__data_key='childDOB'))
+        with_cdobi = set(user.pk for user in users.filter(userdata__data_key='childDOBinput'))
+        with_country = set(user.pk for user in users.filter(userdata__data_key='Pais'))
+        c['users'] = users
+        c['registered'] = len(registered)
+        c['unregistered'] = len(unregistered)
+        c['whitout_reg'] = users.count() - (len(registered) + len(unregistered))
+        c['with_licence'] = len(with_licence)
+        c['without_licence'] = users.count() - len(with_licence)
+
         return c
 
 
