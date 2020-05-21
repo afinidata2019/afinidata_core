@@ -22,6 +22,7 @@ class BotView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(BotView, self).get_context_data()
         users = User.objects.filter(bot_id=self.kwargs['bot_id'])
+        total = users.count()
         registered = set(user.pk for user in users.filter(userdata__data_key='user_reg',
                                                           userdata__data_value='registered'))
         unregistered = set(user.pk for user in users.filter(userdata__data_key='user_reg',
@@ -33,12 +34,25 @@ class BotView(LoginRequiredMixin, DetailView):
         with_cdob = set(user.pk for user in users.filter(userdata__data_key='childDOB'))
         with_cdobi = set(user.pk for user in users.filter(userdata__data_key='childDOBinput'))
         with_country = set(user.pk for user in users.filter(userdata__data_key='Pais'))
+        with_premium = set(user.pk for user in users.filter(userdata__data_key='premium'))
         c['users'] = users
         c['registered'] = len(registered)
         c['unregistered'] = len(unregistered)
-        c['whitout_reg'] = users.count() - (len(registered) + len(unregistered))
+        c['whitout_reg'] = total - (len(registered) + len(unregistered))
         c['with_licence'] = len(with_licence)
-        c['without_licence'] = users.count() - len(with_licence)
+        c['without_licence'] = total - c['with_licence']
+        c['with_rol'] = len(with_rol)
+        c['without_rol'] = total - c['with_rol']
+        c['with_name'] = len(with_cname)
+        c['without_name'] = total - c['with_name']
+        c['with_cdob'] = len(with_cdob)
+        c['without_cdob'] = total - c['with_cdob']
+        c['with_cdobi'] = len(with_cdobi)
+        c['without_cdobi'] = total - c['with_cdobi']
+        c['with_country'] = len(with_country)
+        c['without_country'] = total - c['with_country']
+        c['with_premium'] = len(with_premium)
+        c['without_premium'] = total - c['with_premium']
 
         return c
 
