@@ -40,9 +40,21 @@
                 {% endif %}
             </div>
         </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">User stats</h6>
+            </div>
+            <div class="card-body">
+                <strong class="text-gray-900">Users: </strong><span>{{ users.count }}</span><br>
+                <strong class="text-gray-900">Registered: </strong><span>{{ registered }}</span>
+                <strong class="text-gray-900">Unregistered: </strong><span>{{ unregistered }}</span>
+                <strong class="text-gray-900">Without attribute: </strong><span>{{ whitout_reg }}</span><br>
+                <strong class="text-gray-900">Licence: </strong><span>{{ with_licence }}/{{ without_licence }}</span>
+
+            </div>
+        </div>
     </div>
-
-
 
     <div class="content">
 
