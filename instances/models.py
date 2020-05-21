@@ -11,7 +11,7 @@ from posts.models import Post
 
 class Instance(models.Model):
     entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.TextField()
     attributes = models.ManyToManyField(Attribute, through='AttributeValue')
     milestones = models.ManyToManyField(Milestone, through='Response')
     created_at = models.DateTimeField(auto_now_add=True)
