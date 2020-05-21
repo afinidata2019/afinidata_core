@@ -593,9 +593,6 @@ class ValidatesDateView(View):
 
         rel = relativedelta.relativedelta(datetime.now(), date)
         child_months = (rel.years * 12) + rel.months
-        if child_months > 72:
-            return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         request_message='The child have more to 72 months.')))
 
         lang = form.data['locale'][0:2]
         month = months[date.month - 1]
