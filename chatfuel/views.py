@@ -605,5 +605,5 @@ class ValidatesDateView(View):
             childMonths=child_months,
             request_status='done',
             childYears=rel.years,
-            childExceedMonths=rel.months
+            childExceedMonths=rel.months if rel.years > 0 else 0
         )))
