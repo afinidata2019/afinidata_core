@@ -216,5 +216,5 @@ class AddUserInitialData(PermissionRequiredMixin, TemplateView):
                 if request.POST[data]:
                     user.userdata_set.create(data_key=data, data_value=request.POST[data])
                     c = c + 1
-        messages.success(request, 'Added %s for %s' % (c, user))
+        messages.success(request, 'Added %s items in data for %s' % (c, user))
         return redirect('messenger_users:user', id=user.pk)

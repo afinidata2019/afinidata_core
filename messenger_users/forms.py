@@ -41,13 +41,13 @@ class AfinidataChildForm(forms.ModelForm):
 
 class InitialUserForm(forms.Form):
     tipo_de_licencia = forms.CharField(max_length=50, required=False)
-    user_type = forms.ChoiceField(choices=(('caregiver', 'caregiver'), ('professional', 'professional'),
+    user_type = forms.ChoiceField(choices=(('', '--'), ('caregiver', 'caregiver'), ('professional', 'professional'),
                                            ('pregnant', 'pregnant'), ('influencer', 'influencer')), required=False)
-    user_rol = forms.ChoiceField(choices=(('👩 soy su mamá/papá', '👩 soy su mamá/papá'),
+    user_rol = forms.ChoiceField(choices=(('', '--'), ('👩 soy su mamá/papá', '👩 soy su mamá/papá'),
                                           ('🏫trabajo con niños', '🏫trabajo con niños')), required=False)
     Pais = forms.CharField(max_length=20, required=False)
     childMonths = forms.IntegerField(required=False)
-    user_reg = forms.ChoiceField(choices=(('registered', 'registered'), ('unregistered', 'unregistered')),
+    user_reg = forms.ChoiceField(choices=(('', '--'), ('registered', 'registered'), ('unregistered', 'unregistered')),
                                  required=False)
     Premium = forms.CharField(max_length=10, required=False)
     user_locale = forms.CharField(max_length=10, required=False)
