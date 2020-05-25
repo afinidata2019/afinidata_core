@@ -476,6 +476,25 @@ class GetArticleView(View):
 
     def post(self, request, *args, **kwargs):
         form = forms.UserArticleForm(request.POST)
+        if 'article' in form.data:
+            articles = Article.objects.filter(id=form.data['article'])\
+                .only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
+            article = articles.first()
+            new_interaction = ArticleInteraction.objects \
+                .create(user_id=form.data['user_id'], article=article, type='sent')
+
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='done',
+                article_id=article.pk,
+                article_name=article.name,
+                article_content=("%s/articles/%s/?licence=%s" % (os.getenv('CM_DOMAIN_URL'), article.pk,
+                                                                 form.data['licence'])),
+                article_preview=article.preview,
+                article_thumbail=article.thumbnail,
+                article_instance="false",
+                article_instance_name="false"
+            ), messages=[]))
+
         articles = Article.objects.all().only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
         article = articles[random.randrange(0, articles.count())]
         if not form.is_valid():
@@ -487,7 +506,7 @@ class GetArticleView(View):
         if not instances.count() > 0:
             new_interaction = ArticleInteraction.objects\
                 .create(user_id=form.data['user_id'], article=article, type='sent')
-            print(new_interaction)
+
             return JsonResponse(dict(set_attributes=dict(
                 request_status='done',
                 article_id=article.pk,
@@ -509,7 +528,20 @@ class GetArticleView(View):
                         birthdays.append(birthday_list.last())
                 except:
                     pass
-        print(birthdays)
+        if len(birthdays) < 1:
+            new_interaction = ArticleInteraction.objects \
+                .create(user_id=form.data['user_id'], article=article, type='sent')
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='done',
+                article_id=article.pk,
+                article_name=article.name,
+                article_content=("%s/articles/%s/?licence=%s" % (os.getenv('CM_DOMAIN_URL'), article.pk,
+                                                                 form.cleaned_data['licence'])),
+                article_preview=article.preview,
+                article_thumbail=article.thumbnail,
+                article_instance="false",
+                article_instance_name="false"
+            ), messages=[]))
         random_number = random.randrange(0, len(birthdays))
         date = birthdays[random_number]
         rel = relativedelta.relativedelta(datetime.now(), parser.parse(date.value))
