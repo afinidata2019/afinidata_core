@@ -4,6 +4,7 @@ from messenger_users.models import User, UserData
 from attributes.models import Attribute
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 from django.contrib import messages
 from messenger_users import forms
 from dateutil.parser import parse
@@ -194,3 +195,26 @@ class AddChildView(PermissionRequiredMixin, CreateView):
             user
         ))
         return reverse_lazy('messenger_users:want_add_child', kwargs=dict(user_id=user.pk))
+
+
+class AddUserInitialData(PermissionRequiredMixin, TemplateView):
+    template_name = 'messenger_users/userdata_form.html'
+    permission_required = 'messenger_users.add_userdata'
+
+    def get_context_data(self, **kwargs):
+        c = super(AddUserInitialData, self).get_context_data()
+        c['ms_user'] = User.objects.get(id=self.kwargs['user_id'])
+        c['action'] = 'Add Initial'
+        c['form'] = forms.InitialUserForm(self.request.POST or None)
+        return c
+
+    def post(self, request, **kwargs):
+        user = User.objects.get(id=kwargs['user_id'])
+        c = 0
+        for data in request.POST:
+            if data not in ['csrfmiddlewaretoken']:
+                if request.POST[data]:
+                    user.userdata_set.create(data_key=data, data_value=request.POST[data])
+                    c = c + 1
+        messages.success(request, 'Added %s for %s' % (c, user))
+        return redirect('messenger_users:user', id=user.pk)
