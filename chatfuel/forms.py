@@ -1,6 +1,7 @@
 from instances.models import Instance, AttributeValue, PostInteraction
 from attributes.models import Attribute
 from messenger_users.models import User
+from articles.models import Article
 from groups.models import Code
 from posts.models import Post
 from django import forms
@@ -67,6 +68,7 @@ class UserArticleForm(forms.Form):
     user_id = forms.ModelChoiceField(queryset=User.objects.all())
     licence = forms.CharField(max_length=30)
     en = forms.BooleanField(required=False)
+    article = forms.ModelChoiceField(queryset=Article.objects.all().only('id'), required=False)
 
 
 class ValidatesDateForm(forms.Form):
