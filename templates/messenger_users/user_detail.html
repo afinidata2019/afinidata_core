@@ -9,6 +9,11 @@
             <h1 class="h3 mb-0 text-gray-800">{{ object.first_name }} {{ object.last_name }}</h1>
             <div>
                 {% if perms.messenger_users.add_userdata %}
+                    <a href="{% url 'messenger_users:user_initial_data' user_id=user.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Initial User Data</a>
+                {% endif %}
+                {% if perms.messenger_users.add_userdata %}
                     <a href="{% url 'messenger_users:user_create_data' user_id=user.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                         <i class="fas fa-plus fa-sm text-white-50"></i> Add User Data</a>
@@ -51,6 +56,13 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Instances</h1>
+            <div>
+                {% if perms.messenger_users.add_userdata %}
+                    <a href="{% url 'messenger_users:add_child' user_id=user.pk %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Child</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
