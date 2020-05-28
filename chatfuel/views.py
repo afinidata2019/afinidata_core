@@ -574,6 +574,30 @@ class GetArticleView(View):
         ))
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class GetArticleImageView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.ArticleForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(request_status='error', request_error='Article not exist.'))
+
+        if not form.cleaned_data['article'].thumbnail:
+            return JsonResponse(dict(request_status='error', request_error='Article has not image.'))
+
+        return JsonResponse(dict(messages=[
+            dict(
+                attachment=dict(
+                    type='image',
+                    payload=dict(url=form.cleaned_data['article'].thumbnail)
+                )
+            )
+        ]))
+
+
 ''' CHATFUEL UTILITIES '''
 
 
