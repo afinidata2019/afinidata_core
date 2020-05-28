@@ -76,3 +76,7 @@ class ValidatesDateForm(forms.Form):
     locale = forms.CharField(max_length=10)
     variant = forms.ChoiceField(choices=(('true', 'true'), ('false', 'false')))
 
+
+class ArticleForm(forms.Form):
+    article = forms.ModelChoiceField(queryset=Article.objects.all().only('id', 'name', 'thumbnail'))
+
