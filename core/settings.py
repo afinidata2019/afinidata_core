@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'programs.apps.ProgramsConfig',
     'django_extensions',
     'colorfield',
-    'app.apps.AppConfig'
+    'app.apps.AppConfig',
     'articles.apps.ArticlesConfig'
 ]
 
