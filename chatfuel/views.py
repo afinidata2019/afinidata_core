@@ -575,6 +575,21 @@ class GetArticleView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
+class GetArticleTextView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.ArticleForm(self.request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(request_status='error', request_error='Article not exist.'))
+        split_content = form.cleaned_data['article'].text_content.split('| ')
+        messages = [dict(text=content) for content in split_content]
+        return JsonResponse(dict(messages=messages))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class GetArticleImageView(View):
 
     def get(self, request, *args, **kwargs):
