@@ -25,7 +25,7 @@ def run():
             if us:
                 children = us.get_instances().filter(entity_id=1)
                 if children.count() < 1:
-                    ins = Instance.objects.create(entity_id=1, name=sheet.row_values(i)[1])
+                    ins = Instance.objects.create(entity_id=1, name=sheet.row_values(i)[1][:40])
                     assoc = ins.instanceassociationuser_set.create(user_id=us.pk)
                     attr_v = ins.attributevalue_set.create(attribute=attribute, value=sheet.row_values(i)[2])
                     print(ins.pk, ins, assoc, attr_v)
