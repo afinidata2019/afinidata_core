@@ -17,7 +17,6 @@ def run():
     index = 1
     for i in range(sheet.nrows):
         try:
-            #print(sheet.row_values(i))
             u = User.objects.get(id=sheet.row_values(i)[1])
             if u:
                 if sheet.row_values(i)[2]:
