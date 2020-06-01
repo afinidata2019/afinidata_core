@@ -78,5 +78,5 @@ class ValidatesDateForm(forms.Form):
 
 
 class ArticleForm(forms.Form):
-    article = forms.ModelChoiceField(queryset=Article.objects.all().only('id', 'name', 'thumbnail'))
+    article = forms.ModelChoiceField(queryset=Article.objects.all().only('id', 'name', 'thumbnail', 'text_content'))
 
