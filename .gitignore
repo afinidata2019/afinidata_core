@@ -11,3 +11,4 @@ static/
 *.pem
 *.key
 *.csr
+*.xlsx
