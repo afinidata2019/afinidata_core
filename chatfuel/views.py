@@ -495,7 +495,7 @@ class GetArticleView(View):
                 article_instance_name="false"
             ), messages=[]))
 
-        articles = Article.objects.all().only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
+        articles = Article.objects.filter(campaign=False).only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
         article = articles[random.randrange(0, articles.count())]
         if not form.is_valid():
             return JsonResponse(dict(set_attributes=dict(
