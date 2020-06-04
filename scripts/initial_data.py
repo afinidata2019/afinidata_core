@@ -46,8 +46,6 @@ def run():
                 if sheet.row_values(i)[10]:
                     u.userdata_set.create(data_key='Pais', data_value=sheet.row_values(i)[10])
 
-                if sheet.row_values(i)[11]:
-                    u.userdata_set.create(data_key='Pais', data_value=sheet.row_values(i)[11])
             print(u)
         except Exception as e:
             print(e)
