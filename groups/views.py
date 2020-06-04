@@ -38,10 +38,14 @@ class GroupView(PermissionRequiredMixin, DetailView):
         c = super(GroupView, self).get_context_data()
         c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
         children = 0
+        assignations = 0
         for assign in self.object.assignationmessengeruser_set.all():
-            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1).count()
-            children = children + data
+            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
+            children = children + data.count()
+            for child in data:
+                assignations = assignations + child.postinteraction_set.filter(type='dispatched').count()
         c['children'] = children
+        c['assignations'] = assignations
         return c
 
 
