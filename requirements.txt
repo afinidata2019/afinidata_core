@@ -4,7 +4,7 @@ certifi==2018.11.29
 cffi==1.14.0
 chardet==3.0.4
 cryptography==2.9
-Django==2.2.10
+Django==2.2.13
 django-colorfield==0.2.2
 django-cors-headers==3.3.0
 django-extensions==2.2.8
