@@ -45,6 +45,61 @@ class CreateMessengerUserView(CreateView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
+class VerifyMessengerUserView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request):
+        form = forms.MessengerUserForm(self.request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='done',
+                                                         user_exist='false')))
+
+        user = form.cleaned_data['user']
+
+        return JsonResponse(dict(set_attributes=dict(request_status='done',
+                                                     user_exist='true',
+                                                     user_id=user.pk)))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ReplaceUserInfoView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request):
+        form = forms.ReplaceUserForm(self.request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='error',
+                request_error='Incomplete params.',
+                service_name='Replace Info User'
+            )))
+
+        users = User.objects.filter(id=form.data['id'])
+        if not users.count() > 0:
+            return JsonResponse(dict(set_attributes=dict(
+                request_status='error',
+                request_error='User with ID %s not exist.' % form.data['id'],
+                service_name='Replace Info User'
+            )))
+        user = users.first()
+        user.first_name = form.data['first_name']
+        user.last_name = form.data['last_name']
+        user.channel_id = form.data['channel_id']
+        user.last_channel_id = form.data['channel_id']
+        user.username = form.data['channel_id']
+        user.save()
+        return JsonResponse(dict(set_attributes=dict(
+            request_status='done',
+            service_name='Replace Info User'
+        )))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateMessengerUserDataView(CreateView):
     model = UserData
     fields = ('user', 'data_key', 'data_value')
@@ -56,7 +111,6 @@ class CreateMessengerUserDataView(CreateView):
     def form_invalid(self, form):
         return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                      request_message='Invalid params'), messages=[]))
-
 
 
 @method_decorator(csrf_exempt, name='dispatch')
