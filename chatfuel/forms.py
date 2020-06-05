@@ -60,6 +60,17 @@ class UserForm(forms.Form):
     en = forms.BooleanField(required=False)
 
 
+class MessengerUserForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), to_field_name='last_channel_id')
+
+
+class ReplaceUserForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'channel_id')
+
+
 class BlockRedirectForm(forms.Form):
     next = forms.CharField(max_length=40)
 
