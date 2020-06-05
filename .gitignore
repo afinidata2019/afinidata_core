@@ -15,3 +15,5 @@ static/
 *.key
 *.csr
 *.xlsx
+
+*.csv
