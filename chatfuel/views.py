@@ -32,17 +32,17 @@ class CreateMessengerUserView(CreateView):
         form.instance.backup_key = form.data['channel_id']
         user = form.save()
         return JsonResponse(dict(set_attributes=dict(user_id=user.pk, request_status='done',
-                                                     service_name='Create user')))
+                                                     service_name='Create User')))
 
     def form_invalid(self, form):
         user_set = User.objects.filter(channel_id=form.data['channel_id'])
         if user_set.count() > 0:
             return JsonResponse(dict(set_attributes=dict(user_id=user_set.last().pk,
                                                          request_status='error', request_error='User exists',
-                                                         service_name='Create user')))
+                                                         service_name='Create User')))
 
         return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params',
-                                                     service_name='Create user')))
+                                                     service_name='Create User')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -56,12 +56,12 @@ class VerifyMessengerUserView(View):
 
         if not form.is_valid():
             return JsonResponse(dict(set_attributes=dict(request_status='done', user_exist='false',
-                                                         service_name='Verify user')))
+                                                         service_name='Verify User')))
 
         user = form.cleaned_data['user']
 
         return JsonResponse(dict(set_attributes=dict(request_status='done', user_exist='true', user_id=user.pk,
-                                                     service_name='Verify user')))
+                                                     service_name='Verify User')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -98,26 +98,26 @@ class CreateMessengerUserDataView(CreateView):
 
     def form_valid(self, form):
         form.save()
-        return JsonResponse(dict(set_attributes=dict(request_status='done'), messages=[]))
+        return JsonResponse(dict(set_attributes=dict(request_status='done', service_name='Create User Data')))
 
     def form_invalid(self, form):
-        return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                     request_error='Invalid params'), messages=[]))
+        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params',
+                                                     service_name='Create User Data')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class GetInitialUserData(View):
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method'),
-                                 messages=[]))
+        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method',
+                                                     service_name='Get Initial User Data')))
 
     def post(self, request):
         form = forms.UserForm(request.POST)
 
         if not form.is_valid():
-            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.'),
-                                     messages=[]))
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.',
+                                                         service_name='Get Initial User Data')))
 
         attributes = dict()
 
@@ -134,15 +134,15 @@ class GetInitialUserData(View):
 class GetInstancesByUserView(View):
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method'),
-                                 messages=[]))
+        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid Method',
+                                                     service_name='Get Instances')))
 
     def post(self, request):
         form = forms.GetInstancesForm(request.POST)
 
         if not form.is_valid():
-            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.'),
-                                     messages=[]))
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid data.',
+                                                         service_name='Get Instances')))
 
         label = "Choice your instance: "
         try:
@@ -155,7 +155,7 @@ class GetInstancesByUserView(View):
                    user.get_instances()]
 
         return JsonResponse(dict(
-            set_attributes=dict(request_status='done'),
+            set_attributes=dict(request_status='done', service_name='Get Instances'),
             messages=[
                 dict(
                     text=label,
@@ -170,17 +170,15 @@ def create_instance(request):
 
     if request.method == 'GET':
         return JsonResponse(dict(
-            set_attributes=dict(request_status='error', request_error='Invalid Method'),
-            messages=[]
-        ))
+            set_attributes=dict(request_status='error', request_error='Invalid Method',
+                                service_name='Create Instance')))
 
     form = forms.InstanceModelForm(request.POST)
 
     if not form.is_valid():
         return JsonResponse(dict(
-            set_attributes=dict(request_status='error', request_error='Invalid Params'),
-            messages=[]
-        ))
+            set_attributes=dict(request_status='error', request_error='Invalid Params',
+                                service_name='Create Instance')))
 
     new_instance = form.save()
     assignation = InstanceAssociationUser.objects.create(user_id=form.data['user_id'], instance=new_instance)
@@ -190,10 +188,9 @@ def create_instance(request):
             request_status='done',
             instance=new_instance.pk,
             instance_name=new_instance.name,
-            instance_assignation_id=assignation.pk
-        ),
-        messages=[]
-    ))
+            instance_assignation_id=assignation.pk,
+            service_name='Create Instance'
+        )))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -209,8 +206,8 @@ class GetInstanceAttributeView(TemplateView):
         form = forms.GetInstanceAttributeValue(self.request.POST)
 
         if not form.is_valid():
-            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params'),
-                                     messages=[]))
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params',
+                                                         service_name='Get Instance Attribute')))
 
         instance = Instance.objects.get(id=form.data['instance'])
         attributes = instance.entity.attributes.filter(name=form.data['attribute'])
@@ -218,8 +215,8 @@ class GetInstanceAttributeView(TemplateView):
         if not attributes.count() > 0:
             return JsonResponse(dict(set_attributes=dict(
                 request_status='error',
-                request_error='Entity of instance has not attribute with name %s.' % form.data['attribute']),
-                                     messages=[]))
+                request_error='Entity of instance has not attribute with name %s.' % form.data['attribute'],
+                service_name='Get Instance Attribute')))
 
         attribute = Attribute.objects.get(name=form.data['attribute'])
         instance_attributes = AttributeValue.objects.filter(attribute=attribute, instance=instance)
@@ -227,15 +224,15 @@ class GetInstanceAttributeView(TemplateView):
         if not instance_attributes.count() > 0:
             return JsonResponse(dict(set_attributes=dict(
                 request_status='error',
-                request_error='Instance has not values with attribute: %s.' % form.data['attribute']),
-                messages=[]))
+                request_error='Instance has not values with attribute: %s.' % form.data['attribute'],
+                service_name='Get Instance Attribute')))
 
         return JsonResponse(
             dict(set_attributes={
                 'request_status': 'done',
-                form.data['attribute']: instance_attributes.last().value
-            },
-                 messages=[])
+                form.data['attribute']: instance_attributes.last().value,
+                'service_name': 'Get Instance Attribute'
+            })
         )
 
 
@@ -256,8 +253,9 @@ class ChangeInstanceNameView(TemplateView):
         if not form.is_valid():
             return JsonResponse(dict(set_attributes=dict(
                 request_status='error',
-                request_error='Invalid Params.'
-            ), messages=[]))
+                request_error='Invalid Params.',
+                service_name='Change Instance Name'
+            )))
 
         instance = Instance.objects.get(id=form.data['instance'])
         instance.name = form.data['name']
@@ -266,7 +264,8 @@ class ChangeInstanceNameView(TemplateView):
         return JsonResponse(dict(set_attributes=dict(
             request_status='done',
             request_message="name for instance has been changed.",
-            instance_name=instance.name
+            instance_name=instance.name,
+            service_name='Change Instance Name'
         ), messages=[]))
 
 
@@ -277,19 +276,19 @@ class ChangeInstanceNameView(TemplateView):
 class VerifyCodeView(View):
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(dict(request_status='error', request_error='Invalid Method'))
+        return JsonResponse(dict(request_status='error', request_error='Invalid Method',
+                                 service_name='Verify Code'))
 
     def post(self, request):
         form = forms.VerifyCodeForm(request.POST)
         if not form.is_valid():
-            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params'),
-                                     messages=[]))
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params',
+                                                         service_name='Verify Code')))
 
         code = Code.objects.get(code=form.data['code'])
 
         return JsonResponse(dict(set_attributes=dict(request_status='done', request_code=code.code,
-                                                     request_code_group=code.group.name),
-                                 messages=[]))
+                                                     request_code_group=code.group.name, service_name='Verify Code')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -311,13 +310,15 @@ class ExchangeCodeView(TemplateView):
                 exchange = AssignationMessengerUser.objects.create(messenger_user_id=user.pk, group=code.group,
                                                                    code=code)
                 code.exchange()
-                return JsonResponse(dict(set_attributes=dict(request_status='done'), messages=[]))
+                return JsonResponse(dict(set_attributes=dict(request_status='done', service_name='Exchange Code')))
             else:
                 return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                             request_error='User be in group'), messages=[]))
+                                                             request_error='User be in group',
+                                                             service_name='Exchange Code')))
         else:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         request_error='User ID or code wrong'), messages=[]))
+                                                         request_error='User ID or code wrong',
+                                                         service_name='Exchange Code')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -338,14 +339,13 @@ class CreateInstanceAttributeView(CreateView):
 
         if not form.instance.instance.entity.attributes.filter(id=form.instance.attribute.pk):
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         request_error='Attribute not in instance'), messages=[]))
+                                                         request_error='Attribute not in instance',
+                                                         service_name='Create Instance Attribute')))
 
         attribute_value = form.save()
 
-        return JsonResponse(dict(set_attributes=dict(
-            set_attributes=dict(request_status='done', request_attribute_value_id=attribute_value.pk),
-            messages=[]
-        )))
+        return JsonResponse(dict(set_attributes=dict(request_status='done', request_attribute_value_id=attribute_value.pk,
+                                                     service_name='Create Instance Attribute')))
 
     def form_invalid(self, form):
         return JsonResponse(dict(set_attributes=dict(request_status='error',
