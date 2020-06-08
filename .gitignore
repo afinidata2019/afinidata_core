@@ -17,3 +17,5 @@ static/
 *.xlsx
 
 *.csv
+
+*.csv__activities
