@@ -25,7 +25,7 @@ def run():
             if f_counter > 0:
                 f_data = "{:.2f}".format(f_total / f_counter)
             for c in post.messengerusercommentpost_set.all():
-                comments = comments + "%s \n" % c.comment
+                comments = comments + "%s |  \n" % c.comment
             print(f_data)
             data = dict(ID=post.pk, Name=post.name, Feedback=f_data, Comentarios=comments)
             writer.writerow(data)
