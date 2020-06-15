@@ -47,7 +47,8 @@ def run():
                         other_limit_date = parse("%s-%s-%s 23:59:59" % (year, month, other_numb))
                     interactions = Interaction.objects.filter(created_at__gte=other_date,
                                                               created_at__lt=other_limit_date, user_id__in=id_users,
-                                                              type__in=['opened', 'session'])
+                                                              type__in=['opened', 'session', 'Start_Session',
+                                                                        'dispatched', 'broadcast_init'])
                     day_users = set(i.user_id for i in interactions)
                     copy_data[f'''{year}-{month}-{other_numb}'''] = len(day_users)
 
