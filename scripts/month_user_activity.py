@@ -48,7 +48,7 @@ def run():
                     interactions = Interaction.objects.filter(created_at__gte=other_date,
                                                               created_at__lt=other_limit_date, user_id__in=id_users,
                                                               type__in=['opened', 'session', 'Start_Session',
-                                                                        'dispatched', 'broadcast_init'])
+                                                                        'dispatched'])
                     day_users = set(i.user_id for i in interactions)
                     copy_data[f'''{year}-{month}-{other_numb}'''] = len(day_users)
 
