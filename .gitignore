@@ -19,3 +19,5 @@ static/
 *.csv
 
 *.csv__activities
+
+docs/_build/
