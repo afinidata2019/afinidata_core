@@ -5,7 +5,7 @@ import os
 
 
 def run():
-    posts = Post.objects.all().only('id', 'name')
+    posts = Post.objects.filter(status='published').only('id', 'name', 'status')
     with open(os.path.join(BASE_DIR, 'posts_info.csv'), 'w', newline='') as csvfile:
 
         fieldnames = ['ID', 'Name', 'Feedback', 'Comentarios']
