@@ -67,6 +67,17 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         return c
 
 
+class InstanceReportView(DetailView):
+    model = Instance
+    pk_url_kwarg = 'instance_id'
+    template_name = 'instances/instance_report.html'
+    
+    def get_context_data(self, **kwargs):
+        c = super(InstanceReportView, self).get_context_data(**kwargs)
+        print(c)
+        return c
+
+
 class NewInstanceView(PermissionRequiredMixin, CreateView):
     permission_required = 'instances.add_instance'
     model = Instance
