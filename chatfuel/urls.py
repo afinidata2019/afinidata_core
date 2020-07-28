@@ -24,5 +24,6 @@ urlpatterns = [
     path('get_article_text/', views.GetArticleTextView.as_view(), name='get_article_text'),
     path('validates_date/', views.ValidatesDateView.as_view(), name='validates_date'),
     path('verify_user/', views.VerifyMessengerUserView.as_view(), name='verify_user'),
-    path('replace_user_info/', views.ReplaceUserInfoView.as_view(), name='replace_user_info')
+    path('replace_user_info/', views.ReplaceUserInfoView.as_view(), name='replace_user_info'),
+    path('get_milestone/', views.GetMilestoneView.as_view(), name='get_milestone')
 ]

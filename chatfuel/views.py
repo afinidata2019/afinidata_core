@@ -1,4 +1,4 @@
-from instances.models import InstanceAssociationUser, Instance, AttributeValue, PostInteraction
+from instances.models import InstanceAssociationUser, Instance, AttributeValue, PostInteraction, Response
 from django.views.generic import View, CreateView, TemplateView, UpdateView
 from articles.models import Article, Interaction as ArticleInteraction
 from groups.models import Code, AssignationMessengerUser
@@ -9,6 +9,7 @@ from messenger_users.models import User, UserData
 from django.http import JsonResponse, Http404
 from dateutil import relativedelta, parser
 from attributes.models import Attribute
+from milestones.models import Milestone
 from groups import forms as group_forms
 from django.utils import timezone
 from datetime import datetime
@@ -657,6 +658,44 @@ class GetArticleImageView(View):
                 )
             )
         ]))
+
+
+''' MILESTONES UTILITIES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetMilestoneView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.InstanceForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        instance = form.cleaned_data['instance']
+        birth = instance.get_attribute_values('birthday')
+        if not birth:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not birthday.')))
+        date = parser.parse(birth.value)
+        rd = relativedelta.relativedelta(timezone.now(), date)
+        months = rd.months
+        if rd.years:
+            months = months + (rd.years * 12)
+        responses = instance.response_set.filter(response='done')
+        milestones = Milestone.objects.filter(value__gte=months, value__lte=months)\
+            .exclude(id__in=[i.milestone_id for i in responses])\
+            .order_by('?')
+        if not milestones.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not milestones to do.')))
+        milestone = milestones.first()
+
+        return JsonResponse(dict(set_attributes=dict(request_status='done',
+                                                     milestone=milestone.pk,
+                                                     milestone_text=milestone.name)))
 
 
 ''' CHATFUEL UTILITIES '''
