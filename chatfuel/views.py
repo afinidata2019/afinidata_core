@@ -698,6 +698,26 @@ class GetMilestoneView(View):
                                                      milestone_text=milestone.name)))
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class CreateResponseView(CreateView):
+    model = Response
+    fields = ('instance', 'milestone', 'response')
+
+    def form_valid(self, form):
+        form.instance.created_at = timezone.now()
+        r = form.save()
+        if r.response == 'si':
+            print('done')
+            r.response = 'done'
+        else:
+            r.response = 'failed'
+        r.save()
+        return JsonResponse(dict(set_attributes=dict(request_status='done', request_transaction_id=r.pk)))
+
+    def form_invalid(self, form):
+        return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+
 ''' CHATFUEL UTILITIES '''
 
 
