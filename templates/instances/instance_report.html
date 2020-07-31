@@ -7,17 +7,357 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- ChartsJs -->
+    <script src="{% static 'chartjs/dist/Chart.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.0/Chart.bundle.min.js"></script>
+
+    <style>
+        div{
+            font-size:10px;
+            text-align: center;
+        }
+        .container {
+          position: relative;
+          text-align: center;
+        }
+        .centered {
+          position: absolute;
+          top: 80%;
+          left: 50%;
+          transform: translate(-50%, -30%);
+        }
+        .center {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 50%;
+        }
+        .h1{
+          text-align: center;
+          font-size:25px;
+        }
+        .h2{
+          text-align: center;
+          font-size:17px;
+          padding: 20px;
+        }
+        .row{
+          width: 100%;
+          margin-left: 10px;
+          margin-right: 10px;
+          padding: 10px;
+          margin: 0;
+        }
+        canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			width: 100%;
+		}
+		.rcorners {
+          border-radius: 5px 50px 50px 5px;
+          padding: 10px;
+          width: 100%;
+          height: auto;
+          text-align: left;
+          font-size:15px;
+        }
+    </style>
 </head>
 <body>
-    {{ object.name }}
-
-    {{ object.get_users }}
-
-    {{ object.get_assigned_milestones }}
-
-    {{ object.get_activities }}
-
-    {{ developer }}
+<div class="row container">
+    <div class="col-12">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:30%;">
+        <div class="centered">Estuardo</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 h1">Reporte semanal de tu peque</div>
+</div>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-4">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="Nene" style="width:40%;">
+        Sesiones completadas
+    </div>
+    <div class="col-4">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="Nene" style="width:40%;">
+        Etapa mimoso
+    </div>
+    <div class="col-2"></div>
+</div>
+<div class="row">
+    <div class="col-12 h2">Actividades completadas esta semana</div>
+</div>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <canvas id="chart0"></canvas>
+    </div>
+    <div class="col-2"></div>
+</div>
+<div class="row" style="height:80px; padding:0px;">
+    <div class="col-1"></div>
+    <div class="col-2">
+        <canvas id="chart1"></canvas>
+    </div>
+    <div class="col-2">
+        <canvas id="chart2"></canvas>
+    </div>
+    <div class="col-2">
+        <canvas id="chart3"></canvas>
+    </div>
+    <div class="col-2">
+        <canvas id="chart4"></canvas>
+    </div>
+    <div class="col-2">
+        <canvas id="chart5"></canvas>
+    </div>
+    <div class="col-1"></div>
+</div>
+<br><br>
+<div class="row">
+    <div class="col-12 h2">Progreso por área</div>
+</div>
+<div class="row" style="height:50px; padding: 5px;">
+    <div class="col-2"></div>
+    <div class="col-1">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motor" style="heigth:100%;">
+    </div>
+    <div class="col-8">
+        <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #a06ade);">Desarrollo motor</p>
+    </div>
+    <div class="col-1"></div>
+</div>
+<div class="row" style="height:50px; padding: 5px;">
+    <div class="col-2"></div>
+    <div class="col-1">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivo" style="heigth:100%;">
+    </div>
+    <div class="col-8">
+        <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #ebbd3f);">Desarrollo cognitivo</p>
+    </div>
+    <div class="col-1"></div>
+</div>
+<div class="row" style="height:50px; padding: 5px;">
+    <div class="col-2"></div>
+    <div class="col-1">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_socioe.png' %}" alt="Socio-emocional" style="heigth:100%;">
+    </div>
+    <div class="col-8">
+        <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #6ab061);">Desarrollo socio-emocional</p>
+    </div>
+    <div class="col-1"></div>
+</div>
+<div class="row">
+    <div class="col-12 h2">Hitos completados de 0-3 meses</div>
+</div>
+<div class="row" style="padding:0px; heigth:50px;">
+    <div class="col-2"></div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s1.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s2.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s3.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s4.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s5.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s6.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s7.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-1" style="padding:0px; heigth:50px;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s8.png' %}" alt="Nene" style="width:100%;">
+    </div>
+    <div class="col-2"></div>
+</div>
+<br><br>
+<div class="row">
+    <div class="col-12">Afinidata</div>
+</div>
 </body>
-<script src="{% static 'chartjs/dist/Chart.min.js' %}"></script>
+<script>
+    Chart.pluginService.register({
+      beforeDraw: function(chart) {
+        if (chart.config.options.elements.center) {
+          // Get ctx from string
+          var ctx = chart.chart.ctx;
+
+          // Get options from the center object in options
+          var centerConfig = chart.config.options.elements.center;
+          var fontStyle = centerConfig.fontStyle || 'Arial';
+          var txt = centerConfig.text;
+          var color = centerConfig.color || '#000';
+          var maxFontSize = centerConfig.maxFontSize || 75;
+          var sidePadding = centerConfig.sidePadding || 20;
+          var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+          // Start with a base font of 30px
+          ctx.font = "30px " + fontStyle;
+
+          // Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+          var stringWidth = ctx.measureText(txt).width;
+          var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+          // Find out how much the font can grow in width.
+          var widthRatio = elementWidth / stringWidth;
+          var newFontSize = Math.floor(30 * widthRatio);
+          var elementHeight = (chart.innerRadius * 2);
+
+          // Pick a new font size so it will not be larger than the height of label.
+          var fontSizeToUse = Math.min(newFontSize, elementHeight, maxFontSize);
+          var minFontSize = centerConfig.minFontSize;
+          var lineHeight = centerConfig.lineHeight || 25;
+          var wrapText = false;
+
+          if (minFontSize === undefined) {
+            minFontSize = 20;
+          }
+
+          if (minFontSize && fontSizeToUse < minFontSize) {
+            fontSizeToUse = minFontSize;
+            wrapText = true;
+          }
+
+          // Set font settings to draw it correctly.
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+          var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+          ctx.font = fontSizeToUse + "px " + fontStyle;
+          ctx.fillStyle = color;
+
+          if (!wrapText) {
+            ctx.fillText(txt, centerX, centerY);
+            return;
+          }
+
+          var words = txt.split(' ');
+          var line = '';
+          var lines = [];
+
+          // Break words up into multiple lines if necessary
+          for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = ctx.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > elementWidth && n > 0) {
+              lines.push(line);
+              line = words[n] + ' ';
+            } else {
+              line = testLine;
+            }
+          }
+
+          // Move the center up depending on line height and number of lines
+          centerY -= (lines.length / 2) * lineHeight;
+
+          for (var n = 0; n < lines.length; n++) {
+            ctx.fillText(lines[n], centerX, centerY);
+            centerY += lineHeight;
+          }
+          //Draw text in center
+          ctx.fillText(line, centerX, centerY);
+        }
+      }
+    });
+
+
+var config0 = {
+  type: 'doughnut',
+  data: {
+    labels: [
+      "Completadas",
+      "Faltantes"
+    ],
+    datasets: [{
+      data: [30, 5],
+      backgroundColor: [
+        "#FF6384",
+        "#d9d9d9"
+      ],
+      hoverBackgroundColor: [
+        "#292cd6",
+        "#d9d9d9"
+      ]
+    }]
+  },
+  options: {
+    elements: {
+      center: {
+        text: '78%',
+        color: '#792ad4', // Default is #000000
+        fontStyle: 'Arial', // Default is Arial
+        sidePadding: 60, // Default is 20 (as a percentage)
+        minFontSize: 15, // Default is 20 (in px), set to false and text will not wrap.
+        lineHeight: 25 // Default is 25 (in px), used for when text wraps
+      }
+    },
+    legend: {
+        display: false,
+        labels: {
+            fontColor: 'rgb(255, 99, 132)'
+        }
+    },
+    cutoutPercentage: 70
+  }
+};
+
+var ctx0 = document.getElementById("chart0").getContext("2d");
+var ctx1 = document.getElementById("chart1").getContext("2d");
+var ctx2 = document.getElementById("chart2").getContext("2d");
+var ctx3 = document.getElementById("chart3").getContext("2d");
+var ctx4 = document.getElementById("chart4").getContext("2d");
+var ctx5 = document.getElementById("chart5").getContext("2d");
+
+config1 = JSON.parse(JSON.stringify(config0));
+config2 = JSON.parse(JSON.stringify(config0));
+config3 = JSON.parse(JSON.stringify(config0));
+config4 = JSON.parse(JSON.stringify(config0));
+config5 = JSON.parse(JSON.stringify(config0));
+
+var gradientStroke = ctx0.createLinearGradient(document.getElementById('chart0').offsetWidth*0.6, 0, document.getElementById('chart0').offsetWidth*0.3, document.getElementById('chart0').offsetHeight*0.8);
+gradientStroke.addColorStop(0, "#711dd1");
+gradientStroke.addColorStop(0.6, "#4457d4");
+gradientStroke.addColorStop(1, "#40dfff");
+
+config0.data.datasets[0].backgroundColor[0] = gradientStroke;
+
+var gradientStroke = ctx0.createLinearGradient(document.getElementById('chart1').offsetWidth*0.6, 0, document.getElementById('chart1').offsetWidth*0.3, document.getElementById('chart1').offsetHeight*0.8);
+gradientStroke.addColorStop(0, "#792ad4");
+gradientStroke.addColorStop(0.6, "#4457d4");
+gradientStroke.addColorStop(1, "#40dfff");
+
+config1.data.datasets[0].backgroundColor[0] = gradientStroke;
+config2.data.datasets[0].backgroundColor[0] = gradientStroke;
+config3.data.datasets[0].backgroundColor[0] = gradientStroke;
+config4.data.datasets[0].backgroundColor[0] = gradientStroke;
+config5.data.datasets[0].backgroundColor[0] = gradientStroke;
+
+config1.options.elements.center.text = "L";
+config2.options.elements.center.text = "M";
+config3.options.elements.center.text = "M";
+config4.options.elements.center.text = "J";
+config5.options.elements.center.text = "V";
+
+config0.options.cutoutPercentage = 80;
+
+var chart0 = new Chart(ctx0, config0);
+var chart1 = new Chart(ctx1, config1);
+var chart2 = new Chart(ctx2, config2);
+var chart3 = new Chart(ctx3, config3);
+var chart4 = new Chart(ctx4, config4);
+var chart5 = new Chart(ctx5, config5);
+
+</script>
 </html>
