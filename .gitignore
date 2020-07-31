@@ -14,4 +14,10 @@ static/
 *.pem
 *.key
 *.csr
+*.xlsx
 
+*.csv
+
+*.csv__activities
+
+docs/_build/

@@ -21,5 +21,10 @@ urlpatterns = [
     path('redirect_to_block/', views.BlockRedirectView.as_view(), name='redirect_to_block'),
     path('get_article/', views.GetArticleView.as_view(), name='get_article'),
     path('get_article_image/', views.GetArticleImageView.as_view(), name='get_article_image'),
-    path('validates_date/', views.ValidatesDateView.as_view(), name='validates_date')
+    path('get_article_text/', views.GetArticleTextView.as_view(), name='get_article_text'),
+    path('validates_date/', views.ValidatesDateView.as_view(), name='validates_date'),
+    path('verify_user/', views.VerifyMessengerUserView.as_view(), name='verify_user'),
+    path('replace_user_info/', views.ReplaceUserInfoView.as_view(), name='replace_user_info'),
+    path('get_milestone/', views.GetMilestoneView.as_view(), name='get_milestone'),
+    path('response_milestone/', views.CreateResponseView.as_view(), name='response_milestone')
 ]
