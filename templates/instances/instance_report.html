@@ -1,4 +1,4 @@
-
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <!-- Bootstrap core CSS -->
-    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- ChartsJs -->
-    <script src="https://www.chartjs.org/dist/2.9.3/Chart.min.js"></script>
+    <script src="{% static 'chartjs/dist/Chart.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.0/Chart.bundle.min.js"></script>
 
     <style>
@@ -69,7 +69,7 @@
 <body>
 <div class="row container">
     <div class="col-12">
-        <img class="center" src="../img/Elementos_1080x1080_nene.png" alt="Nene" style="width:30%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:30%;">
         <div class="centered">Estuardo</div>
     </div>
 </div>
@@ -79,11 +79,11 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col-4">
-        <img class="center" src="../img/Elementos_1080x1080_estrella.png" alt="Nene" style="width:40%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="Nene" style="width:40%;">
         Sesiones completadas
     </div>
     <div class="col-4">
-        <img class="center" src="../img/Elementos_1080x1080_estrella.png" alt="Nene" style="width:40%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="Nene" style="width:40%;">
         Etapa mimoso
     </div>
     <div class="col-2"></div>
@@ -124,7 +124,7 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="../img/Elementos_1080x1080_motor.png" alt="Motor" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motor" style="heigth:100%;">
     </div>
     <div class="col-8">
         <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #a06ade);">Desarrollo motor</p>
@@ -134,7 +134,7 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="../img/Elementos_1080x1080_cognitivo.png" alt="Cognitivo" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivo" style="heigth:100%;">
     </div>
     <div class="col-8">
         <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #ebbd3f);">Desarrollo cognitivo</p>
@@ -144,7 +144,7 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="../img/Elementos_1080x1080_socioe.png" alt="Socio-emocional" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_socioe.png' %}" alt="Socio-emocional" style="heigth:100%;">
     </div>
     <div class="col-8">
         <p class="rcorners" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #6ab061);">Desarrollo socio-emocional</p>
@@ -157,28 +157,28 @@
 <div class="row" style="padding:0px; heigth:50px;">
     <div class="col-2"></div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s1.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s1.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s2.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s2.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s3.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s3.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s4.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s4.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s5.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s5.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s6.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s6.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s7.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s7.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-1" style="padding:0px; heigth:50px;">
-        <img class="center" src="../img/Elementos_1080x1080_s8.png" alt="Nene" style="width:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_s8.png' %}" alt="Nene" style="width:100%;">
     </div>
     <div class="col-2"></div>
 </div>
