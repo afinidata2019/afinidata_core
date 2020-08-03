@@ -69,31 +69,17 @@ class Instance(models.Model):
                 post.completed = None
         return posts
 
-    def get_activities_area(self, area, date):
-        posts = Post.objects.\
-            filter(id__in=set([x.post_id for x in self.postinteraction_set.filter(created_at__gte=date)]))\
-            .filter(area_id=area).only('id', 'name')
-        for post in posts:
-            post.assign = self.postinteraction_set.filter(post_id=post.id, type='dispatched').last()
-            sessions = self.postinteraction_set.filter(post_id=post.id, type='session')
-            if sessions.count() > 0:
-                post.completed = sessions.last()
-            else:
-                post.completed = None
-        return posts
-
-    def get_time_activities(self, first_limit, last_limit):
-        posts = Post.objects. \
-            filter(id__in=set([x.post_id for x in self.postinteraction_set\
-                              .filter(created_at__gte=first_limit, created_at__lte=last_limit).filter()]))\
-            .only('id', 'name')
-        for post in posts:
-            post.assign = self.postinteraction_set.filter(post_id=post.id, type='dispatched').last()
-            sessions = self.postinteraction_set.filter(post_id=post.id, type='session')
-            if sessions.count() > 0:
-                post.completed = sessions.last()
-            else:
-                post.completed = None
+    def get_activities_area(self, area, first_limit, last_limit):
+        if area > 0:
+            posts = Post.objects.\
+                filter(id__in=set([x.post_id for x in self.postinteraction_set \
+                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit).filter()])) \
+                .filter(area_id=area).only('id', 'name')
+        else:
+            posts = Post.objects. \
+                filter(id__in=set([x.post_id for x in self.postinteraction_set \
+                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit).filter()])) \
+                .only('id', 'name')
         return posts
 
     def get_completed_activities(self):
