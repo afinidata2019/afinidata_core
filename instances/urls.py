@@ -12,5 +12,6 @@ urlpatterns = [
     path('<int:instance_id>/add_attribute/', views.AddAttributeToInstanceView.as_view(), name='add_instance_attribute'),
     path('<int:instance_id>/edit_attribute/<int:attribute_id>/', views.AttributeValueEditView.as_view(),
          name='edit_instance_attribute'),
-    path('<int:instance_id>/report/', views.InstanceReportView.as_view(), name='instance_report')
+    path('<int:instance_id>/report/', views.InstanceReportView.as_view(), name='instance_report'),
+    path('<int:instance_id>/milestones/', views.InstanceReportView.as_view(), name='instance_milestones')
 ]
