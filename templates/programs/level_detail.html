@@ -46,4 +46,52 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Milestones</h1>
+            <div>
+                {% if perms.programs.add_levelmilestoneassociation %}
+                    <a href="{% url 'programs:add_level_milestone' level_id=object.pk program_id=object.program_id %}"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Assign Milestone</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for milestone in object.milestones.all %}
+                            <tr>
+                                <td>{{ milestone.pk }}</td>
+                                <td>{{ milestone.code }}</td>
+                                <td>{{ milestone.name }}</td>
+                                <td>
+                                    {% if perms.milestones.view_milestone %}
+                                        <a href="{% url 'milestones:milestone' milestone_id=milestone.pk %}"
+                                           class="btn btn-primary"><i class="fa fa-eye"></i></a>
+                                    {% endif %} 
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
