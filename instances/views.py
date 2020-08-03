@@ -74,7 +74,17 @@ class InstanceReportView(DetailView):
     
     def get_context_data(self, **kwargs):
         c = super(InstanceReportView, self).get_context_data(**kwargs)
-        print(c)
+        c['trabajo_motor'] = self.object.get_activities_area(2, '2020-07-27').count()
+        c['trabajo_cognitivo'] = self.object.get_activities_area(1, '2020-07-27').count()
+        c['trabajo_socio'] = self.object.get_activities_area(3, '2020-07-27').count()
+        c['activities'] = [
+            self.object.get_time_activities('2020-07-27', '2020-08-01').count(),
+            self.object.get_time_activities('2020-07-27', '2020-07-28').count(),
+            self.object.get_time_activities('2020-07-28', '2020-07-29').count(),
+            self.object.get_time_activities('2020-07-29', '2020-07-30').count(),
+            self.object.get_time_activities('2020-07-30', '2020-07-31').count(),
+            self.object.get_time_activities('2020-07-31', '2020-08-01').count()
+        ]
         return c
 
 

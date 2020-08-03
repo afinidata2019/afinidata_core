@@ -24,7 +24,7 @@
         }
         .centered {
           position: absolute;
-          top: 80%;
+          top: 85%;
           left: 50%;
           transform: translate(-50%, -30%);
         }
@@ -67,11 +67,13 @@
     </style>
 </head>
 <body>
-<div class="row container">
-    <div class="col-12">
-        <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:30%;">
+<div class="row" style="width:100%; margin:0px;">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:100%;">
         <div class="centered" style="font-size:15px;">{{ object.name }}</div>
     </div>
+    <div class="col-4"></div>
 </div>
 <div class="row">
     <div class="col-12 h1">Reporte semanal de tu peque</div>
@@ -80,7 +82,7 @@
     <div class="col-2"></div>
     <div class="col-4" style="font-size:15px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="estrella" style="width:40%;">
-        {{ object.get_activities.count }} Sesiones completadas
+        <b>{{ object.get_activities.count }}</b> Sesiones completadas
     </div>
     <div class="col-4" style="font-size:15px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="estrella" style="width:40%;">
@@ -124,7 +126,7 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motor" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motor" style="width:100%;">
     </div>
     <div class="col-8">
         <p class="rcorners" id="trabajo_motor" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #a06ade);">Desarrollo motor</p>
@@ -134,7 +136,7 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivo" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivo" style="width:100%;">
     </div>
     <div class="col-8">
         <p class="rcorners" id="trabajo_cognitivo" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #ebbd3f);">Desarrollo cognitivo</p>
@@ -144,16 +146,18 @@
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
     <div class="col-1">
-        <img class="center" src="{% static 'images/Elementos_1080x1080_socioe.png' %}" alt="Socio-emocional" style="heigth:100%;">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_socioe.png' %}" alt="Socio-emocional" style="width:100%;">
     </div>
     <div class="col-8">
-        <p class="rcorners" id="trabajo_socioe" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #6ab061);">Desarrollo socio-emocional</p>
+        <p class="rcorners" id="trabajo_socio" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #6ab061);">Desarrollo socio-emocional</p>
     </div>
     <div class="col-1"></div>
 </div>
 <br><br>
 <div class="row">
-    <img class="col-12 center" src="{% static 'images/afini_logo.png' %}" alt="Afinidata" style="height:64px; width:210px;">
+    <div class="col-4"></div>
+    <img class="col-4 center" src="{% static 'images/afini_logo.png' %}" alt="Afinidata" style="height:64px; width:110px;">
+    <div class="col-4"></div>
 </div>
 </body>
 <script>
@@ -313,7 +317,7 @@ config3.data.datasets[0].backgroundColor[0] = gradientStroke;
 config4.data.datasets[0].backgroundColor[0] = gradientStroke;
 config5.data.datasets[0].backgroundColor[0] = gradientStroke;
 
-config0.options.elements.center.text = Mat.min(100, Math.round(100*{{ object.get_time_activities('2020-07-27','2020-08-01').count }}/15))+"%";
+config0.options.elements.center.text = Math.min(100, Math.round(100*{{ activities }}[0]/15))+"%";
 config1.options.elements.center.text = "L";
 config2.options.elements.center.text = "M";
 config3.options.elements.center.text = "M";
@@ -322,12 +326,12 @@ config5.options.elements.center.text = "V";
 
 config0.options.cutoutPercentage = 80;
 
-config0.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-27','2020-08-01').count }};
-config1.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-27','2020-07-28').count }};
-config2.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-28','2020-07-29').count }};
-config3.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-29','2020-07-30').count }};
-config4.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-30','2020-07-31').count }};
-config5.data.datasets[0].data[0] = {{ object.get_time_activities('2020-07-31','2020-08-01').count }};
+config0.data.datasets[0].data[0] = {{ activities }}[0];
+config1.data.datasets[0].data[0] = {{ activities }}[1];
+config2.data.datasets[0].data[0] = {{ activities }}[2];
+config3.data.datasets[0].data[0] = {{ activities }}[3];
+config4.data.datasets[0].data[0] = {{ activities }}[4];
+config5.data.datasets[0].data[0] = {{ activities }}[5];
 
 config0.data.datasets[0].data[1] = Math.max(15 - config0.data.datasets[0].data[0], 0);
 config1.data.datasets[0].data[1] = Math.max(3 - config1.data.datasets[0].data[0], 0);
@@ -343,13 +347,9 @@ var chart3 = new Chart(ctx3, config3);
 var chart4 = new Chart(ctx4, config4);
 var chart5 = new Chart(ctx5, config5);
 
-var trabajo_motor = {{ object.get_activities_area(2,'2020-07-27').count }};
-var trabajo_cognitivo = {{ object.get_activities_area(1,'2020-07-27').count }};
-var trabajo_socio = {{ object.get_activities_area(3,'2020-07-27').count }};
-var trabajo_total = 10+trabajo_motor+trabajo_cognitivo+trabajo_socio;
-document.getElementById("trabajo_motor").style.width = trabajo_motor/trabajo_total + "%";
-document.getElementById("trabajo_cognitivo").style.width = trabajo_cognitivo/trabajo_total + "%";
-document.getElementById("trabajo_socio").style.width = trabajo_socio/trabajo_total + "%";
-
+var trabajo_total = 0.01+{{trabajo_motor}}+{{trabajo_cognitivo}}+{{trabajo_socio}};
+document.getElementById("trabajo_motor").style.width = Math.min(Math.round(60*{{trabajo_motor}}/trabajo_total+40), 100) + "%";
+document.getElementById("trabajo_cognitivo").style.width = Math.min(Math.round(60*{{trabajo_cognitivo}}/trabajo_total+40), 100) + "%";
+document.getElementById("trabajo_socio").style.width = Math.min(Math.round(60*{{trabajo_socio}}/trabajo_total+40), 100) + "%";
 </script>
 </html>
