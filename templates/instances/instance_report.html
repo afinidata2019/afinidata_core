@@ -82,7 +82,7 @@
     <div class="col-2"></div>
     <div class="col-4" style="font-size:15px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="estrella" style="width:40%;">
-        <b>{{ activities }}[0]</b> Sesiones completadas
+        <b id="estrellas"></b> Sesiones completadas
     </div>
     <div class="col-4" style="font-size:15px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="estrella" style="width:40%;">
@@ -352,5 +352,6 @@ var trabajo_total = 0.01+{{trabajo_motor}}+{{trabajo_cognitivo}}+{{trabajo_socio
 document.getElementById("trabajo_motor").style.width = Math.min(Math.round(60*{{trabajo_motor}}/trabajo_total+40), 100) + "%";
 document.getElementById("trabajo_cognitivo").style.width = Math.min(Math.round(60*{{trabajo_cognitivo}}/trabajo_total+40), 100) + "%";
 document.getElementById("trabajo_socio").style.width = Math.min(Math.round(60*{{trabajo_socio}}/trabajo_total+40), 100) + "%";
+document.getElementById("estrellas").innerHTML = {{ activities }}[0];
 </script>
 </html>
