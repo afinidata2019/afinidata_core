@@ -688,6 +688,7 @@ class GetMilestoneView(View):
         if rd.years:
             months = months + (rd.years * 12)
         print(months)
+        level = None
         if form.cleaned_data['program']:
             level = form.cleaned_data['program'].level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
@@ -695,6 +696,9 @@ class GetMilestoneView(View):
             level = Program.objects.get(id=1).level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
         print(level)
+        if not level:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
         day_range = (timezone.now() - timedelta(7))
         responses = instance.response_set.filter(response='done')
         milestones = level.milestones.filter(value__gte=months, value__lte=months)\
