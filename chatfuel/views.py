@@ -721,6 +721,16 @@ class GetMilestoneView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
+class GetInstanceMilestoneView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        return JsonResponse(dict(h='w'))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateResponseView(CreateView):
     model = Response
     fields = ('instance', 'milestone', 'response')
