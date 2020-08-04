@@ -71,21 +71,40 @@ class InstanceReportView(DetailView):
     model = Instance
     pk_url_kwarg = 'instance_id'
     template_name = 'instances/instance_report.html'
-    
+
     def get_context_data(self, **kwargs):
         c = super(InstanceReportView, self).get_context_data(**kwargs)
-        c['trabajo_motor'] = self.object.get_activities_area(2, '2020-07-27', '2020-08-01').count()
-        c['trabajo_cognitivo'] = self.object.get_activities_area(1, '2020-07-27', '2020-08-01').count()
-        c['trabajo_socio'] = self.object.get_activities_area(3, '2020-07-27', '2020-08-01').count()
+        c['trabajo_motor'] = self.object.get_activities_area(2, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                             ).count()
+        c['trabajo_cognitivo'] = self.object.get_activities_area(1, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                                 ).count()
+        c['trabajo_socio'] = self.object.get_activities_area(3, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                             ).count()
         c['activities'] = [
-            self.object.get_activities_area(0, '2020-07-27', '2020-08-01').count(),
-            self.object.get_activities_area(0, '2020-07-27', '2020-07-28').count(),
-            self.object.get_activities_area(0, '2020-07-28', '2020-07-29').count(),
-            self.object.get_activities_area(0, '2020-07-29', '2020-07-30').count(),
-            self.object.get_activities_area(0, '2020-07-30', '2020-07-31').count(),
-            self.object.get_activities_area(0, '2020-07-31', '2020-08-01').count()
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-4),
+                                                timezone.now() + datetime.timedelta(days=1)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-4),
+                                                timezone.now() + datetime.timedelta(days=-3)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-3),
+                                                timezone.now() + datetime.timedelta(days=-2)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-2),
+                                                timezone.now() + datetime.timedelta(days=-1)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-1),
+                                                timezone.now() + datetime.timedelta(days=0)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=0),
+                                                timezone.now() + datetime.timedelta(days=1)).count()
         ]
+        try:
+            age = datetime.datetime.today() - datetime.datetime.strptime(self.object.get_attribute_values('birthday'),
+                                                                            '%Y-%m-%d %H:%M:%S.%f')
+            c['months'] = age / datetime.timedelta(days=30, hours=10, minutes=30)
+        except:
+            c['months'] = 0
         return c
+
 
 class InstanceMilestonesView(DetailView):
     model = Instance
@@ -95,6 +114,7 @@ class InstanceMilestonesView(DetailView):
     def get_context_data(self, **kwargs):
         c = super(InstanceMilestonesView, self).get_context_data(**kwargs)
         return c
+
 
 class NewInstanceView(PermissionRequiredMixin, CreateView):
     permission_required = 'instances.add_instance'
@@ -113,7 +133,7 @@ class NewInstanceView(PermissionRequiredMixin, CreateView):
             form.add_error('user_id', 'User ID is not valid')
             messages.error(self.request, 'User ID is not valid')
             return super(NewInstanceView, self).form_invalid(form)
-        
+
         return super(NewInstanceView, self).form_valid(form)
 
     def get_success_url(self):
@@ -153,7 +173,7 @@ class DeleteInstanceView(PermissionRequiredMixin, DeleteView):
         c['action'] = 'Delete'
         c['delete_message'] = 'Are you sure to delete instance with name: "%s"?' % self.object.name
         return c
-    
+
     def get_success_url(self):
         messages.success(self.request, 'Instance with name: "%s" has been deleted.' % self.object.name)
         return super(DeleteInstanceView, self).get_success_url()
