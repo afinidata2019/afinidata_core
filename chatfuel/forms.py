@@ -2,6 +2,7 @@ from instances.models import Instance, AttributeValue, PostInteraction
 from attributes.models import Attribute
 from messenger_users.models import User
 from articles.models import Article
+from programs.models import Program
 from groups.models import Code
 from posts.models import Post
 from django import forms
@@ -94,3 +95,4 @@ class ArticleForm(forms.Form):
 
 class InstanceForm(forms.Form):
     instance = forms.ModelChoiceField(queryset=Instance.objects.all())
+    program = forms.ModelChoiceField(queryset=Program.objects.all(), required=False)
