@@ -727,7 +727,41 @@ class GetInstanceMilestoneView(View):
         raise Http404('Not found')
 
     def post(self, request, *args, **kwargs):
-        return JsonResponse(dict(h='w'))
+        form = forms.InstanceForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        if not form.cleaned_data['program']:
+            program = Program.objects.get(id=1)
+        else:
+            program = form.cleaned_data['program']
+
+        instance = form.cleaned_data['instance']
+
+        birth = instance.get_attribute_values('birthday')
+        if not birth:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not birthday.')))
+        date = parser.parse(birth.value)
+        rd = relativedelta.relativedelta(timezone.now(), date)
+        months = rd.months
+
+        level = program.level_set.filter(assign_min__lte=months, assign_max__gte=months).first()
+
+        milestones = level.milestones.all()
+        filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
+        responses = instance.response_set.filter(response='done', milestone_id__in=[m.pk for m in milestones])
+
+        return JsonResponse(dict(
+            set_attributes=dict(
+                all_level_milestones=milestones.count(),
+                all_range_milestones=filtered_milestones.count(),
+                level_milestones_completed=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
+                range_milestones_completed=filtered_milestones
+                    .exclude(id__in=(f.milestone_id for f in responses)).count()
+            )
+        ))
 
 
 @method_decorator(csrf_exempt, name='dispatch')

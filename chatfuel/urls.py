@@ -27,5 +27,5 @@ urlpatterns = [
     path('replace_user_info/', views.ReplaceUserInfoView.as_view(), name='replace_user_info'),
     path('get_milestone/', views.GetMilestoneView.as_view(), name='get_milestone'),
     path('response_milestone/', views.CreateResponseView.as_view(), name='response_milestone'),
-    path('get_instance_milestones/', views.GetInstanceMilestoneView.as_view(), name='get_instance_milestone')
+    path('get_instance_milestones/', views.GetInstanceMilestoneView.as_view(), name='get_instance_milestones')
 ]
