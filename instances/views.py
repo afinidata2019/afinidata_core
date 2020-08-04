@@ -87,6 +87,14 @@ class InstanceReportView(DetailView):
         ]
         return c
 
+class InstanceMilestonesView(DetailView):
+    model = Instance
+    pk_url_kwarg = 'instance_id'
+    template_name = 'instances/instance_milestones.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceMilestonesView, self).get_context_data(**kwargs)
+        return c
 
 class NewInstanceView(PermissionRequiredMixin, CreateView):
     permission_required = 'instances.add_instance'

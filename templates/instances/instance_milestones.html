@@ -1,0 +1,91 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Milestones</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- ChartsJs -->
+    <script src="{% static 'chartjs/dist/Chart.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.0/Chart.bundle.min.js"></script>
+
+    <style>
+        div{
+            font-size:10px;
+            text-align: center;
+        }
+        .container {
+          position: relative;
+          text-align: center;
+        }
+        .centered {
+          position: absolute;
+          top: 85%;
+          left: 50%;
+          transform: translate(-50%, -30%);
+        }
+        .center {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 50%;
+        }
+        .h1{
+          text-align: center;
+          font-size:25px;
+        }
+        .h2{
+          text-align: center;
+          font-size:17px;
+          padding: 20px;
+        }
+        .row{
+          width: 100%;
+          margin-left: 10px;
+          margin-right: 10px;
+          padding: 10px;
+          margin: 0;
+        }
+        canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			width: 100%;
+		}
+		.rcorners {
+          border-radius: 5px 50px 50px 5px;
+          padding: 10px;
+          width: 100%;
+          height: auto;
+          text-align: left;
+          font-size:15px;
+        }
+    </style>
+</head>
+<body>
+<div class="row" style="width:100%; margin:0px;">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:100%;">
+        <div class="centered" style="font-size:15px;">{{ object.name }}</div>
+    </div>
+    <div class="col-4"></div>
+</div>
+<div class="row">
+    <div class="col-12 h1">Milestones</div>
+</div>
+<br><br>
+<div class="row">
+    <div class="col-4"></div>
+    <img class="col-4 center" src="{% static 'images/afini_logo.png' %}" alt="Afinidata" style="height:64px; width:110px;">
+    <div class="col-4"></div>
+</div>
+<br><br>
+</body>
+<script>
+</script>
+</html>
