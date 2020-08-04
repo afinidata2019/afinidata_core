@@ -680,8 +680,13 @@ class GetMilestoneView(View):
         if not birth:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
-        date = parser.parse(birth.value)
-        print(date)
+
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
         rd = relativedelta.relativedelta(timezone.now(), date)
         print(rd)
         months = rd.months 
@@ -751,7 +756,12 @@ class GetInstanceMilestoneView(View):
         if not birth:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
-        date = parser.parse(birth.value)
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
