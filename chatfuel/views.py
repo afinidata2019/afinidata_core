@@ -755,7 +755,13 @@ class GetInstanceMilestoneView(View):
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
-        level = program.level_set.filter(assign_min__lte=months, assign_max__gte=months).first()
+        levels = program.level_set.filter(assign_min__lte=months, assign_max__gte=months)
+
+        if not levels.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+
+        level = levels.first()
 
         milestones = level.milestones.all()
         filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
@@ -765,8 +771,8 @@ class GetInstanceMilestoneView(View):
             set_attributes=dict(
                 all_level_milestones=milestones.count(),
                 all_range_milestones=filtered_milestones.count(),
-                level_milestones_completed=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
-                range_milestones_completed=filtered_milestones
+                level_milestones_available=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
+                range_milestones_available=filtered_milestones
                     .exclude(id__in=(f.milestone_id for f in responses)).count()
             )
         ))
