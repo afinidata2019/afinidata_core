@@ -680,17 +680,30 @@ class GetMilestoneView(View):
         if not birth:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
-        date = parser.parse(birth.value)
+
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
         rd = relativedelta.relativedelta(timezone.now(), date)
-        months = rd.months
+        print(rd)
+        months = rd.months 
+        if rd.years:
+            months = months + (rd.years * 12)
+        print(months)
+        level = None
         if form.cleaned_data['program']:
             level = form.cleaned_data['program'].level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
         else:
             level = Program.objects.get(id=1).level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
-        if rd.years:
-            months = months + (rd.years * 12)
+        print(level)
+        if not level:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
         day_range = (timezone.now() - timedelta(7))
         responses = instance.response_set.filter(response='done')
         milestones = level.milestones.filter(value__gte=months, value__lte=months)\
@@ -743,23 +756,38 @@ class GetInstanceMilestoneView(View):
         if not birth:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
-        date = parser.parse(birth.value)
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
-        level = program.level_set.filter(assign_min__lte=months, assign_max__gte=months).first()
+        levels = program.level_set.filter(assign_min__lte=months, assign_max__gte=months)
+
+        if not levels.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+
+        level = levels.first()
 
         milestones = level.milestones.all()
         filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
         responses = instance.response_set.filter(response='done', milestone_id__in=[m.pk for m in milestones])
+        f_responses = instance.response_set\
+            .filter(response='done', milestone_id__in=[m.pk for m in filtered_milestones])
 
         return JsonResponse(dict(
             set_attributes=dict(
                 all_level_milestones=milestones.count(),
                 all_range_milestones=filtered_milestones.count(),
-                level_milestones_completed=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
-                range_milestones_completed=filtered_milestones
-                    .exclude(id__in=(f.milestone_id for f in responses)).count()
+                level_milestones_available=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
+                range_milestones_available=filtered_milestones
+                                           .exclude(id__in=(f.milestone_id for f in responses)).count(),
+                level_milestones_completed=len(set(f.milestone_id for f in responses)),
+                range_milestones_completed=len(set(f.milestone_id for f in f_responses))
             )
         ))
 
