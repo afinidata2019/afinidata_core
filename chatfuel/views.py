@@ -681,16 +681,20 @@ class GetMilestoneView(View):
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
         date = parser.parse(birth.value)
+        print(date)
         rd = relativedelta.relativedelta(timezone.now(), date)
-        months = rd.months
+        print(rd)
+        months = rd.months 
+        if rd.years:
+            months = months + (rd.years * 12)
+        print(months)
         if form.cleaned_data['program']:
             level = form.cleaned_data['program'].level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
         else:
             level = Program.objects.get(id=1).level_set\
                 .filter(assign_min__lte=months, assign_max__gte=months).first()
-        if rd.years:
-            months = months + (rd.years * 12)
+        print(level)
         day_range = (timezone.now() - timedelta(7))
         responses = instance.response_set.filter(response='done')
         milestones = level.milestones.filter(value__gte=months, value__lte=months)\
