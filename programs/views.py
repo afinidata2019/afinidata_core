@@ -1,8 +1,9 @@
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
-from programs.models import Program, Level
+from programs.models import Program, Level, LevelMilestoneAssociation
 from django.urls import reverse_lazy
+from milestones.models import Milestone
 from django.contrib import messages
 
 
@@ -170,3 +171,32 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Level with name: "%s" has been deleted.' % self.object.name)
         return reverse_lazy('programs:level_list', kwargs=dict(program_id=self.object.program_id))
+
+
+class LevelMilestoneCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'programs.add_levelmilestoneassociation'
+    model = LevelMilestoneAssociation
+    fields = ('milestone',)
+
+    def get_context_data(self, **kwargs):
+        c = super(LevelMilestoneCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['level'] = Level.objects.get(id=self.kwargs['level_id'])
+        return c
+
+    def get_form(self, form_class=None):
+        form = super(LevelMilestoneCreateView, self).get_form()
+        level = Level.objects.get(id=self.kwargs['level_id'])
+        form.fields['milestone'].queryset = form.fields['milestone'].queryset\
+            .filter(value__gte=level.assign_min, value__lte=level.assign_max)\
+            .exclude(id__in=[m.pk for m in level.milestones.all()])
+        return form
+
+    def form_valid(self, form):
+        form.instance.level_id = self.kwargs['level_id']
+        return super(LevelMilestoneCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        level = Level.objects.get(id=self.kwargs['level_id'])
+        messages.success(self.request, "Milestone to level added.")
+        return reverse_lazy('programs:level_detail', kwargs=dict(level_id=level.pk, program_id=level.program_id))
