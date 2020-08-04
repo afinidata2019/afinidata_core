@@ -776,6 +776,8 @@ class GetInstanceMilestoneView(View):
         milestones = level.milestones.all()
         filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
         responses = instance.response_set.filter(response='done', milestone_id__in=[m.pk for m in milestones])
+        f_responses = instance.response_set\
+            .filter(response='done', milestone_id__in=[m.pk for m in filtered_milestones])
 
         return JsonResponse(dict(
             set_attributes=dict(
@@ -783,7 +785,9 @@ class GetInstanceMilestoneView(View):
                 all_range_milestones=filtered_milestones.count(),
                 level_milestones_available=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
                 range_milestones_available=filtered_milestones
-                    .exclude(id__in=(f.milestone_id for f in responses)).count()
+                                           .exclude(id__in=(f.milestone_id for f in responses)).count(),
+                level_milestones_completed=len(set(f.milestone_id for f in responses)),
+                range_milestones_completed=len(set(f.milestone_id for f in f_responses))
             )
         ))
 
