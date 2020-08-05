@@ -8,11 +8,12 @@ from django.views.decorators.csrf import csrf_exempt
 from messenger_users.models import User, UserData
 from django.http import JsonResponse, Http404
 from dateutil import relativedelta, parser
+from datetime import datetime, timedelta
 from attributes.models import Attribute
 from milestones.models import Milestone
 from groups import forms as group_forms
+from programs.models import Program
 from django.utils import timezone
-from datetime import datetime
 from chatfuel import forms
 import random
 import boto3
@@ -679,23 +680,116 @@ class GetMilestoneView(View):
         if not birth:
             return JsonResponse(dict(set_attributes=dict(request_status='error',
                                                          request_error='Instance has not birthday.')))
-        date = parser.parse(birth.value)
+
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
         rd = relativedelta.relativedelta(timezone.now(), date)
-        months = rd.months
+        print(rd)
+        months = rd.months 
         if rd.years:
             months = months + (rd.years * 12)
+        print(months)
+        level = None
+        if form.cleaned_data['program']:
+            level = form.cleaned_data['program'].level_set\
+                .filter(assign_min__lte=months, assign_max__gte=months).first()
+        else:
+            level = Program.objects.get(id=1).level_set\
+                .filter(assign_min__lte=months, assign_max__gte=months).first()
+        print(level)
+        if not level:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+        day_range = (timezone.now() - timedelta(7))
         responses = instance.response_set.filter(response='done')
-        milestones = Milestone.objects.filter(value__gte=months, value__lte=months)\
+        milestones = level.milestones.filter(value__gte=months, value__lte=months)\
             .exclude(id__in=[i.milestone_id for i in responses])\
-            .order_by('?')
+            .exclude(id__in=[i.milestone_id for i in instance.response_set.filter(created_at__gte=day_range)])
+
         if not milestones.exists():
             return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         request_error='Instance has not milestones to do.')))
-        milestone = milestones.first()
+                                                         request_error='Instance has not milestones to do.',
+                                                         all_range_milestones_dispatched='true',
+                                                         all_level_milestones_dispatched='true')))
+
+        filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
+        act_range = 'false'
+
+        if filtered_milestones.exists():
+            milestone = filtered_milestones.order_by('?').first()
+            if filtered_milestones.count() < 2:
+                act_range = 'true'
+        else:
+            milestone = milestones.exclude(id__in=[m.pk for m in filtered_milestones]).order_by('?').first()
 
         return JsonResponse(dict(set_attributes=dict(request_status='done',
                                                      milestone=milestone.pk,
-                                                     milestone_text=milestone.name)))
+                                                     milestone_text=milestone.name,
+                                                     all_level_milestones_dispatched='false',
+                                                     all_range_milestones_dispatched=act_range)))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetInstanceMilestoneView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.InstanceForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        if not form.cleaned_data['program']:
+            program = Program.objects.get(id=1)
+        else:
+            program = form.cleaned_data['program']
+
+        instance = form.cleaned_data['instance']
+
+        birth = instance.get_attribute_values('birthday')
+        if not birth:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not birthday.')))
+        try:
+            date = parser.parse(birth.value)
+            print(date)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
+        rd = relativedelta.relativedelta(timezone.now(), date)
+        months = rd.months
+
+        levels = program.level_set.filter(assign_min__lte=months, assign_max__gte=months)
+
+        if not levels.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+
+        level = levels.first()
+
+        milestones = level.milestones.all()
+        filtered_milestones = milestones.filter(value__gte=months, value__lte=months)
+        responses = instance.response_set.filter(response='done', milestone_id__in=[m.pk for m in milestones])
+        f_responses = instance.response_set\
+            .filter(response='done', milestone_id__in=[m.pk for m in filtered_milestones])
+
+        return JsonResponse(dict(
+            set_attributes=dict(
+                all_level_milestones=milestones.count(),
+                all_range_milestones=filtered_milestones.count(),
+                level_milestones_available=milestones.exclude(id__in=(f.milestone_id for f in responses)).count(),
+                range_milestones_available=filtered_milestones
+                                           .exclude(id__in=(f.milestone_id for f in responses)).count(),
+                level_milestones_completed=len(set(f.milestone_id for f in responses)),
+                range_milestones_completed=len(set(f.milestone_id for f in f_responses))
+            )
+        ))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
