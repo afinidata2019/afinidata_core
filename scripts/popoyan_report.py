@@ -17,6 +17,8 @@ def run():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
+
+        all_users = [i.messenger_user_id for i in group.assignationmessengeruser_set.all()]
         param_list = [dict(name='Abril', init='2020-04-01 00:00:00', finish='2020-04-30 23:59:59'),
                       dict(name='Mayo', init='2020-05-01 00:00:00', finish='2020-05-31 23:59:59'),
                       dict(name='Junio', init='2020-06-01 00:00:00', finish='2020-06-30 23:59:59'),
@@ -32,16 +34,16 @@ def run():
             assocs = group.assignationmessengeruser_set.filter(created_at__gte=init, created_at__lte=finish)
             data['Usuarios'] = assocs.count()
             for assoc in assocs:
-                user = User.objects.get(id=assoc.messenger_user_id)
-                data['IDS'].add(user.pk)
+                user = User.objects.get(id=assoc.messenger_user_id) 
                 data['Instancias'] = data['Instancias'] + user.get_instances().count()
 
-            dispatched_list = Interaction.objects.filter(user_id__in=data['IDS'], created_at__gte=init, created_at__lte=finish, type='dispatched')
-            active_list = Interaction.objects.filter(user_id__in=data['IDS'], created_at__gte=init, created_at__lte=finish, type='opened')
+            dispatched_list = Interaction.objects.filter(user_id__in=all_users, created_at__gte=init, created_at__lte=finish, type='dispatched')
+            active_list = Interaction.objects.filter(user_id__in=all_users, created_at__gte=init, created_at__lte=finish, type='opened')
             active_users = set(it.user_id for it in active_list)
             print(dispatched_list.count())
             print(active_users)
             data['Actividades_Enviadas'] = dispatched_list.count()
             data['Usuarios_Activos'] = len(active_users)
+            data['IDS'] = active_users
 
             writer.writerow(data)
