@@ -15,7 +15,7 @@
 
     <style>
         div{
-            font-size:10px;
+            font-size:2vw;
             text-align: center;
         }
         .container {
@@ -36,11 +36,11 @@
         }
         .h1{
           text-align: center;
-          font-size:25px;
+          font-size:4vw;
         }
         .h2{
           text-align: center;
-          font-size:17px;
+          font-size:3vw;
           padding: 20px;
         }
         .row{
@@ -64,6 +64,14 @@
           text-align: left;
           font-size:15px;
         }
+        img{
+            max-height: 100%;
+            max-width: 100%;
+        }
+        [class*="col-"] {
+            max-height: 100%;
+            max-width: 100%;
+	    }
     </style>
 </head>
 <body>
@@ -71,7 +79,7 @@
     <div class="col-4"></div>
     <div class="col-4">
         <img class="center" src="{% static 'images/Elementos_1080x1080_nene.png' %}" alt="Nene" style="width:100%;">
-        <div class="centered" style="font-size:15px;">{{ object.name }}</div>
+        <div class="centered" style="font-size:3vw;">{{ object.name }}</div>
     </div>
     <div class="col-4"></div>
 </div>
@@ -85,8 +93,42 @@
         <b id="estrellas"></b> Sesiones completadas
     </div>
     <div class="col-4" style="font-size:15px;">
-        <img class="center" src="{% static 'images/Elementos_1080x1080_estrella.png' %}" alt="estrella" style="width:40%;">
-        Etapa mimoso
+        {% if object.months >= 0 and object.months < 4 %}
+            <img class="center" src="{% static 'images/etapa_mimosos.jpeg' %}" alt="mimosos" style="width:40%;">
+            Etapa Mimosos
+        {% endif %}
+        {% if object.months >= 4 and object.months < 7 %}
+            <img class="center" src="{% static 'images/etapa_exploradores.jpeg' %}" alt="descubridores" style="width:40%;">
+            Etapa Descubridores
+        {% endif %}
+        {% if object.months >= 7 and object.months < 10 %}
+            <img class="center" src="{% static 'images/etapa_exploradores.jpeg' %}" alt="exploradores" style="width:40%;">
+            Etapa Exploradores
+        {% endif %}
+        {% if object.months >= 10 and object.months < 13 %}
+            <img class="center" src="{% static 'images/etapa_entendedores.jpeg' %}" alt="entendedores" style="width:40%;">
+            Etapa Entendedores
+        {% endif %}
+        {% if object.months >= 13 and object.months < 19 %}
+            <img class="center" src="{% static 'images/etapa_constructores.jpeg' %}" alt="constructores" style="width:40%;">
+            Etapa Constructores
+        {% endif %}
+        {% if object.months >= 19 and object.months < 25 %}
+            <img class="center" src="{% static 'images/etapa_imitadores.jpeg' %}" alt="imitadores" style="width:40%;">
+            Etapa Imitadores
+        {% endif %}
+        {% if object.months >= 25 and object.months < 30 %}
+            <img class="center" src="{% static 'images/etapa_comunicadores.jpeg' %}" alt="comunicadores" style="width:40%;">
+            Etapa Comunicadores
+        {% endif %}
+        {% if object.months >= 30 and object.months < 36 %}
+            <img class="center" src="{% static 'images/etapa_comunicadores.jpeg' %}" alt="comunicadores2" style="width:40%;">
+            Etapa Comunicadores II
+        {% endif %}
+        {% if object.months >= 36 %}
+            <img class="center" src="{% static 'images/etapa_pollitos.jpeg' %}" alt="pollitos" style="width:40%;">
+            Etapa Pollitos
+        {% endif %}
     </div>
     <div class="col-2"></div>
 </div>
@@ -100,7 +142,10 @@
     </div>
     <div class="col-2"></div>
 </div>
-<div class="row" style="height:80px; padding:0px;">
+<div class="row">
+    <div class="col-12">Últimos 5 días</div>
+</div>
+<div class="row" style="height:100px; padding:0px;">
     <div class="col-1"></div>
     <div class="col-2">
         <canvas id="chart1"></canvas>
@@ -125,32 +170,35 @@
 </div>
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
-    <div class="col-1">
+    <div class="col-1" style="padding:0px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motor" style="width:100%;">
     </div>
-    <div class="col-8">
+    <div class="col-7">
         <p class="rcorners" id="trabajo_motor" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #a06ade);">Desarrollo motor</p>
     </div>
+    <div class="col-1" id="trabajo_motor_pts"></div>
     <div class="col-1"></div>
 </div>
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
-    <div class="col-1">
+    <div class="col-1" style="padding:0px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivo" style="width:100%;">
     </div>
-    <div class="col-8">
+    <div class="col-7">
         <p class="rcorners" id="trabajo_cognitivo" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #ebbd3f);">Desarrollo cognitivo</p>
     </div>
+    <div class="col-1" id="trabajo_cognitivo_pts"></div>
     <div class="col-1"></div>
 </div>
 <div class="row" style="height:50px; padding: 5px;">
     <div class="col-2"></div>
-    <div class="col-1">
+    <div class="col-1" style="padding:0px;">
         <img class="center" src="{% static 'images/Elementos_1080x1080_socioe.png' %}" alt="Socio-emocional" style="width:100%;">
     </div>
-    <div class="col-8">
+    <div class="col-7">
         <p class="rcorners" id="trabajo_socio" style="padding: 0; background-image: linear-gradient(to right, rgba(255,0,0,0), #6ab061);">Desarrollo socio-emocional</p>
     </div>
+    <div class="col-1" id="trabajo_socio_pts"></div>
     <div class="col-1"></div>
 </div>
 <br><br>
@@ -318,12 +366,12 @@ config3.data.datasets[0].backgroundColor[0] = gradientStroke;
 config4.data.datasets[0].backgroundColor[0] = gradientStroke;
 config5.data.datasets[0].backgroundColor[0] = gradientStroke;
 
-config0.options.elements.center.text = Math.min(100, Math.round(100*{{ activities }}[0]/15))+"%";
-config1.options.elements.center.text = "1";
-config2.options.elements.center.text = "2";
-config3.options.elements.center.text = "3";
-config4.options.elements.center.text = "4";
-config5.options.elements.center.text = "5";
+config0.options.elements.center.text = Math.min(100, Math.round(100*{{ activities }}[0]/(5*{{ objetivo }})))+"%";
+config1.options.elements.center.text = "";
+config2.options.elements.center.text = "";
+config3.options.elements.center.text = "";
+config4.options.elements.center.text = "";
+config5.options.elements.center.text = "";
 
 config0.options.cutoutPercentage = 80;
 
@@ -334,12 +382,12 @@ config3.data.datasets[0].data[0] = {{ activities }}[3];
 config4.data.datasets[0].data[0] = {{ activities }}[4];
 config5.data.datasets[0].data[0] = {{ activities }}[5];
 
-config0.data.datasets[0].data[1] = Math.max(15 - config0.data.datasets[0].data[0], 0);
-config1.data.datasets[0].data[1] = Math.max(3 - config1.data.datasets[0].data[0], 0);
-config2.data.datasets[0].data[1] = Math.max(3 - config2.data.datasets[0].data[0], 0);
-config3.data.datasets[0].data[1] = Math.max(3 - config3.data.datasets[0].data[0], 0);
-config4.data.datasets[0].data[1] = Math.max(3 - config4.data.datasets[0].data[0], 0);
-config5.data.datasets[0].data[1] = Math.max(3 - config5.data.datasets[0].data[0], 0);
+config0.data.datasets[0].data[1] = Math.max(5*{{ objetivo }} - config0.data.datasets[0].data[0], 0);
+config1.data.datasets[0].data[1] = Math.max({{ objetivo }} - config1.data.datasets[0].data[0], 0);
+config2.data.datasets[0].data[1] = Math.max({{ objetivo }} - config2.data.datasets[0].data[0], 0);
+config3.data.datasets[0].data[1] = Math.max({{ objetivo }} - config3.data.datasets[0].data[0], 0);
+config4.data.datasets[0].data[1] = Math.max({{ objetivo }} - config4.data.datasets[0].data[0], 0);
+config5.data.datasets[0].data[1] = Math.max({{ objetivo }} - config5.data.datasets[0].data[0], 0);
 
 var chart0 = new Chart(ctx0, config0);
 var chart1 = new Chart(ctx1, config1);
@@ -352,6 +400,9 @@ var trabajo_total = 0.01+{{trabajo_motor}}+{{trabajo_cognitivo}}+{{trabajo_socio
 document.getElementById("trabajo_motor").style.width = Math.min(Math.round(60*{{trabajo_motor}}/trabajo_total+40), 100) + "%";
 document.getElementById("trabajo_cognitivo").style.width = Math.min(Math.round(60*{{trabajo_cognitivo}}/trabajo_total+40), 100) + "%";
 document.getElementById("trabajo_socio").style.width = Math.min(Math.round(60*{{trabajo_socio}}/trabajo_total+40), 100) + "%";
+document.getElementById("trabajo_motor_pts").innerHTML = Math.min(Math.round(60*{{trabajo_motor}}/trabajo_total+40), 100) + "%";
+document.getElementById("trabajo_cognitivo_pts").innerHTML = Math.min(Math.round(60*{{trabajo_cognitivo}}/trabajo_total+40), 100) + "%";
+document.getElementById("trabajo_cognitivo_pts").innerHTML = Math.min(Math.round(60*{{trabajo_motor}}/trabajo_total+40), 100) + "%";
 document.getElementById("estrellas").innerHTML = {{ activities }}[0];
 </script>
 </html>

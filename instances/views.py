@@ -98,6 +98,16 @@ class InstanceReportView(DetailView):
                                                 timezone.now() + datetime.timedelta(days=1)).count()
         ]
         try:
+            objetivo = '10 min'#User.object.get_property('tiempo_intensidad')
+            if objetivo == '10 min':
+                c['objetivo'] = 1
+            elif objetivo == '30 min':
+                c['objetivo'] = 3
+            else:
+                c['objetivo'] = 6
+        except:
+            c['objetivo'] = 6
+        try:
             age = datetime.datetime.today() - datetime.datetime.strptime(self.object.get_attribute_values('birthday'),
                                                                             '%Y-%m-%d %H:%M:%S.%f')
             c['months'] = age / datetime.timedelta(days=30, hours=10, minutes=30)
