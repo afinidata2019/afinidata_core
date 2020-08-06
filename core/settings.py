@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'areas.apps.AreasConfig',
+    'subareas.apps.SubareasConfig',
     'milestones.apps.MilestonesConfig',
     'pages.apps.PagesConfig',
     'entities.apps.EntitiesConfig',
