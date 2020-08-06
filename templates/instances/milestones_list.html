@@ -49,11 +49,14 @@
                         <span>{{ milestone.name }}</span>
                         <div class="buttons">
                             {% if milestone.finished %}
-                                <a class="btn btn-outline-danger" href="#"><span class="fa fa-times"></span></a>
+                                <a class="btn btn-outline-danger"
+                                   href="{% url 'instances:reverse_milestone' instance_id=object.pk milestone_id=milestone.pk %}">
+                                    <span class="fa fa-times"></span></a>
                                 <span class="btn btn-outline-secondary disabled"><span class="fa fa-check"></span></span>
                             {% else %}
                                 <span class="btn btn-outline-secondary disabled"><span class="fa fa-times"></span></span>
-                                <a class="btn btn-outline-success" href="#"><span class="fa fa-check"></span></a>
+                                <a class="btn btn-outline-success"
+                                   href="{% url 'instances:complete_milestone' instance_id=object.pk milestone_id=milestone.pk %}"><span class="fa fa-check"></span></a>
                             {% endif %}
                         </div>
                     </div>

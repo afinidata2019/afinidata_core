@@ -1,6 +1,6 @@
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from instances.models import Instance, AttributeValue
+from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from django.urls import reverse_lazy
@@ -263,3 +263,26 @@ class InstanceMilestonesListView(DetailView):
                 else:
                     m.finished = False
         return c
+
+
+class CompleteMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        new_response = Response.objects.create(milestone_id=kwargs['milestone_id'], instance_id=kwargs['instance_id'],
+                                               response='done', created_at=timezone.now())
+        print(new_response)
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
+
+
+class ReverseMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        responses = Response.objects.filter(instance_id=kwargs['instance_id'], milestone_id=kwargs['milestone_id'],
+                                            response='done')
+        for r in responses:
+            r.delete()
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
