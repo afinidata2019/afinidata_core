@@ -38,7 +38,7 @@ def run():
                 data['Instancias'] = data['Instancias'] + user.get_instances().count()
 
             dispatched_list = Interaction.objects.filter(user_id__in=all_users, created_at__gte=init, created_at__lte=finish, type='dispatched')
-            active_list = Interaction.objects.filter(user_id__in=all_users, created_at__gte=init, created_at__lte=finish, type='opened')
+            active_list = Interaction.objects.filter(user_id__in=all_users, created_at__gte=init, created_at__lte=finish, type__in=['opened', 'Start_Session'])
             active_users = set(it.user_id for it in active_list)
             print(dispatched_list.count())
             print(active_users)
