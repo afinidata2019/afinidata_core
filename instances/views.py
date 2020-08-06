@@ -8,9 +8,11 @@ from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
 from areas.models import Area
 from posts.models import Post
 from instances import forms
+from programs.models import Program
 import datetime
 import calendar
 
@@ -231,3 +233,33 @@ class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
             self.object.value, self.object.attribute.name, self.object.instance
         ))
         return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
+
+
+class InstanceMilestonesListView(DetailView):
+    model = Instance
+    pk_url_kwarg = 'instance_id'
+    template_name = 'instances/milestones_list.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceMilestonesListView, self).get_context_data()
+        birthday = parse(self.object.get_attribute_values('birthday').value)
+        rd = relativedelta(timezone.now(), birthday)
+        months = 0
+        if rd.months:
+            months = rd.months
+        if rd.years:
+            months = months + (rd.years * 12)
+        print(birthday)
+        print(months)
+        levels = Program.objects.get(id=1).level_set.filter(assign_min__lte=months, assign_max__gte=months)
+        responses = self.object.response_set.all()
+        if levels.exists():
+            c['level'] = levels.first()
+            c['milestones'] = c['level'].milestones.all()
+            for m in c['milestones']:
+                m_responses = responses.filter(milestone_id=m.pk, response='done')
+                if m_responses.exists():
+                    m.finished = True
+                else:
+                    m.finished = False
+        return c

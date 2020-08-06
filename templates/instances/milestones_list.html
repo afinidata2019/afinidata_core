@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'Font-Awesome/css/all.css' %}">
+    <title>Milestones List</title>
+    <style>
+        .milestones-list-content {
+            padding: 1em;
+        }
+
+        .milestones-list-content ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 1em 0;
+        }
+
+        .milestones-list-content li {
+            padding: 1em 0;
+            border-top: 1px solid rgba(0,0,0, .1);
+        }
+
+        .milestones-list-content .buttons {
+            flex-shrink: 2;
+            display: flex;
+            align-items: center;
+        }
+
+        .milestones-list-content .buttons .btn {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="milestones-list-content">
+        <h3>Hitos de {{ object.name }}</h3>
+
+        <h4>Etapa: {{ level.name.title }}</h4>
+
+        <ul>
+            {% for milestone in milestones %}
+                <li>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span>{{ milestone.name }}</span>
+                        <div class="buttons">
+                            {% if milestone.finished %}
+                                <a class="btn btn-outline-danger" href="#"><span class="fa fa-times"></span></a>
+                                <span class="btn btn-outline-secondary disabled"><span class="fa fa-check"></span></span>
+                            {% else %}
+                                <span class="btn btn-outline-secondary disabled"><span class="fa fa-times"></span></span>
+                                <a class="btn btn-outline-success" href="#"><span class="fa fa-check"></span></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+</body>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+</html>
