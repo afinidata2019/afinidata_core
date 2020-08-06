@@ -1,6 +1,6 @@
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from instances.models import Instance, AttributeValue
+from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from django.urls import reverse_lazy
@@ -8,9 +8,11 @@ from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
 from areas.models import Area
 from posts.models import Post
 from instances import forms
+from programs.models import Program
 import datetime
 import calendar
 
@@ -231,3 +233,58 @@ class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
             self.object.value, self.object.attribute.name, self.object.instance
         ))
         return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
+
+
+class InstanceMilestonesListView(DetailView):
+    model = Instance
+    pk_url_kwarg = 'instance_id'
+    template_name = 'instances/milestones_list.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceMilestonesListView, self).get_context_data()
+        birthday = parse(self.object.get_attribute_values('birthday').value)
+        rd = relativedelta(timezone.now(), birthday)
+        months = 0
+        if rd.months:
+            months = rd.months
+        if rd.years:
+            months = months + (rd.years * 12)
+        print(birthday)
+        print(months)
+        levels = Program.objects.get(id=1).level_set.filter(assign_min__lte=months, assign_max__gte=months)
+        responses = self.object.response_set.all()
+        if levels.exists():
+            c['level'] = levels.first()
+            c['milestones'] = c['level'].milestones.all()
+            for m in c['milestones']:
+                m_responses = responses.filter(milestone_id=m.pk, response='done')
+                if m_responses.exists():
+                    m.finished = True
+                else:
+                    m.finished = False
+        return c
+
+
+class CompleteMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        new_response = Response.objects.create(milestone_id=kwargs['milestone_id'], instance_id=kwargs['instance_id'],
+                                               response='done', created_at=timezone.now())
+        print(new_response)
+        messages.success(self.request, 'Se han realizado los cambios.')
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
+
+
+class ReverseMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        responses = Response.objects.filter(instance_id=kwargs['instance_id'], milestone_id=kwargs['milestone_id'],
+                                            response='done')
+        for r in responses:
+            r.delete()
+        messages.success(self.request, 'Se han realizado los cambios.')
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
