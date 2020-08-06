@@ -37,10 +37,15 @@
     </style>
 </head>
 <body>
-    <div class="milestones-list-content">
-        <h3>Hitos de {{ object.name }}</h3>
 
-        <h4>Etapa: {{ level.name.title }}</h4>
+
+    <div class="milestones-list-content">
+
+        {% include 'base/messages.html' %}
+
+        <h3 class="text-center">Hitos de {{ object.name }}</h3>
+
+        <h4 class="text-center">Etapa: {{ level.name.title }}</h4>
 
         <ul>
             {% for milestone in milestones %}
