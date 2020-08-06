@@ -1,6 +1,6 @@
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from instances.models import Instance, AttributeValue
+from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from django.urls import reverse_lazy
@@ -8,9 +8,11 @@ from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
 from areas.models import Area
 from posts.models import Post
 from instances import forms
+from programs.models import Program
 import datetime
 import calendar
 
@@ -71,21 +73,50 @@ class InstanceReportView(DetailView):
     model = Instance
     pk_url_kwarg = 'instance_id'
     template_name = 'instances/instance_report.html'
-    
+
     def get_context_data(self, **kwargs):
         c = super(InstanceReportView, self).get_context_data(**kwargs)
-        c['trabajo_motor'] = self.object.get_activities_area(2, '2020-07-27', '2020-08-01').count()
-        c['trabajo_cognitivo'] = self.object.get_activities_area(1, '2020-07-27', '2020-08-01').count()
-        c['trabajo_socio'] = self.object.get_activities_area(3, '2020-07-27', '2020-08-01').count()
+        c['trabajo_motor'] = self.object.get_activities_area(2, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                             ).count()
+        c['trabajo_cognitivo'] = self.object.get_activities_area(1, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                                 ).count()
+        c['trabajo_socio'] = self.object.get_activities_area(3, timezone.now() + datetime.timedelta(days=-4),
+                                                                timezone.now() + datetime.timedelta(days=1)
+                                                             ).count()
         c['activities'] = [
-            self.object.get_activities_area(0, '2020-07-27', '2020-08-01').count(),
-            self.object.get_activities_area(0, '2020-07-27', '2020-07-28').count(),
-            self.object.get_activities_area(0, '2020-07-28', '2020-07-29').count(),
-            self.object.get_activities_area(0, '2020-07-29', '2020-07-30').count(),
-            self.object.get_activities_area(0, '2020-07-30', '2020-07-31').count(),
-            self.object.get_activities_area(0, '2020-07-31', '2020-08-01').count()
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-4),
+                                                timezone.now() + datetime.timedelta(days=1)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-4),
+                                                timezone.now() + datetime.timedelta(days=-3)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-3),
+                                                timezone.now() + datetime.timedelta(days=-2)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-2),
+                                                timezone.now() + datetime.timedelta(days=-1)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=-1),
+                                                timezone.now() + datetime.timedelta(days=0)).count(),
+            self.object.get_activities_area(0,  timezone.now() + datetime.timedelta(days=0),
+                                                timezone.now() + datetime.timedelta(days=1)).count()
         ]
+        try:
+            objetivo = '10 min'#User.object.get_property('tiempo_intensidad')
+            if objetivo == '10 min':
+                c['objetivo'] = 1
+            elif objetivo == '30 min':
+                c['objetivo'] = 3
+            else:
+                c['objetivo'] = 6
+        except:
+            c['objetivo'] = 6
+        try:
+            age = datetime.datetime.today() - datetime.datetime.strptime(self.object.get_attribute_values('birthday'),
+                                                                            '%Y-%m-%d %H:%M:%S.%f')
+            c['months'] = age / datetime.timedelta(days=30, hours=10, minutes=30)
+        except:
+            c['months'] = 0
         return c
+
 
 class InstanceMilestonesView(DetailView):
     model = Instance
@@ -95,6 +126,7 @@ class InstanceMilestonesView(DetailView):
     def get_context_data(self, **kwargs):
         c = super(InstanceMilestonesView, self).get_context_data(**kwargs)
         return c
+
 
 class NewInstanceView(PermissionRequiredMixin, CreateView):
     permission_required = 'instances.add_instance'
@@ -113,7 +145,7 @@ class NewInstanceView(PermissionRequiredMixin, CreateView):
             form.add_error('user_id', 'User ID is not valid')
             messages.error(self.request, 'User ID is not valid')
             return super(NewInstanceView, self).form_invalid(form)
-        
+
         return super(NewInstanceView, self).form_valid(form)
 
     def get_success_url(self):
@@ -153,7 +185,7 @@ class DeleteInstanceView(PermissionRequiredMixin, DeleteView):
         c['action'] = 'Delete'
         c['delete_message'] = 'Are you sure to delete instance with name: "%s"?' % self.object.name
         return c
-    
+
     def get_success_url(self):
         messages.success(self.request, 'Instance with name: "%s" has been deleted.' % self.object.name)
         return super(DeleteInstanceView, self).get_success_url()
@@ -201,3 +233,58 @@ class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
             self.object.value, self.object.attribute.name, self.object.instance
         ))
         return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
+
+
+class InstanceMilestonesListView(DetailView):
+    model = Instance
+    pk_url_kwarg = 'instance_id'
+    template_name = 'instances/milestones_list.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(InstanceMilestonesListView, self).get_context_data()
+        birthday = parse(self.object.get_attribute_values('birthday').value)
+        rd = relativedelta(timezone.now(), birthday)
+        months = 0
+        if rd.months:
+            months = rd.months
+        if rd.years:
+            months = months + (rd.years * 12)
+        print(birthday)
+        print(months)
+        levels = Program.objects.get(id=1).level_set.filter(assign_min__lte=months, assign_max__gte=months)
+        responses = self.object.response_set.all()
+        if levels.exists():
+            c['level'] = levels.first()
+            c['milestones'] = c['level'].milestones.all()
+            for m in c['milestones']:
+                m_responses = responses.filter(milestone_id=m.pk, response='done')
+                if m_responses.exists():
+                    m.finished = True
+                else:
+                    m.finished = False
+        return c
+
+
+class CompleteMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        new_response = Response.objects.create(milestone_id=kwargs['milestone_id'], instance_id=kwargs['instance_id'],
+                                               response='done', created_at=timezone.now())
+        print(new_response)
+        messages.success(self.request, 'Se han realizado los cambios.')
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
+
+
+class ReverseMilestoneView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        responses = Response.objects.filter(instance_id=kwargs['instance_id'], milestone_id=kwargs['milestone_id'],
+                                            response='done')
+        for r in responses:
+            r.delete()
+        messages.success(self.request, 'Se han realizado los cambios.')
+        return reverse_lazy('instances:milestones_list', kwargs=dict(instance_id=kwargs['instance_id']))
