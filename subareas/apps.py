@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AreasConfig(AppConfig):
-    name = 'areas'
+class SubareasConfig(AppConfig):
+    name = 'subareas'
