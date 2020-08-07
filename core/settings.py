@@ -62,7 +62,8 @@ INSTALLED_APPS = [
     'colorfield',
     'app.apps.AppConfig',
     'articles.apps.ArticlesConfig',
-    'corsheaders'
+    'corsheaders',
+    'user_sessions.apps.UserSessionsConfig'
 ]
 
 MIDDLEWARE = [
