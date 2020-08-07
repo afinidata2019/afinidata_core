@@ -1,4 +1,4 @@
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
