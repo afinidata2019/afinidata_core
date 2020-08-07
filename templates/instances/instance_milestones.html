@@ -142,12 +142,12 @@
 <div class="row" style="padding:30px">
     <div class="col-sm-4 charts" align="center" >
         <canvas id="chart1"></canvas><br>
-        <div class="text-center">Etapa Mimoso</div><br>
+        <div class="text-center">Motor</div><br>
         <img src="{% static 'images/Elementos_1080x1080_motor.png' %}" alt="Motoras" style="width:30%;">
     </div>
     <div class="col-sm-4 charts" align="center" >
         <canvas id="chart2"></canvas><br>
-        <div class="text-center">Cognitivas</div><br>
+        <div class="text-center">Cognitivos</div><br>
         <img src="{% static 'images/Elementos_1080x1080_cognitivo.png' %}" alt="Cognitivas" style="width:30%;">
     </div>
     <div class="col-sm-4 charts" align="center" >
@@ -160,7 +160,7 @@
 <div class="row">
     <div class="col-3"></div>
     <div class="col-3">
-        <button type="button" class="btn btn-primary btn-lg btn-block" href="../report">Editar</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="window.open(window.location.href.replace('milestones', 'milestones_list'))">Editar</button>
     </div>
     <div class="col-3">
         <button type="button" class="btn btn-primary btn-lg btn-block" onClick="window.location.reload();">Actualizar</button>
