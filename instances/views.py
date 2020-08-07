@@ -1,16 +1,18 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from instances.models import Instance, AttributeValue
+from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
-from messenger_users.models import User
+from messenger_users.models import User, UserData
 from django.urls import reverse_lazy
 from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
 from areas.models import Area
 from posts.models import Post
 from instances import forms
+from programs.models import Program
 import datetime
 import calendar
 
@@ -98,21 +100,26 @@ class InstanceReportView(DetailView):
                                                 timezone.now() + datetime.timedelta(days=1)).count()
         ]
         try:
-            objetivo = '10 min'#User.object.get_property('tiempo_intensidad')
-            if objetivo == '10 min':
-                c['objetivo'] = 1
-            elif objetivo == '30 min':
-                c['objetivo'] = 3
+            objective = UserData.objects.filter(user=self.object.instanceassociationuser_set.last().user_id).\
+                                            filter(data_key='tiempo_intensidad').last().data_value
+            if objective == '10 min':
+                c['objective'] = 1
+            elif objective == '30 min':
+                c['objective'] = 3
             else:
-                c['objetivo'] = 6
+                c['objective'] = 6
         except:
-            c['objetivo'] = 6
+            c['objective'] = 6
         try:
-            age = datetime.datetime.today() - datetime.datetime.strptime(self.object.get_attribute_values('birthday'),
-                                                                            '%Y-%m-%d %H:%M:%S.%f')
-            c['months'] = age / datetime.timedelta(days=30, hours=10, minutes=30)
+            age = relativedelta(timezone.now(), parse(self.object.get_attribute_values('birthday').value))
+            months = 0
+            if age.months:
+                months = age.months
+            if age.years:
+                months = months + (age.years * 12)
         except:
-            c['months'] = 0
+            months = 0
+        c['months'] = months
         return c
 
 
@@ -123,6 +130,28 @@ class InstanceMilestonesView(DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(InstanceMilestonesView, self).get_context_data(**kwargs)
+        try:
+            age = relativedelta(timezone.now(), parse(self.object.get_attribute_values('birthday').value))
+            months = 0
+            if age.months:
+                months = age.months
+            if age.years:
+                months = months + (age.years * 12)
+        except:
+            months = 0
+        c['months'] = months
+        levels = Program.objects.get(id=1).level_set.filter(assign_min__lte=months, assign_max__gte=months)
+        responses = self.object.response_set.all()
+        for area in Area.objects.all():
+            c['trabajo_' + area.name] = 0
+            c['trabajo_' + area.name+'_total'] = 0
+            if levels.exists():
+                milestones = levels.first().milestones.filter(area=area.id).order_by('value')
+                for m in milestones:
+                    m_responses = responses.filter(milestone_id=m.pk, response='done')
+                    if m_responses.exists():
+                        c['trabajo_'+area.name] += 1
+                    c['trabajo_'+area.name+'_total'] += 1
         return c
 
 
