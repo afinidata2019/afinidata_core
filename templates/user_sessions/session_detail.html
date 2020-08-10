@@ -74,7 +74,8 @@
                                                 <td>
                                                     <a href="{% url 'sessions:message_edit' session_id=object.pk field_id=field.pk message_id=message.pk %}"
                                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="#" class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                                    <a href="{% url 'sessions:message_delete' session_id=object.pk field_id=field.pk message_id=message.pk %}"
+                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
                                                 </td>
                                             </tr>
                                         {% endfor %}

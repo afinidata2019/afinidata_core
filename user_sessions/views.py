@@ -123,3 +123,13 @@ class MessageEditView(PermissionRequiredMixin, UpdateView):
         messages.success(self.request, "Message changed in field.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
+
+class MessageDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.change_message'
+    model = models.Message
+    pk_url_kwarg = 'message_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "Message deleted in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
