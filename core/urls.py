@@ -34,5 +34,6 @@ urlpatterns = [
     path('groups/', include('groups.urls', namespace='groups')),
     path('languages/', include('languages.urls', namespace='languages')),
     path('programs/', include('programs.urls', namespace='programs')),
-    path('app_services/', include('app.service_urls', namespace='app_services'))
+    path('app_services/', include('app.service_urls', namespace='app_services')),
+    path('sessions/', include('user_sessions.urls', namespace='sessions'))
 ]

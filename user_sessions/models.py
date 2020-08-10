@@ -6,7 +6,7 @@ class Session(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    parent_session = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    parent_session = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
 
