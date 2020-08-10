@@ -104,3 +104,22 @@ class MessageCreateView(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         messages.success(self.request, "Message added in field.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class MessageEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_message'
+    model = models.Message
+    fields = ('text', )
+    pk_url_kwarg = 'message_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(MessageEditView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        c['action'] = 'Update'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Message changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
