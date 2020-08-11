@@ -15,5 +15,17 @@ urlpatterns = [
     path('<int:session_id>/field/<int:field_id>/messages/<int:message_id>/edit/', views.MessageEditView.as_view(),
          name='message_edit'),
     path('<int:session_id>/field/<int:field_id>/messages/<int:message_id>/delete/', views.MessageDeleteView.as_view(),
-         name='message_delete')
+         name='message_delete'),
+    path('<int:session_id>/field/<int:field_id>/add_reply/', views.ReplyCreateView.as_view(),
+         name='reply_create'),
+    path('<int:session_id>/field/<int:field_id>/replies/<int:reply_id>/edit/', views.ReplyEditView.as_view(),
+         name='reply_edit'),
+    path('<int:session_id>/field/<int:field_id>/replies/<int:reply_id>/delete/', views.ReplyDeleteView.as_view(),
+         name='reply_delete'),
+    path('<int:session_id>/field/<int:field_id>/add_block/', views.RedirectBlockCreateView.as_view(),
+         name='block_create'),
+    path('<int:session_id>/field/<int:field_id>/blocks/<int:block_id>/edit/', views.RedirectBlockEditView.as_view(),
+         name='block_edit'),
+    path('<int:session_id>/field/<int:field_id>/blocks/<int:block_id>/delete/', views.RedirectBlockDeleteView.as_view(),
+         name='block_delete')
 ]

@@ -83,6 +83,63 @@
                                 </table>
                                 <a href="{% url 'sessions:message_create' session_id=object.pk field_id=field.pk %}">Add message</a>
                             {% endif %}
+
+                            {% if field.field_type == 'quick_replies' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Label</th>
+                                            <th>Attribute</th>
+                                            <th>Value</th>
+                                            <th>Redirect Block</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reply in field.reply_set.all %}
+                                            <tr>
+                                                <td>{{ reply.label }}</td>
+                                                <td>{% if reply.attribute %}<span>{{ reply.attribute }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.value %}<span>{{ reply.value }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.redirect_block %}<span>{{ reply.redirect_block }}</span>{% else %}--{% endif %}</td>
+                                                <td>
+                                                    <a href="{% url 'sessions:reply_edit' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
+                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                                    <a href="{% url 'sessions:reply_delete' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
+                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'sessions:reply_create' session_id=object.pk field_id=field.pk %}">Add Reply</a>
+                            {% endif %}
+                        
+                            {% if field.field_type == 'save_values_block' %}
+                                {% if field.redirectblock %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Block</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>{{ field.redirectblock }}</td>
+                                            <td>
+                                                <a href="{% url 'sessions:block_edit' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
+                                                   class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                                <a href="{% url 'sessions:block_delete' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
+                                                   class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <a href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}">Add Block</a>
+                                {% endif %}
+                            {% endif %} 
                         </div>
                     </div>
                 </div>
