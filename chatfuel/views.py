@@ -896,7 +896,7 @@ class GetSessionFieldView(View):
 
         attributes = dict(
             session_finish=finish,
-            field=response_field
+            position=response_field
         )
 
         if field.field_type == 'text':
