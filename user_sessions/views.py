@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -20,6 +20,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(SessionDetailView, self).get_context_data()
         c['fields'] = self.object.field_set.order_by('position')
+        c['last_field'] = c['fields'].last()
         return c
 
 
@@ -83,6 +84,22 @@ class FieldCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Field added to session.')
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class FieldUpView(PermissionRequiredMixin, RedirectView):
+    permission_required = 'user_sessions.change_field'
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        field = models.Field.objects.get(id=self.kwargs['field_id'])
+        top_field = models.Field.objects.get(position=(field.position - 1))
+        field.position = field.position - 1
+        top_field.position = top_field.position + 1
+        field.save()
+        top_field.save()
+        messages.success(self.request, "Changed position for fields.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 

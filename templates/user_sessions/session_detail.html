@@ -47,12 +47,16 @@
             <div class="row">
                 <div class="col-1">
                     <div class="btn-group">
-                        <a class="btn btn-outline-secondary" href="#">
-                            <i class="fas fa-chevron-up"></i>
-                        </a>
-                        <a class="btn btn-outline-secondary" href="#">
-                            <i class="fas fa-chevron-down"></i>
-                        </a>
+                        {% if field.position != 0 %}
+                            <a class="btn btn-outline-secondary" href="{% url 'sessions:field_up' session_id=object.pk field_id=field.pk %}">
+                                <i class="fas fa-chevron-up"></i>
+                            </a>
+                        {% endif %}
+                        {% if field.position != last_field.position %}
+                            <a class="btn btn-outline-secondary" href="#">
+                                <i class="fas fa-chevron-down"></i>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-11">
