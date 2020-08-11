@@ -62,7 +62,10 @@
                 <div class="col-11">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <span>Type: {{ field.field_type }}</span><br><br>
+                            <span>Type: {{ field.field_type }}</span>
+                            <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                               class="btn btn-danger">Delete</a>
+                            <br><br>
                             {% if field.field_type == 'text' %}
                                 <table class="table">
                                     <thead>

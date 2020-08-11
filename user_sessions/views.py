@@ -87,6 +87,20 @@ class FieldCreateView(PermissionRequiredMixin, CreateView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class FieldDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.add_field'
+    model = models.Field
+    pk_url_kwarg = 'field_id'
+
+    def get_success_url(self):
+        fields = self.object.session.field_set.filter(position__gt=self.object.position)
+        for field in fields:
+            field.position = field.position - 1
+            field.save()
+        messages.success(self.request, "Field has been deleted.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class FieldUpView(PermissionRequiredMixin, RedirectView):
     permission_required = 'user_sessions.change_field'
     permanent = False
