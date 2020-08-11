@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from attributes.models import Attribute
 from milestones.models import Milestone
 from groups import forms as group_forms
+from posts.models import Interaction
 from programs.models import Program
 from django.utils import timezone
 from chatfuel import forms
@@ -765,6 +766,9 @@ class GetInstanceMilestoneView(View):
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
+        if rd.years:
+            months = months + (rd.years * 12)
+
         levels = program.level_set.filter(assign_min__lte=months, assign_max__gte=months)
 
         if not levels.exists():
@@ -813,6 +817,54 @@ class CreateResponseView(CreateView):
 
 
 ''' SESSIONS UTILITIES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetSessionView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SessionForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        instance = form.cleaned_data['instance']
+
+        birth = instance.get_attribute_values('birthday')
+        if not birth:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not birthday.')))
+
+        try:
+            date = parser.parse(birth.value)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
+        rd = relativedelta.relativedelta(timezone.now(), date)
+        months = rd.months
+
+        if rd.years:
+            months = months + (rd.years * 12)
+
+        levels = Program.objects.all().first().level_set.filter(assign_min__lte=months, assign_max__gte=months)
+
+        if not levels.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+
+        level = levels.first()
+
+        interactions = Interaction.objects.filter(user_id=form.data['user_id'], type='session_init')
+
+        if not interactions.exists():
+            print('here')
+
+        print(level.session_set.filter(parent_session=None))
+
+        return JsonResponse(dict(h='w'))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
