@@ -848,6 +848,17 @@ class GetSessionFieldView(View):
             for m in field.message_set.all():
                 messages.append(dict(text=m.text))
 
+        if field.field_type == 'quick_replies':
+            message = dict(text='Responde: ', quick_replies=[])
+            for r in field.reply_set.all():
+                rep = dict(title=r.label)
+                message['quick_replies'].append(rep)
+                if r.attribute and r.value:
+                    rep['set_attributes'] = {r.attribute: r.value}
+                if r.redirect_block:
+                    rep['block_names'] = [r.redirect_block]
+            messages.append(message)
+
         response = dict(
             set_attributes=dict(
                 session_finish=finish,
