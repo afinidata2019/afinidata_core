@@ -812,6 +812,52 @@ class CreateResponseView(CreateView):
         return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
 
 
+''' SESSIONS UTILITIES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetSessionFieldView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SessionFieldForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        session = form.cleaned_data['session']
+        field = session.field_set.filter(position=form.cleaned_data['position'])
+
+        if not field.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Field not exists.')))
+
+        field = field.first()
+        fields = session.field_set.all().order_by('position')
+        finish = 'false'
+        messages = []
+        response_field = field.position + 1
+        if fields.last().position == field.position:
+            finish = 'true'
+            response_field = 0
+
+        print(field.field_type)
+
+        if field.field_type == 'text':
+            for m in field.message_set.all():
+                messages.append(dict(text=m.text))
+
+        response = dict(
+            set_attributes=dict(
+                session_finish=finish,
+                field=response_field
+            ),
+            messages=messages)
+
+        return JsonResponse(response)
+
+
 ''' CHATFUEL UTILITIES '''
 
 
