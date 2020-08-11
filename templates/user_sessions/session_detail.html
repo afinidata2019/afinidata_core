@@ -53,7 +53,7 @@
                             </a>
                         {% endif %}
                         {% if field.position != last_field.position %}
-                            <a class="btn btn-outline-secondary" href="#">
+                            <a class="btn btn-outline-secondary" href="{% url 'sessions:field_down' session_id=object.pk field_id=field.pk %}">
                                 <i class="fas fa-chevron-down"></i>
                             </a>
                         {% endif %}

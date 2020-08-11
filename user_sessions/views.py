@@ -103,6 +103,22 @@ class FieldUpView(PermissionRequiredMixin, RedirectView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class FieldDownView(PermissionRequiredMixin, RedirectView):
+    permission_required = 'user_sessions.change_field'
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        field = models.Field.objects.get(id=self.kwargs['field_id'])
+        bottom_field = models.Field.objects.get(position=(field.position + 1))
+        field.position = field.position + 1
+        bottom_field.position = bottom_field.position - 1
+        field.save()
+        bottom_field.save()
+        messages.success(self.request, "Changed position for fields.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class MessageCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_message'
     model = models.Message

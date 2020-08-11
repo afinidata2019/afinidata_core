@@ -12,6 +12,8 @@ urlpatterns = [
     path('<int:session_id>/add_field/', views.FieldCreateView.as_view(), name='field_create'),
     path('<int:session_id>/field/<int:field_id>/up/', views.FieldUpView.as_view(),
          name='field_up'),
+    path('<int:session_id>/field/<int:field_id>/down/', views.FieldDownView.as_view(),
+         name='field_down'),
     path('<int:session_id>/field/<int:field_id>/add_message/', views.MessageCreateView.as_view(),
          name='message_create'),
     path('<int:session_id>/field/<int:field_id>/messages/<int:message_id>/edit/', views.MessageEditView.as_view(),
