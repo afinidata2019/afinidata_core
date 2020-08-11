@@ -1,4 +1,5 @@
 from instances.models import Instance, AttributeValue, PostInteraction
+from user_sessions.models import Session, Field
 from attributes.models import Attribute
 from messenger_users.models import User
 from articles.models import Article
@@ -96,3 +97,13 @@ class ArticleForm(forms.Form):
 class InstanceForm(forms.Form):
     instance = forms.ModelChoiceField(queryset=Instance.objects.all())
     program = forms.ModelChoiceField(queryset=Program.objects.all(), required=False)
+
+
+class SessionFieldForm(forms.Form):
+    session = forms.ModelChoiceField(queryset=Session.objects.all())
+    position = forms.IntegerField()
+
+
+class SessionForm(forms.Form):
+    instance = forms.ModelChoiceField(queryset=Instance.objects.all())
+    user_id = forms.ModelChoiceField(queryset=User.objects.all())

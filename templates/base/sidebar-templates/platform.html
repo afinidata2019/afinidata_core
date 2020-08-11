@@ -113,6 +113,28 @@
 
 {% endif %}
 
+{% if perms.user_sessions.view_session %}
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSessions" aria-expanded="true" aria-controls="collapseSessions">
+      <i class="fas fa-comment-alt"></i>
+      <span>Sessions</span>
+    </a>
+    <div id="collapseSessions" class="collapse" aria-labelledby="collapseSessions" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Sessions:</h6>
+          {% if perms.user_sessions.view_session %}
+            <a class="collapse-item" href="{% url 'sessions:session_list' %}">All Sessions</a>
+          {% endif %}
+          {% if perms.user_sessions.add_session %}
+            <a class="collapse-item" href="{% url 'sessions:session_create' %}">Add Session</a>
+          {% endif %}
+      </div>
+    </div>
+</li>
+
+{% endif %}
+
 {% if perms.languages.view_language %}
 
 <li class="nav-item">

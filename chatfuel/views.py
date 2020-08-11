@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from attributes.models import Attribute
 from milestones.models import Milestone
 from groups import forms as group_forms
+from posts.models import Interaction
 from programs.models import Program
 from django.utils import timezone
 from chatfuel import forms
@@ -765,6 +766,9 @@ class GetInstanceMilestoneView(View):
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
+        if rd.years:
+            months = months + (rd.years * 12)
+
         levels = program.level_set.filter(assign_min__lte=months, assign_max__gte=months)
 
         if not levels.exists():
@@ -810,6 +814,114 @@ class CreateResponseView(CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+
+''' SESSIONS UTILITIES '''
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetSessionView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SessionForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        instance = form.cleaned_data['instance']
+
+        birth = instance.get_attribute_values('birthday')
+        if not birth:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not birthday.')))
+
+        try:
+            date = parser.parse(birth.value)
+        except:
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not a valid date in birthday.')))
+        rd = relativedelta.relativedelta(timezone.now(), date)
+        months = rd.months
+
+        if rd.years:
+            months = months + (rd.years * 12)
+
+        levels = Program.objects.all().first().level_set.filter(assign_min__lte=months, assign_max__gte=months)
+
+        if not levels.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                         request_error='Instance has not level.')))
+
+        level = levels.first()
+
+        interactions = Interaction.objects.filter(user_id=form.data['user_id'], type='session_init')
+
+        if not interactions.exists():
+            print('here')
+
+        print(level.session_set.filter(parent_session=None))
+
+        return JsonResponse(dict(h='w'))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetSessionFieldView(View):
+
+    def get(self, request, *args, **kwargs):
+        raise Http404('Not found')
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SessionFieldForm(request.POST)
+
+        if not form.is_valid():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
+
+        session = form.cleaned_data['session']
+        field = session.field_set.filter(position=form.cleaned_data['position'])
+
+        if not field.exists():
+            return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Field not exists.')))
+
+        field = field.first()
+        fields = session.field_set.all().order_by('position')
+        finish = 'false'
+        messages = []
+        response_field = field.position + 1
+        if fields.last().position == field.position:
+            finish = 'true'
+            response_field = 0
+
+        attributes = dict(
+            session_finish=finish,
+            field=response_field
+        )
+
+        if field.field_type == 'text':
+            for m in field.message_set.all():
+                messages.append(dict(text=m.text))
+
+        if field.field_type == 'quick_replies':
+            message = dict(text='Responde: ', quick_replies=[])
+            for r in field.reply_set.all():
+                rep = dict(title=r.label)
+                message['quick_replies'].append(rep)
+                if r.attribute and r.value:
+                    rep['set_attributes'] = {r.attribute: r.value}
+                if r.redirect_block:
+                    rep['block_names'] = [r.redirect_block]
+            messages.append(message)
+
+        if field.field_type == 'save_values_block':
+            attributes['redirect_to_blocks'] = [field.redirectblock.block]
+
+        response = dict(
+            set_attributes=attributes,
+            messages=messages)
+
+        return JsonResponse(response)
 
 
 ''' CHATFUEL UTILITIES '''
