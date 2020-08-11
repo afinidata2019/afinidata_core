@@ -8,6 +8,7 @@ class Session(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     parent_session = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    value = models.IntegerField(verbose_name='Months')
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
