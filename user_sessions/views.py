@@ -27,7 +27,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
 class SessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_session'
     model = models.Session
-    fields = ('name', 'parent_session', 'level')
+    fields = ('name', 'parent_session', 'level', 'value')
 
     def get_context_data(self, **kwargs):
         c = super(SessionCreateView, self).get_context_data()
@@ -42,7 +42,7 @@ class SessionCreateView(PermissionRequiredMixin, CreateView):
 class SessionUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_session'
     model = models.Session
-    fields = ('name', 'parent_session', 'level')
+    fields = ('name', 'parent_session', 'level', 'value')
     pk_url_kwarg = 'session_id'
 
     def get_context_data(self, **kwargs):
