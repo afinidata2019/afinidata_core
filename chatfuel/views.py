@@ -842,7 +842,10 @@ class GetSessionFieldView(View):
             finish = 'true'
             response_field = 0
 
-        print(field.field_type)
+        attributes = dict(
+            session_finish=finish,
+            field=response_field
+        )
 
         if field.field_type == 'text':
             for m in field.message_set.all():
@@ -859,11 +862,11 @@ class GetSessionFieldView(View):
                     rep['block_names'] = [r.redirect_block]
             messages.append(message)
 
+        if field.field_type == 'save_values_block':
+            attributes['redirect_to_blocks'] = [field.redirectblock.block]
+
         response = dict(
-            set_attributes=dict(
-                session_finish=finish,
-                field=response_field
-            ),
+            set_attributes=attributes,
             messages=messages)
 
         return JsonResponse(response)
