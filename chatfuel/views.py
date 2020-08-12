@@ -848,9 +848,10 @@ class GetSessionView(View):
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
-
         if rd.years:
             months = months + (rd.years * 12)
+
+        print(months)
 
         sessions = Session.objects.filter(value=months)
         print(sessions)
@@ -876,7 +877,8 @@ class GetSessionView(View):
         n_i = Interaction.objects.create(user_id=form.data['user_id'], type='session_init', value=session.pk)
         print(n_i)
 
-        return JsonResponse(dict(set_attributes=dict(session=session.pk, position=0, request_status='done')))
+        return JsonResponse(dict(set_attributes=dict(session=session.pk, position=0, request_status='done',
+                                                     session_finish='false')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -905,6 +907,9 @@ class GetSessionFieldView(View):
         if fields.last().position == field.position:
             finish = 'true'
             response_field = 0
+            n_i = Interaction.objects.create(user_id=form.data['user_id'], type='session_finish',
+                                             value=form.data['session'])
+            print(n_i.pk)
 
         attributes = dict(
             session_finish=finish,

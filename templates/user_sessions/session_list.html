@@ -25,6 +25,7 @@
                           <th>ID</th>
                           <th>Name</th>
                           <th>Fields</th>
+                          <th>Months</th>
                           <th>Parent Session</th>
                           <th>Actions</th>
                         </tr>
@@ -34,6 +35,7 @@
                           <th>ID</th>
                           <th>Name</th>
                           <th>Fields</th>
+                          <th>Months</th>
                           <th>Parent Session</th>
                           <th>Actions</th>
                         </tr>
@@ -43,7 +45,10 @@
                             <tr>
                                 <td>{{ object.pk }}</td>
                                 <td>{{ object.name }}</td>
-                                <td>0</td>
+                                <td>
+                                    {{ object.field_set.count }}
+                                </td>
+                                <td>{{ object.value }}</td>
                                 <td>
                                     {% if object.parent_session %}
                                         <a href="{% url 'sessions:session_detail' session_id=object.parent_session_id %}">
