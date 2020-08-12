@@ -120,6 +120,7 @@ class InstanceReportView(DetailView):
         except:
             months = 0
         c['months'] = months
+        c['activities'] = self.object.get_completed_activities('opened').count()
         return c
 
 
