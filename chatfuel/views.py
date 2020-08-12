@@ -9,6 +9,7 @@ from messenger_users.models import User, UserData
 from django.http import JsonResponse, Http404
 from dateutil import relativedelta, parser
 from datetime import datetime, timedelta
+from user_sessions.models import Session
 from attributes.models import Attribute
 from milestones.models import Milestone
 from groups import forms as group_forms
@@ -832,6 +833,7 @@ class GetSessionView(View):
             return JsonResponse(dict(set_attributes=dict(request_status='error', request_error='Invalid params.')))
 
         instance = form.cleaned_data['instance']
+        user = form.cleaned_data['user_id']
 
         birth = instance.get_attribute_values('birthday')
         if not birth:
@@ -846,25 +848,35 @@ class GetSessionView(View):
         rd = relativedelta.relativedelta(timezone.now(), date)
         months = rd.months
 
+
         if rd.years:
             months = months + (rd.years * 12)
 
-        levels = Program.objects.all().first().level_set.filter(assign_min__lte=months, assign_max__gte=months)
+        sessions = Session.objects.filter(value=months)
+        print(sessions)
 
-        if not levels.exists():
-            return JsonResponse(dict(set_attributes=dict(request_status='error',
-                                                         request_error='Instance has not level.')))
-
-        level = levels.first()
-
-        interactions = Interaction.objects.filter(user_id=form.data['user_id'], type='session_init')
+        interactions = Interaction.objects.filter(user_id=form.data['user_id'], type='session_init',
+                                                  value__in=[s.pk for s in sessions])
 
         if not interactions.exists():
-            print('here')
+            month_sessions = sessions.filter(parent_session=None)
+            if not month_sessions.exists():
+                return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                             request_error='Instance has not sessions.')))
+            session = month_sessions.first()
 
-        print(level.session_set.filter(parent_session=None))
+        else:
+            interaction = interactions.last()
+            filter_session = Session.objects.filter(parent_session_id=interaction.value)
+            if not filter_session.exists():
+                return JsonResponse(dict(set_attributes=dict(request_status='error',
+                                                             request_error='Instance has not sessions.')))
+            session = filter_session.first()
 
-        return JsonResponse(dict(h='w'))
+        n_i = Interaction.objects.create(user_id=form.data['user_id'], type='session_init', value=session.pk)
+        print(n_i)
+
+        return JsonResponse(dict(set_attributes=dict(session=session.pk, position=0, request_status='done')))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
