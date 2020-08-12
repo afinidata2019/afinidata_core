@@ -120,7 +120,6 @@ class InstanceReportView(DetailView):
         except:
             months = 0
         c['months'] = months
-        c['activities'] = self.object.get_completed_activities('opened').count()
         return c
 
 
@@ -153,6 +152,7 @@ class InstanceMilestonesView(DetailView):
                     if m_responses.exists():
                         c['trabajo_'+area.name] += 1
                     c['trabajo_'+area.name+'_total'] += 1
+        c['activities'] = self.object.get_completed_activities('opened').count()
         return c
 
 
