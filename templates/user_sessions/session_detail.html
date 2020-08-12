@@ -24,6 +24,8 @@
                         <a href="{% url 'sessions:session_detail' session_id=object.parent_session_id %}">
                             {{ object.parent_session.name }}</a><br>
                 {% endif %}
+                <strong>Fields: </strong><span>{{ object.field_set.count }}</span><br>
+                <strong>Months: </strong><span>{{ object.value }}</span><br>
                 <strong>Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br>
                 <strong>Actions: </strong>
