@@ -108,7 +108,7 @@ class FieldUpView(PermissionRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         field = models.Field.objects.get(id=self.kwargs['field_id'])
-        top_field = models.Field.objects.get(position=(field.position - 1))
+        top_field = field.session.field_set.get(position=(field.position - 1))
         field.position = field.position - 1
         top_field.position = top_field.position + 1
         field.save()
@@ -124,7 +124,7 @@ class FieldDownView(PermissionRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         field = models.Field.objects.get(id=self.kwargs['field_id'])
-        bottom_field = models.Field.objects.get(position=(field.position + 1))
+        bottom_field = field.session.field_set.get(position=(field.position + 1))
         field.position = field.position + 1
         bottom_field.position = bottom_field.position - 1
         field.save()
