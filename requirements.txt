@@ -12,13 +12,16 @@ django-cors-headers==3.3.0
 django-extensions==2.2.8
 django-widget-tweaks==1.4.5
 docutils==0.15.2
+et-xmlfile==1.0.1
 idna==2.8
 imagesize==1.2.0
+jdcal==1.4.1
 Jinja2==2.11.2
 jmespath==0.9.5
 jwcrypto==0.7
 MarkupSafe==1.1.1
 mysqlclient==1.4.2.post1
+openpyxl==3.0.4
 packaging==20.4
 pem==20.1.0
 pycparser==2.20
@@ -35,6 +38,7 @@ snowballstemmer==2.0.0
 Sphinx==3.1.1
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-django==0.5.1
 sphinxcontrib-htmlhelp==1.0.3
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
