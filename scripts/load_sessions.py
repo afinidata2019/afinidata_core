@@ -6,7 +6,7 @@ import os
 
 def run():
     # file uri
-    file_url = os.path.join(BASE_DIR, 'test_sessions.xlsx')
+    file_url = os.path.join(BASE_DIR, 'sessions.xlsx')
     # get workbook
     wb = load_workbook(filename=file_url)
     # get worksheet
