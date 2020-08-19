@@ -97,7 +97,7 @@ def run():
                                         new_reply.value = reply_values[2]
                                     # check if has block
                                     if len(reply_values) > 3:
-                                        new_reply.value = reply_values[3]
+                                        new_reply.redirect_block = reply_values[3]
                                     # save new values
                                     new_reply.save()
 
