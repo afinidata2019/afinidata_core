@@ -1,15 +1,21 @@
-from programs.models import Level
+from articles.models import Topic, Demographic
 from django.db import models
-import uuid
+
+LANGS = [
+        ('en', 'English'),
+        ('es', 'Spanish; Castilian'),
+        ('ar', 'Arabic')
+]
 
 
 class Session(models.Model):
     name = models.CharField(max_length=100)
+    lang = models.CharField(max_length=10, choices=LANGS, default=LANGS[0][0], verbose_name='idioma')
+    min = models.IntegerField(null=True, default=0, verbose_name='Min meses')
+    max = models.IntegerField(null=True, default=72, verbose_name='Max meses')
+    topics = models.ManyToManyField(Topic)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    parent_session = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
-    value = models.IntegerField(verbose_name='Months')
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def __str__(self):
         return self.name
@@ -18,14 +24,13 @@ class Session(models.Model):
 class Field(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     position = models.IntegerField()
-    identifier = models.UUIDField(default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     field_type = models.CharField(max_length=50, choices=(('text', 'Text'), ('quick_replies', 'Quick Replies'),
                                            ('save_values_block', 'Save Values Block')))
 
     def __str__(self):
-        return "%s" % self.identifier
+        return "%s" % self.pk
 
 
 class Message(models.Model):
@@ -59,3 +64,26 @@ class RedirectBlock(models.Model):
 
     def __str__(self):
         return self.block
+
+
+class DemographicQuestion(models.Model):
+    demographic = models.ForeignKey(Demographic, on_delete=models.CASCADE)
+    lang = models.CharField(max_length=10, choices=LANGS, default=LANGS[0][0], verbose_name='idioma')
+    question = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.question
+
+
+class DemographicReply(models.Model):
+    demographic = models.ForeignKey(Demographic, on_delete=models.CASCADE)
+    lang = models.CharField(max_length=10, choices=LANGS, default=LANGS[0][0], verbose_name='idioma')
+    reply = models.TextField()
+    value = models.IntegerField(null=True, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.reply
