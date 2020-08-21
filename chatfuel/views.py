@@ -20,6 +20,7 @@ from chatfuel import forms
 import random
 import boto3
 import os
+import re
 
 
 ''' MESSENGER USERS VIEWS '''
@@ -917,10 +918,52 @@ class GetSessionFieldView(View):
         )
 
         response = dict()
+        user = form.cleaned_data['user_id']
+        instance = form.cleaned_data['instance']
+
+        print(user, instance)
 
         if field.field_type == 'text':
             for m in field.message_set.all():
-                messages.append(dict(text=m.text))
+                cut_message = m.text.split(' ')
+                new_text = ""
+                for c in cut_message:
+                    first_search = re.search("^{{.*}}*", c)
+                    last_search = re.search("^{.*}*", c)
+                    if first_search:
+                        idx = c.index('}')
+                        exc = c[(idx + 2):]
+                        attribute = c[2:idx]
+                        if attribute == 'name':
+                            attribute = instance.name
+                        else:
+                            qs = instance.attributevalue_set.filter(attribute__name=attribute)
+                            if qs.exists():
+                                attribute = qs.last().value
+                            else:
+                                attribute = '-' + attribute + '-'
+                        text = attribute + exc
+                        new_text = new_text + ' ' + text
+                    elif last_search:
+                        idx = c.index('}')
+                        exc = c[(idx + 1):]
+                        attribute = c[1:idx]
+                        if attribute == 'first_name':
+                            attribute = user.first_name
+                        elif attribute == 'last_name':
+                            attribute = user.last_name
+                        else:
+                            qs = user.userdata_set.filter(data_key=attribute)
+                            if qs.exists():
+                                attribute = qs.last().data_value
+                            else:
+                                attribute = '-' + attribute + '-'
+                        text = attribute + exc
+                        new_text = new_text + ' ' + text
+                    else:
+                        new_text = new_text + ' ' + c
+
+                messages.append(dict(text=new_text))
 
         if field.field_type == 'quick_replies':
             message = dict(text='Responde: ', quick_replies=[])
