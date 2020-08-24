@@ -2,7 +2,7 @@ from instances.models import Instance, AttributeValue, PostInteraction
 from user_sessions.models import Session, Field
 from attributes.models import Attribute
 from messenger_users.models import User
-from articles.models import Article
+from articles.models import Article, Topic
 from programs.models import Program
 from groups.models import Code
 from posts.models import Post
@@ -109,3 +109,4 @@ class SessionFieldForm(forms.Form):
 class SessionForm(forms.Form):
     instance = forms.ModelChoiceField(queryset=Instance.objects.all())
     user_id = forms.ModelChoiceField(queryset=User.objects.all())
+    topics = forms.ModelMultipleChoiceField(queryset=Topic.objects.all(), to_field_name="name", required=False)
