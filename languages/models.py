@@ -31,8 +31,8 @@ class LanguageCode(models.Model):
 class MilestoneTranslation(models.Model):
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE)
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    language_code = models.ForeignKey(LanguageCode, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=255, unique=True)
+    language_code = models.ForeignKey(LanguageCode, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
