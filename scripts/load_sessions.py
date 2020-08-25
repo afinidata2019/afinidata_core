@@ -1,6 +1,8 @@
 from user_sessions.models import Session, RedirectBlock
+from articles.models import Topic
 from core.settings import BASE_DIR
 from openpyxl import load_workbook
+from django.db.models import Max
 import os
 
 
@@ -19,7 +21,7 @@ def run():
             # check if session not exist
             if not row[0].value:
                 # create session
-                session = Session.objects.create(name=row[1].value, value=row[3].value)
+                session = Session.objects.create(name=row[1].value, min=row[3].value, max=row[4].value)
                 # set session ID in file
                 row[0].value = session.pk
             # session exists here
@@ -28,19 +30,29 @@ def run():
                 session = Session.objects.get(id=row[0].value)
                 # get name and value in sheet
                 row_name = row[1].value
-                row_value = row[3].value
+                row_min = row[3].value
+                row_max = row[4].value
                 # verify if session name or value change in BD
-                if session.name != row_name or session.value != row_value:
+                if session.name != row_name or session.min != row_min or session.max != row_max:
                     session.name = row_name
-                    session.value = row_value
+                    session.min = row_min
+                    session.max = row_max
                     # change values for session
                     session.save()
-
+            # Add topics
+            topics = row[2].value.split(', ')
+            for new_topic in topics:
+                if not Topic.objects.filter(name=new_topic).exists():
+                    topic = Topic.objects.create(id=str(int(Topic.objects.all().aggregate(Max('id'))['id__max'])+1),
+                                                 name=new_topic)
+                else:
+                    topic = Topic.objects.get(name=new_topic)
+                session.topics.add(topic)
             for index, cell in enumerate(row):
                 # verify if cell is not in flow
-                if index > 3:
+                if index > 4:
                     # get position
-                    position = index - 4
+                    position = index - 5
                     # split values
                     if cell.value:
                         text = cell.value.split('\n\n')
@@ -72,8 +84,9 @@ def run():
                                 message.delete()
                             # add file messages
                             for message in messages:
-                                new_message = field.message_set.create(text=message)
-                                print(new_message.pk, 'message created.')
+                                if message.strip() != '':
+                                    new_message = field.message_set.create(text=message)
+                                    print(new_message.pk, 'message created.')
 
                         # check field type in field is replies
                         if field.field_type == 'quick_replies':
