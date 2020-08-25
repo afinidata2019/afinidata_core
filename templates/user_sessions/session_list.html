@@ -25,8 +25,8 @@
                           <th>ID</th>
                           <th>Name</th>
                           <th>Fields</th>
-                          <th>Months</th>
-                          <th>Parent Session</th>
+                          <th>Min</th>
+                          <th>Max</th>
                           <th>Actions</th>
                         </tr>
                     </thead>
@@ -35,8 +35,8 @@
                           <th>ID</th>
                           <th>Name</th>
                           <th>Fields</th>
-                          <th>Months</th>
-                          <th>Parent Session</th>
+                          <th>Min</th>
+                          <th>Max</th>
                           <th>Actions</th>
                         </tr>
                     </tfoot>
@@ -48,16 +48,8 @@
                                 <td>
                                     {{ object.field_set.count }}
                                 </td>
-                                <td>{{ object.value }}</td>
-                                <td>
-                                    {% if object.parent_session %}
-                                        <a href="{% url 'sessions:session_detail' session_id=object.parent_session_id %}">
-                                            {{ object.parent_session.name }}
-                                        </a>
-                                    {% else %}
-                                        --
-                                    {% endif %}
-                                </td>
+                                <td>{{ object.min }}</td>
+                                <td>{{ object.max }}</td>
                                 <td>
                                     <a href="{% url 'sessions:session_detail' session_id=object.pk %}"
                                        class="btn btn-primary"><i class="fas fa-eye"></i></a>

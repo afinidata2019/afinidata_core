@@ -19,13 +19,9 @@
             </div>
             <div class="card-body">
                 <strong>ID: </strong><span>{{ object.pk }}</span><br>
-                {% if object.parent_session %}
-                    <strong>Parent Session: </strong>
-                        <a href="{% url 'sessions:session_detail' session_id=object.parent_session_id %}">
-                            {{ object.parent_session.name }}</a><br>
-                {% endif %}
                 <strong>Fields: </strong><span>{{ object.field_set.count }}</span><br>
-                <strong>Months: </strong><span>{{ object.value }}</span><br>
+                <strong>Min: </strong><span>{{ object.min }}</span><br>
+                <strong>Max: </strong><span>{{ object.max }}</span><br>
                 <strong>Created At: </strong><span>{{ object.created_at }}</span><br>
                 <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br>
                 <strong>Actions: </strong>
