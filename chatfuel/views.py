@@ -742,7 +742,6 @@ class GetMilestoneView(View):
                 if language.available:
                     codes = language.languagecode_set.filter(code=locale)
                     lang_translations = MilestoneTranslation.objects.filter(milestone=milestone, language=language)
-                    print(lang_translations)
                     if codes.exists():
                         code = codes.first()
                         translations = MilestoneTranslation.objects.filter(milestone=milestone, language_code=code)
@@ -757,11 +756,15 @@ class GetMilestoneView(View):
                         if lang_translations.exists():
                             milestone_text = lang_translations.first().name
                         else:
-                            region = os.getenv('region')
-                            translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
-                            result = translate.translate_text(Text=milestone.name, SourceLanguageCode="auto",
-                                                              TargetLanguageCode=language.name)
-                            print(result['TranslatedText'])
+                            if language.auto_translate:
+                                region = os.getenv('region')
+                                translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
+                                result = translate.translate_text(Text=milestone.name, SourceLanguageCode="auto",
+                                                                  TargetLanguageCode=language.name)
+                                new_translation = MilestoneTranslation.objects.create(
+                                    milestone=milestone, language=language, name=result['TranslatedText'],
+                                    description=result['TranslatedText'])
+                                milestone_text = new_translation.name
 
         return JsonResponse(dict(set_attributes=dict(request_status='done',
                                                      milestone=milestone.pk,
