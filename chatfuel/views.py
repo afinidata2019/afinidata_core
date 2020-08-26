@@ -1,6 +1,7 @@
 from instances.models import InstanceAssociationUser, Instance, AttributeValue, PostInteraction, Response
 from django.views.generic import View, CreateView, TemplateView, UpdateView
 from articles.models import Article, Interaction as ArticleInteraction
+from languages.models import Language, MilestoneTranslation
 from groups.models import Code, AssignationMessengerUser
 from messenger_users.models import User as MessengerUser
 from django.utils.decorators import method_decorator
@@ -729,9 +730,42 @@ class GetMilestoneView(View):
         else:
             milestone = milestones.exclude(id__in=[m.pk for m in filtered_milestones]).order_by('?').first()
 
+        milestone_text = milestone.name
+
+        if 'locale' in form.data:
+            locale = form.data['locale']
+            print(locale)
+            languages = Language.objects.filter(name=locale[0:2])
+            if languages.exists():
+                check_translation = False
+                language = languages.first()
+                if language.available:
+                    codes = language.languagecode_set.filter(code=locale)
+                    lang_translations = MilestoneTranslation.objects.filter(milestone=milestone, language=language)
+                    print(lang_translations)
+                    if codes.exists():
+                        code = codes.first()
+                        translations = MilestoneTranslation.objects.filter(milestone=milestone, language_code=code)
+                        if translations.exists():
+                            milestone_text = translations.first().name
+                        else:
+                            check_translation = True
+                    else:
+                        check_translation = True
+
+                    if check_translation:
+                        if lang_translations.exists():
+                            milestone_text = lang_translations.first().name
+                        else:
+                            region = os.getenv('region')
+                            translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
+                            result = translate.translate_text(Text=milestone.name, SourceLanguageCode="auto",
+                                                              TargetLanguageCode=language.name)
+                            print(result['TranslatedText'])
+
         return JsonResponse(dict(set_attributes=dict(request_status='done',
                                                      milestone=milestone.pk,
-                                                     milestone_text=milestone.name,
+                                                     milestone_text=milestone_text,
                                                      all_level_milestones_dispatched='false',
                                                      all_range_milestones_dispatched=act_range)))
 
