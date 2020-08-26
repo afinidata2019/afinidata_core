@@ -756,7 +756,12 @@ class GetMilestoneView(View):
                     if check_translation:
                         if lang_translations.exists():
                             milestone_text = lang_translations.first().name
-
+                        else:
+                            region = os.getenv('region')
+                            translate = boto3.client(service_name='translate', region_name=region, use_ssl=True)
+                            result = translate.translate_text(Text=milestone.name, SourceLanguageCode="auto",
+                                                              TargetLanguageCode=language.name)
+                            print(result['TranslatedText'])
 
         return JsonResponse(dict(set_attributes=dict(request_status='done',
                                                      milestone=milestone.pk,
