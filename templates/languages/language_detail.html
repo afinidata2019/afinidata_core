@@ -28,6 +28,13 @@
                 {% if not object.available %}
                     <i class="fas fa-times-circle text-danger"></i>
                 {% endif %}<br>
+                <strong class="text-gray-900">Auto Translate: </strong>
+                {% if object.auto_translate %}
+                     <i class="fas fa-check-circle text-success"></i>
+                {% endif %}
+                {% if not object.auto_translate %}
+                    <i class="fas fa-times-circle text-danger"></i>
+                {% endif %}<br>
                 {% if object.redirect %}
                     <strong class="text-gray-900">Available: </strong>
                     <a href="{% url 'languages:language_detail' language_id=object.redirect_id %}">{{object.redirect.name}}</a><br>

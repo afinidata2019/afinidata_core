@@ -29,19 +29,11 @@
                           <th>Name</th>
                           <th>Description</th>
                           <th>Enabled</th>
+                          <th>Auto Translate</th>
                           <th>Codes</th>
                           <th>Actions</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Name</th>
-                          <th>Description</th>
-                          <th>Enabled</th>
-                          <th>Codes</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for object in object_list %}
                             <tr>
@@ -52,6 +44,14 @@
                                          <i class="fas fa-check-circle fa-2x text-success"></i>
                                     {% endif %}
                                     {% if not object.available %}
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if object.auto_translate %}
+                                         <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    {% endif %}
+                                    {% if not object.auto_translate %}
                                         <i class="fas fa-times-circle fa-2x text-danger"></i>
                                     {% endif %}
                                 </td>
