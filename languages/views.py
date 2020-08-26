@@ -23,7 +23,7 @@ class LanguageView(PermissionRequiredMixin, DetailView):
 class LanguageCreateView(PermissionRequiredMixin, CreateView):
     model = Language
     permission_required = 'languages.add_language'
-    fields = ('name', 'description', 'available', 'redirect')
+    fields = ('name', 'description', 'available', 'auto_translate', 'redirect')
     login_url = reverse_lazy('pages:login')
 
     def get_context_data(self, **kwargs):
@@ -39,7 +39,7 @@ class LanguageCreateView(PermissionRequiredMixin, CreateView):
 class LanguageEditView(PermissionRequiredMixin, UpdateView):
     model = Language
     permission_required = 'languages.add_language'
-    fields = ('description', 'available', 'redirect')
+    fields = ('description', 'available', 'auto_translate', 'redirect')
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'language_id'
 
