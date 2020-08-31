@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'entities.apps.EntitiesConfig',
     'bots.apps.BotsConfig',
+    'channels.apps.ChannelsConfig',
     'instances.apps.InstancesConfig',
     'chatfuel.apps.ChatfuelConfig',
     'messenger_users.apps.MessengerUsersConfig',
