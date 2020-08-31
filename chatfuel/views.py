@@ -534,7 +534,7 @@ class GetArticleView(View):
                 .only('id', 'name', 'min', 'max', 'preview', 'thumbnail')
             article = articles.first()
             new_interaction = ArticleInteraction.objects \
-                .create(user_id=form.data['user_id'], article=article, type='sent')
+                .create(user_id=form.data['user_id'], article=article, type='dispatched')
 
             return JsonResponse(dict(set_attributes=dict(
                 request_status='done',
@@ -558,7 +558,7 @@ class GetArticleView(View):
         instances = form.cleaned_data['user_id'].get_instances().filter(entity_id=1)
         if not instances.count() > 0:
             new_interaction = ArticleInteraction.objects\
-                .create(user_id=form.data['user_id'], article=article, type='sent')
+                .create(user_id=form.data['user_id'], article=article, type='dispatched')
 
             return JsonResponse(dict(set_attributes=dict(
                 request_status='done',
@@ -583,7 +583,7 @@ class GetArticleView(View):
                     pass
         if len(birthdays) < 1:
             new_interaction = ArticleInteraction.objects \
-                .create(user_id=form.data['user_id'], article=article, type='sent')
+                .create(user_id=form.data['user_id'], article=article, type='dispatched')
             return JsonResponse(dict(set_attributes=dict(
                 request_status='done',
                 article_id=article.pk,
@@ -597,6 +597,7 @@ class GetArticleView(View):
             )))
         random_number = random.randrange(0, len(birthdays))
         date = birthdays[random_number]
+        print(date.instance)
         rel = relativedelta.relativedelta(datetime.now(), parser.parse(date.value))
         months = (rel.years * 12) + rel.months
         print(months)
@@ -610,7 +611,7 @@ class GetArticleView(View):
         else:
             article = filter_articles[random.randrange(0, filter_articles.count())]
             new_interaction = ArticleInteraction.objects \
-                .create(user_id=form.data['user_id'], article=article, type='sent')
+                .create(user_id=form.data['user_id'], article=article, type='dispatched', instance_id=date.instance_id)
             print(new_interaction)
         return JsonResponse(dict(
             set_attributes=dict(
