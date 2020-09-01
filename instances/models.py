@@ -1,12 +1,11 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
-from entities.models import Entity
-from bots import models as bot_models
-from areas.models import Area
+from messenger_users import models as user_models
+from posts.models import Post, Interaction
 from milestones.models import Milestone
 from attributes.models import Attribute
-from messenger_users import models as user_models
-from posts.models import Post
+from entities.models import Entity
+from django.db import models
+from areas.models import Area
 
 
 class Instance(models.Model):
@@ -30,7 +29,8 @@ class Instance(models.Model):
         return feeds
 
     def get_time_interactions(self, first_limit, last_limit):
-        interactions = self.postinteraction_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)
+        interactions = Interaction.objects.filter(created_at__gte=first_limit, created_at__lte=last_limit,
+                                                  instance_id=self.pk)
         return interactions
 
     def get_users(self):
@@ -59,10 +59,11 @@ class Instance(models.Model):
         return milestones
 
     def get_activities(self):
-        posts = Post.objects.filter(id__in=set([x.post_id for x in self.postinteraction_set.all()])).only('id', 'name')
+        posts = Post.objects.filter(id__in=set([x.post_id for x in Interaction.objects.filter(instance_id=self.pk)]))\
+            .only('id', 'name')
         for post in posts:
-            post.assign = self.postinteraction_set.filter(post_id=post.id, type='dispatched').last()
-            sessions = self.postinteraction_set.filter(post_id=post.id, type='session')
+            post.assign = Interaction.objects.filter(post_id=post.id, type='dispatched', instance_id=self.pk).last()
+            sessions = Interaction.objects.filter(post_id=post.id, type='session', instance_id=self.pk)
             if sessions.count() > 0:
                 post.completed = sessions.last()
             else:
@@ -84,7 +85,8 @@ class Instance(models.Model):
 
     def get_completed_activities(self, tipo='session'):
         posts = Post.objects\
-            .filter(id__in=set([x.post_id for x in self.postinteraction_set.filter(type=tipo)])).only('id')
+            .filter(id__in=set([x.post_id for x in Interaction.objects.filter(instance_id=self.pk, type=tipo)]))\
+            .only('id')
         return posts
 
     def get_attributes(self):
