@@ -41,10 +41,10 @@ class Post(models.Model):
         return self.name
 
     def get_user_dispatched_interactions(self, instance, first_limit, last_limit):
-        return instance_models.PostInteraction.objects.filter(post_id=self.pk, instance=instance,
-                                                              created_at__gte=first_limit,
-                                                              created_at__lte=last_limit,
-                                                              type='dispatched')
+        return self.interaction_set.filter(instance_id=instance.pk,
+                                           created_at__gte=first_limit,
+                                           created_at__lte=last_limit,
+                                           type='dispatched')
 
     def get_user_last_dispatched_interaction(self, instance, first_limit, last_limit):
         interactions = self.get_user_dispatched_interactions(instance, first_limit, last_limit)
@@ -53,10 +53,10 @@ class Post(models.Model):
         return interactions.last()
 
     def get_user_session_interactions(self, instance, first_limit, last_limit):
-        return instance_models.PostInteraction.objects.filter(post_id=self.pk, instance=instance,
-                                                              created_at__gte=first_limit,
-                                                              created_at__lte=last_limit,
-                                                              type='session')
+        return self.interaction_set.filter(instance_id=instance.pk,
+                                           created_at__gte=first_limit,
+                                           created_at__lte=last_limit,
+                                           type='session')
 
     def get_user_last_session_interaction(self, instance, first_limit, last_limit):
         interactions = self.get_user_session_interactions(instance, first_limit, last_limit)
@@ -68,6 +68,7 @@ class Post(models.Model):
 class Interaction(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     user_id = models.IntegerField(default=0)
+    instance_id = models.IntegerField(null=True)
     username = models.CharField(max_length=255, null=True)
     channel_id = models.CharField(default="", max_length=50)
     bot_id = models.IntegerField(default=1)
