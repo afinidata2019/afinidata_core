@@ -1,6 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import Instance, AttributeValue, Response
+from attributes.models import Attribute
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User, UserData
 from user_sessions.models import Field, Message, Reply, Interaction as SessionInteraction
@@ -44,7 +45,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
         c['completed_activities'] = 0
         c['assigned_activities'] = 0
-        c['areas'] = Area.objects.all()
+        c['areas'] = Area.objects.filter(topic_id=1)
         for area in c['areas']:
             area.assigned_activities = 0
             area.completed_activities = 0
@@ -81,6 +82,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             else:
                 rep['answer'] = reply.text or ''
                 rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
+            Attribute.objects.filter(name=rep['attribute']).first()
             rep['value'] = reply.value or 0
             rep['response'] = reply.created_at
             quick_replies.append(rep)
