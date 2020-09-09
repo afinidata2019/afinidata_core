@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import Instance, AttributeValue, Response
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User, UserData
+from user_sessions.models import Field, Message, Reply, Interaction as SessionInteraction
 from django.urls import reverse_lazy
 from django.http import HttpResponse, Http404
 from django.contrib import messages
@@ -66,6 +67,24 @@ class InstanceView(PermissionRequiredMixin, DetailView):
 
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
+        quick_replies = []
+        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply')
+        for reply in replies:
+            rep = dict()
+            field = Field.objects.filter(id=reply.field_id).first()
+            question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1).first()
+            rep['question'] = Message.objects.filter(field_id=question_field.id).first().text
+            answer = Reply.objects.filter(field_id=field.id, value=reply.value)
+            if answer.exists():
+                rep['answer'] = answer.first().label
+                rep['attribute'] = answer.first().attribute
+            else:
+                rep['answer'] = reply.text or ''
+                rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
+            rep['value'] = reply.value or 0
+            rep['response'] = reply.created_at
+            quick_replies.append(rep)
+        c['quick_replies'] = quick_replies
         return c
 
 

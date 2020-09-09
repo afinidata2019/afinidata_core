@@ -105,12 +105,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('CORE_DATABASE_ENGINE'),
-        'NAME': os.getenv('CORE_DATABASE_NAME'),
-        'USER': os.getenv('CORE_DATABASE_USER'),
-        'PASSWORD': os.getenv('CORE_DATABASE_PASSWORD'),
-        'HOST': os.getenv('CORE_DATABASE_HOST'),
-        'PORT': os.getenv('CORE_DATABASE_PORT'),
+        'ENGINE': os.getenv('CORE_POSTS_DATABASE_ENGINE'),
+        'NAME': os.getenv('CORE_POSTS_DATABASE_NAME'),
+        'USER': os.getenv('CORE_POSTS_DATABASE_USER'),
+        'PASSWORD': os.getenv('CORE_POSTS_DATABASE_PASSWORD'),
+        'HOST': os.getenv('CORE_POSTS_DATABASE_HOST'),
+        'PORT': os.getenv('CORE_POSTS_DATABASE_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             'charset': 'utf8mb4'
