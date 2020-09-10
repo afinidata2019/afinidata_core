@@ -167,7 +167,7 @@ class InstanceMilestonesView(DetailView):
             c['trabajo_' + area.name] = 0
             c['trabajo_' + area.name+'_total'] = 0
             if levels.exists():
-                milestones = levels.first().milestones.filter(area=area.id).order_by('value')
+                milestones = levels.first().milestones.filter(areas__in=[area.pk]).order_by('value')
                 for m in milestones:
                     m_responses = responses.filter(milestone_id=m.pk, response='done')
                     if m_responses.exists():
