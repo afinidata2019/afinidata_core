@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from posts.models import Post
 from messenger_users.models import User, UserData
 from attributes.models import Attribute
 from django.shortcuts import redirect
@@ -49,6 +50,19 @@ class UserView(PermissionRequiredMixin, DetailView):
     model = User
     pk_url_kwarg = 'id'
     login_url = reverse_lazy('pages:login')
+
+
+class UserInteractionsView(PermissionRequiredMixin, DetailView):
+    permission_required = 'messenger_users.view_user'
+    model = User
+    pk_url_kwarg = 'id'
+    template_name = 'messenger_users/interactions_detail.html'
+    login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(UserInteractionsView, self).get_context_data()
+        c['post_interactions'] = self.object.get_last_post_interactions()[:10]
+        return c
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):
