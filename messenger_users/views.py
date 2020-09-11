@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from posts.models import Interaction
+from user_sessions.models import Interaction as SessionInteraction
 from articles.models import Interaction as ArticleInteraction
 from django.contrib import messages
 from messenger_users import forms
@@ -64,6 +65,7 @@ class UserInteractionsView(PermissionRequiredMixin, DetailView):
         c = super(UserInteractionsView, self).get_context_data()
         c['post_interactions'] = self.object.get_post_interactions()[:20]
         c['article_interactions'] = self.object.get_article_interactions()[:20]
+        c['session_interactions'] = self.object.get_session_interactions()[:20]
         return c
 
 
@@ -74,7 +76,7 @@ class UserPostInteractionListView(PermissionRequiredMixin, ListView):
     template_name = 'messenger_users/post_interaction_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        c = super(UserPostInteractionListView, self).get_context_data(  object_list=None, **kwargs)
+        c = super(UserPostInteractionListView, self).get_context_data(object_list=None, **kwargs)
         c['user'] = User.objects.get(id=self.kwargs['id'])
         return c
 
@@ -90,13 +92,29 @@ class UserArticleInteractionListView(PermissionRequiredMixin, ListView):
     template_name = 'messenger_users/article_interaction_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        c = super(UserArticleInteractionListView, self).get_context_data(  object_list=None, **kwargs)
+        c = super(UserArticleInteractionListView, self).get_context_data(object_list=None, **kwargs)
         c['user'] = User.objects.get(id=self.kwargs['id'])
         return c
 
     def get_queryset(self):
         user = User.objects.get(id=self.kwargs['id'])
         return user.get_article_interactions()
+
+
+class UserSessionInteractionListView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.view_user'
+    model = SessionInteraction
+    paginate_by = 30
+    template_name = 'messenger_users/session_interaction_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(UserSessionInteractionListView, self).get_context_data(object_list=None, **kwargs)
+        c['user'] = User.objects.get(id=self.kwargs['id'])
+        return c
+
+    def get_queryset(self):
+        user = User.objects.get(id=self.kwargs['id'])
+        return user.get_session_interactions()
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):

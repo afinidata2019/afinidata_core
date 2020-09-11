@@ -11,6 +11,8 @@ urlpatterns = [
     path('<int:id>/post_interactions/', views.UserPostInteractionListView.as_view(), name='user_post_interactions'),
     path('<int:id>/article_interactions/', views.UserArticleInteractionListView.as_view(),
          name='user_article_interactions'),
+    path('<int:id>/session_interactions/', views.UserSessionInteractionListView.as_view(),
+         name='user_session_interactions'),
     path('<int:user_id>/want_add_child/', views.WantAddChildView.as_view(), name='want_add_child'),
     path('<int:user_id>/add_child/', views.AddChildView.as_view(), name='add_child'),
     path('<int:user_id>/data/', views.UserDataListView.as_view(), name='user_data_list'),

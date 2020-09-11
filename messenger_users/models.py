@@ -130,6 +130,13 @@ class User(models.Model):
                 a.instance = InstanceModels.Instance.objects.filter(id=a.instance_id).first()
         return ai
 
+    def get_session_interactions(self):
+        si = SessionInteraction.objects.filter(user_id=self.pk).order_by('-id')
+        for s in si:
+            if s.instance_id:
+                s.instance = InstanceModels.Instance.objects.filter(id=s.instance_id).first()
+        return si
+
 
 class UserData(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)

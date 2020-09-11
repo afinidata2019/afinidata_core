@@ -1,0 +1,63 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Session Interactions for {{ user }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Session Interactions for {{ user }}</h1>
+            <div>
+                <a href="{% url 'messenger_users:user_interactions' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to User</a>
+                <a href="{% url 'messenger_users:user_interactions' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to All Interactions</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Session Interactions</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Instance</th>
+                                <th>Type</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in object_list %}
+                                    <tr>
+                                        <td>{{ interaction.session }}</td>
+                                        <td>
+                                            {% if interaction.instance_id %}
+                                                <a href="{% url 'instances:instance' id=interaction.instance_id %}">
+                                                    {{ interaction.instance }}
+                                                </a>
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% include 'base/pagination.html' %}
+    </div>
+{% endblock %}
