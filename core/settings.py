@@ -166,9 +166,6 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ['messenger_users.routers.MessengerUsersRouter', 'posts.routers.PostsRouter',
-                    'articles.routers.ArticlesRouter', 'user_sessions.routers.UserSessionsRouter']
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 

@@ -1,0 +1,157 @@
+{% extends 'base/private.html' %}
+
+
+{% block title %}{{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ object.first_name }} {{ object.last_name }}</h1>
+            <div>
+                <a href="{% url 'messenger_users:user' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to User</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Post Interactions</h6>
+                      <div>
+                          <a href="{% url 'messenger_users:user_post_interactions' id=object.pk %}" class="btn btn-primary">
+                              View All
+                          </a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Post</th>
+                                <th>Instance</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in post_interactions %}
+                                    <tr>
+                                        <td>
+                                            {% if interaction.post_id %}
+                                                {{ interaction.post_name }} ({{ interaction.post_id }})
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if interaction.instance %}
+                                                <a href="{% url 'instances:instance' id=interaction.instance_id %}">
+                                                    {{ interaction.instance }}
+                                                </a>
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.value }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}                             
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Article Interactions</h6>
+                      <div>
+                          <a href="{% url 'messenger_users:user_article_interactions' id=user.pk %}"
+                             class="btn btn-primary">View All</a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Article</th>
+                                <th>Instance</th>
+                                <th>Type</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in article_interactions %}
+                                    <tr>
+                                        <td>{{ interaction.article }}</td>
+                                        <td>
+                                            {% if interaction.instance_id %}
+                                                <a href="{% url 'instances:instance' id=interaction.instance_id %}">
+                                                    {{ interaction.instance }}
+                                                </a>
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Session Interactions</h6>
+                      <div>
+                          <a href="{% url 'messenger_users:user_session_interactions' id=user.pk %}"
+                             class="btn btn-primary">View All</a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Instance</th>
+                                <th>Type</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in session_interactions %}
+                                    <tr>
+                                        <td>{{ interaction.session }}</td>
+                                        <td>
+                                            {% if interaction.instance_id %}
+                                                <a href="{% url 'instances:instance' id=interaction.instance_id %}">
+                                                    {{ interaction.instance }}
+                                                </a>
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

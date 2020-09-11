@@ -1,3 +1,7 @@
+from user_sessions.models import Interaction as SessionInteraction
+from articles.models import Interaction as ArticleInteraction
+from posts.models import Interaction as PostInteraction
+from posts.models import Post
 from instances import models as InstanceModels
 from bots.models import Bot
 from django.db import models
@@ -109,6 +113,29 @@ class User(models.Model):
             return keys.last().data_value
         else:
             return None
+
+    def get_post_interactions(self):
+        pi = PostInteraction.objects.filter(user_id=self.pk).order_by('-id')
+        for p in pi:
+            if p.post_id:
+                p.post_name = Post.objects.filter(id=p.post_id).only('name').first()
+            if p.instance_id:
+                p.instance = InstanceModels.Instance.objects.filter(id=p.instance_id).first()
+        return pi
+
+    def get_article_interactions(self):
+        ai = ArticleInteraction.objects.filter(user_id=self.pk).order_by('-id')
+        for a in ai:
+            if a.instance_id:
+                a.instance = InstanceModels.Instance.objects.filter(id=a.instance_id).first()
+        return ai
+
+    def get_session_interactions(self):
+        si = SessionInteraction.objects.filter(user_id=self.pk).order_by('-id')
+        for s in si:
+            if s.instance_id:
+                s.instance = InstanceModels.Instance.objects.filter(id=s.instance_id).first()
+        return si
 
 
 class UserData(models.Model):
