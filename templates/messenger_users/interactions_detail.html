@@ -14,8 +14,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
                       <h6 class="m-0 font-weight-bold text-primary">Post Interactions</h6>
+                      <div>
+                          <a href="{% url 'messenger_users:user_post_interactions' id=object.pk %}" class="btn btn-primary">
+                              View all
+                          </a>
+                      </div>
                     </div>
                     <div class="card-body">
                         <table class="table">

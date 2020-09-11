@@ -1,11 +1,11 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from posts.models import Post
 from messenger_users.models import User, UserData
 from attributes.models import Attribute
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse
+from posts.models import Interaction
 from django.contrib import messages
 from messenger_users import forms
 from dateutil.parser import parse
@@ -64,6 +64,22 @@ class UserInteractionsView(PermissionRequiredMixin, DetailView):
         c['post_interactions'] = self.object.get_post_interactions()[:10]
         c['article_interactions'] = self.object.get_article_interactions()[:10]
         return c
+
+
+class UserPostInteractionListView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.view_user'
+    model = Interaction
+    paginate_by = 30
+    template_name = 'messenger_users/post_interaction_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(UserPostInteractionListView, self).get_context_data(  object_list=None, **kwargs)
+        c['user'] = User.objects.get(id=self.kwargs['id'])
+        return c
+
+    def get_queryset(self):
+        user = User.objects.get(id=self.kwargs['id'])
+        return user.get_post_interactions()
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):
