@@ -109,4 +109,40 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Quick replies</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                  <th>Attribute</th>
+                                  <th>Question</th>
+                                  <th>Awnser</th>
+                                  <th>Value</th>
+                                  <th>Last Response</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reply in quick_replies %}
+                                    <tr>
+                                        <td>{{ reply.attribute }}</td>
+                                        <td>{{ reply.question }}</td>
+                                        <td>{{ reply.answer }}</td>
+                                        <td>{{ reply.value }}</td>
+                                        <td>{{ reply.response }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

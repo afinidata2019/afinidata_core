@@ -1,12 +1,11 @@
-from user_sessions.models import Session, RedirectBlock
-from articles.models import Topic
-from core.settings import BASE_DIR
+from user_sessions.models import Session, RedirectBlock, SessionType
+from areas.models import Area
+from content_manager.settings import BASE_DIR
 from openpyxl import load_workbook
-from django.db.models import Max
 import os
 
 
-def run():
+def load_sessions():
     # file uri
     file_url = os.path.join(BASE_DIR, 'sessions.xlsx')
     # get workbook
@@ -21,7 +20,7 @@ def run():
             # check if session not exist
             if not row[0].value:
                 # create session
-                session = Session.objects.create(name=row[1].value, min=row[3].value, max=row[4].value)
+                session = Session.objects.create(name=row[1].value, min=row[5].value, max=row[6].value)
                 # set session ID in file
                 row[0].value = session.pk
             # session exists here
@@ -30,8 +29,8 @@ def run():
                 session = Session.objects.get(id=row[0].value)
                 # get name and value in sheet
                 row_name = row[1].value
-                row_min = row[3].value
-                row_max = row[4].value
+                row_min = row[5].value
+                row_max = row[6].value
                 # verify if session name or value change in BD
                 if session.name != row_name or session.min != row_min or session.max != row_max:
                     session.name = row_name
@@ -39,27 +38,28 @@ def run():
                     session.max = row_max
                     # change values for session
                     session.save()
-            # Add topics
-            topics = row[2].value.split(', ')
-            for new_topic in topics:
-                if not Topic.objects.filter(name=new_topic).exists():
-                    topic = Topic.objects.create(id=str(int(Topic.objects.all().aggregate(Max('id'))['id__max'])+1),
-                                                 name=new_topic)
-                else:
-                    topic = Topic.objects.get(name=new_topic)
-                session.topics.add(topic)
+            print("Session:", session.pk)
+            # Add Type
+            new_type, created = SessionType.objects.get_or_create(name=row[2].value)
+            session.session_type = new_type
+            session.save()
+            # Add Areas
+            areas = row[4].value.split(', ')
+            for new_area in areas:
+                area, created = Area.objects.get_or_create(name=new_area)
+                session.areas.add(area)
             for index, cell in enumerate(row):
                 # verify if cell is not in flow
-                if index > 4:
+                if index > 6:
                     # get position
-                    position = index - 5
+                    position = index - 7
                     # split values
                     if cell.value:
                         text = cell.value.split('\n\n')
                         # choice field type
-                        if text[0] == 'TEXT':
+                        if text[0].strip() == 'TEXT':
                             field_type = 'text'
-                        elif text[0] == 'REPLIES':
+                        elif text[0].strip() == 'REPLIES':
                             field_type = 'quick_replies'
                         else:
                             field_type = 'save_values_block'
