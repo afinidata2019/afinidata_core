@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from messenger_users import forms
 from dateutil.parser import parse
+from user_sessions.models import Field, Message, Reply, Interaction as SessionInteraction
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -49,6 +50,28 @@ class UserView(PermissionRequiredMixin, DetailView):
     model = User
     pk_url_kwarg = 'id'
     login_url = reverse_lazy('pages:login')
+    def get_context_data(self, **kwargs):
+        c = super(UserView, self).get_context_data()
+        quick_replies = []
+        replies = SessionInteraction.objects.filter(user_id=self.object.pk, type='quick_reply')
+        for reply in replies:
+            rep = dict()
+            field = Field.objects.filter(id=reply.field_id).first()
+            question_field = Field.objects.filter(session_id=field.session_id, position=field.position - 1).first()
+            rep['question'] = Message.objects.filter(field_id=question_field.id).first().text
+            answer = Reply.objects.filter(field_id=field.id, value=reply.value)
+            if answer.exists():
+                rep['answer'] = answer.first().label
+                rep['attribute'] = answer.first().attribute
+            else:
+                rep['answer'] = reply.text or ''
+                rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
+            Attribute.objects.filter(name=rep['attribute']).first()
+            rep['value'] = reply.value or 0
+            rep['response'] = reply.created_at
+            quick_replies.append(rep)
+        c['quick_replies'] = quick_replies
+        return c
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):
