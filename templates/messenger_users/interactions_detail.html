@@ -63,6 +63,36 @@
                     <div class="card-header py-3">
                       <h6 class="m-0 font-weight-bold text-primary">Article Interactions</h6>
                     </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Article</th>
+                                <th>Instance</th>
+                                <th>Type</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in article_interactions %}
+                                    <tr>
+                                        <td>{{ interaction.article }}</td>
+                                        <td>
+                                            {% if interaction.instance_id %}
+                                                <a href="{% url 'instances:instance' id=interaction.instance_id %}">
+                                                    {{ interaction.instance }}
+                                                </a>
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

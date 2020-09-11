@@ -62,6 +62,7 @@ class UserInteractionsView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(UserInteractionsView, self).get_context_data()
         c['post_interactions'] = self.object.get_post_interactions()[:10]
+        c['article_interactions'] = self.object.get_article_interactions()[:10]
         return c
 
 

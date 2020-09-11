@@ -124,8 +124,12 @@ class User(models.Model):
         return pi
 
     def get_article_interactions(self):
-        pass
-    
+        ai = ArticleInteraction.objects.filter(user_id=self.pk).order_by('-id')
+        for a in ai:
+            if a.instance_id:
+                a.instance = InstanceModels.Instance.objects.filter(id=a.instance_id).first()
+        return ai
+
 
 class UserData(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
