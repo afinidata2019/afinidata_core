@@ -114,7 +114,7 @@ class User(models.Model):
         else:
             return None
 
-    def get_last_post_interactions(self):
+    def get_post_interactions(self):
         pi = PostInteraction.objects.filter(user_id=self.pk).order_by('-id')
         for p in pi:
             if p.post_id:
@@ -123,6 +123,9 @@ class User(models.Model):
                 p.instance = InstanceModels.Instance.objects.filter(id=p.instance_id).first()
         return pi
 
+    def get_article_interactions(self):
+        pass
+    
 
 class UserData(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
