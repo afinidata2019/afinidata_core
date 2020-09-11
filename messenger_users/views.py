@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from posts.models import Interaction
+from articles.models import Interaction as ArticleInteraction
 from django.contrib import messages
 from messenger_users import forms
 from dateutil.parser import parse
@@ -61,8 +62,8 @@ class UserInteractionsView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(UserInteractionsView, self).get_context_data()
-        c['post_interactions'] = self.object.get_post_interactions()[:10]
-        c['article_interactions'] = self.object.get_article_interactions()[:10]
+        c['post_interactions'] = self.object.get_post_interactions()[:20]
+        c['article_interactions'] = self.object.get_article_interactions()[:20]
         return c
 
 
@@ -80,6 +81,22 @@ class UserPostInteractionListView(PermissionRequiredMixin, ListView):
     def get_queryset(self):
         user = User.objects.get(id=self.kwargs['id'])
         return user.get_post_interactions()
+
+
+class UserArticleInteractionListView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.view_user'
+    model = ArticleInteraction
+    paginate_by = 30
+    template_name = 'messenger_users/article_interaction_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(UserArticleInteractionListView, self).get_context_data(  object_list=None, **kwargs)
+        c['user'] = User.objects.get(id=self.kwargs['id'])
+        return c
+
+    def get_queryset(self):
+        user = User.objects.get(id=self.kwargs['id'])
+        return user.get_article_interactions()
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):
