@@ -318,21 +318,21 @@ config1.data.datasets[0].backgroundColor[0] = gradientStroke;
 config2.data.datasets[0].backgroundColor[0] = gradientStroke;
 config3.data.datasets[0].backgroundColor[0] = gradientStroke;
 
-config1.options.elements.center.text = Math.round(100*{{ trabajo_motor }}/{{ trabajo_motor_total }})+"%";
-config2.options.elements.center.text = Math.round(100*{{ trabajo_cognitivo }}/{{ trabajo_cognitivo_total }})+"%";
-config3.options.elements.center.text = Math.round(100*{{ trabajo_emocional }}/{{ trabajo_emocional_total }})+"%";
+config1.options.elements.center.text = Math.round(100*{{ trabajo_2 }}/{{ trabajo_2_total }})+"%";
+config2.options.elements.center.text = Math.round(100*{{ trabajo_1 }}/{{ trabajo_1_total }})+"%";
+config3.options.elements.center.text = Math.round(100*{{ trabajo_3 }}/{{ trabajo_3_total }})+"%";
 
 config1.options.cutoutPercentage = 80;
 config2.options.cutoutPercentage = 80;
 config3.options.cutoutPercentage = 80;
 
-config1.data.datasets[0].data[0] = {{ trabajo_motor }};
-config2.data.datasets[0].data[0] = {{ trabajo_cognitivo }};
-config3.data.datasets[0].data[0] = {{ trabajo_emocional }};
+config1.data.datasets[0].data[0] = {{ trabajo_2 }};
+config2.data.datasets[0].data[0] = {{ trabajo_1 }};
+config3.data.datasets[0].data[0] = {{ trabajo_3 }};
 
-config1.data.datasets[0].data[1] = Math.max({{ trabajo_motor_total }} - config1.data.datasets[0].data[0], 0);
-config2.data.datasets[0].data[1] = Math.max({{ trabajo_cognitivo_total }} - config2.data.datasets[0].data[0], 0);
-config3.data.datasets[0].data[1] = Math.max({{ trabajo_emocional_total }} - config3.data.datasets[0].data[0], 0);
+config1.data.datasets[0].data[1] = Math.max({{ trabajo_2_total }} - config1.data.datasets[0].data[0], 0);
+config2.data.datasets[0].data[1] = Math.max({{ trabajo_1_total }} - config2.data.datasets[0].data[0], 0);
+config3.data.datasets[0].data[1] = Math.max({{ trabajo_3_total }} - config3.data.datasets[0].data[0], 0);
 
 var chart1 = new Chart(ctx1, config1);
 var chart2 = new Chart(ctx2, config2);

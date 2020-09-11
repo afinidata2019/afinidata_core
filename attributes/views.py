@@ -9,7 +9,7 @@ class AttributesView(PermissionRequiredMixin, ListView):
     permission_required = 'attributes.view_all_attributes'
     login_url = reverse_lazy('pages:login')
     model = Attribute
-    paginate_by = 5
+    paginate_by = 10
 
 
 class NewAttributeView(PermissionRequiredMixin, CreateView):
