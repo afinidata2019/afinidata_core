@@ -38,7 +38,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(InstanceView, self).get_context_data()
-        c['today'] = timezone.now()
+        c['today'] = timezone.now() + datetime.timedelta(1)
         c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
         c['feeds'] = self.object.get_time_feeds(c['first_month'], c['today'])
@@ -152,7 +152,7 @@ class InstanceMilestonesView(DetailView):
     def get_context_data(self, **kwargs):
         c = super(InstanceMilestonesView, self).get_context_data(**kwargs)
         try:
-            age = relativedelta(timezone.now(), parse(self.object.get_attribute_values('birthday').value))
+            age = relativedelta(datetime.datetime.now(), parse(self.object.get_attribute_values('birthday').value))
             months = 0
             if age.months:
                 months = age.months
@@ -163,16 +163,16 @@ class InstanceMilestonesView(DetailView):
         c['months'] = months
         levels = Program.objects.get(id=1).level_set.filter(assign_min__lte=months, assign_max__gte=months)
         responses = self.object.response_set.all()
-        for area in Area.objects.all():
-            c['trabajo_' + area.name] = 0
-            c['trabajo_' + area.name+'_total'] = 0
+        for area in Area.objects.filter(topic_id=1):
+            c['trabajo_' + str(area.id)] = 0
+            c['trabajo_' + str(area.id)+'_total'] = 0
             if levels.exists():
-                milestones = levels.first().milestones.filter(area=area.id).order_by('value')
+                milestones = levels.first().milestones.filter(areas__in=[area.id]).order_by('value')
                 for m in milestones:
                     m_responses = responses.filter(milestone_id=m.pk, response='done')
                     if m_responses.exists():
-                        c['trabajo_'+area.name] += 1
-                    c['trabajo_'+area.name+'_total'] += 1
+                        c['trabajo_'+str(area.id)] += 1
+                    c['trabajo_'+str(area.id)+'_total'] += 1
         c['activities'] = self.object.get_completed_activities('session').count()
         return c
 
