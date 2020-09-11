@@ -6,6 +6,14 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Post Interactions for {{ user }}</h1>
+            <div>
+                <a href="{% url 'messenger_users:user' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to User</a>
+                <a href="{% url 'messenger_users:user_interactions' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to All Interactions</a>
+            </div>
         </div>
     </div>
 
