@@ -49,21 +49,6 @@
 
         <ul>
             {% for milestone in milestones %}
-                {% if not milestone.finished %}
-                    <li>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <span>{{ milestone.name }}</span>
-                            <div class="buttons">
-                                <a class="btn btn-outline-success"
-                                   href="{% url 'instances:complete_milestone' instance_id=object.pk milestone_id=milestone.pk %}">Si <span class="fa fa-check"></span></a>
-
-                            </div>
-                        </div>
-                    </li>
-                {% endif %}
-            {% endfor %}
-
-            {% for milestone in milestones %}
                 {% if milestone.finished %}
                 <li>
                     <div class="d-flex justify-content-between align-items-start">
@@ -74,6 +59,17 @@
                                href="{% url 'instances:reverse_milestone' instance_id=object.pk milestone_id=milestone.pk %}">
                                 Cambiar
                             </a>
+                        </div>
+                    </div>
+                </li>
+                {% else %}
+                <li>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span>{{ milestone.name }}</span>
+                        <div class="buttons">
+                            <a class="btn btn-outline-success"
+                               href="{% url 'instances:complete_milestone' instance_id=object.pk milestone_id=milestone.pk %}">Si <span class="fa fa-check"></span></a>
+
                         </div>
                     </div>
                 </li>
