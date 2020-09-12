@@ -34,6 +34,21 @@
         .milestones-list-content .buttons a {
             margin-left: 5px;
         }
+
+        .fa-square.text-success {
+            position: relative;
+        }
+
+        .fa-square.text-success::after {
+            content: "";
+            position: absolute;
+            background: #fff;
+            width: calc(100% - 4px);
+            height: calc(100% - 8px);
+            top: 4px;
+            left: 2px;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
@@ -54,11 +69,12 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <span>{{ milestone.name }}</span>
                         <div class="buttons">
-                            <span>Completado </span>
+                            <i class="far fa-check-square fa-2x text-success"></i>
+                            <!--
                             <a class="text-danger"
                                href="{% url 'instances:reverse_milestone' instance_id=object.pk milestone_id=milestone.pk %}">
                                 Cambiar
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </li>
@@ -67,8 +83,9 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <span>{{ milestone.name }}</span>
                         <div class="buttons">
-                            <a class="btn btn-outline-success"
-                               href="{% url 'instances:complete_milestone' instance_id=object.pk milestone_id=milestone.pk %}">Si <span class="fa fa-check"></span></a>
+                            <a class="btn"
+                               href="{% url 'instances:complete_milestone' instance_id=object.pk milestone_id=milestone.pk %}">
+                                <span class="fa fa-square fa-2x text-success"></span></a>
 
                         </div>
                     </div>
