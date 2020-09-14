@@ -25,15 +25,11 @@
                 <strong class="text-gray-800">Type: </strong><span>{{ object.type }}</span><br>
                 <strong class="text-gray-800">Created At:</strong><span>{{ object.created_at }}</span><br>
                 <strong class="text-gray-800">Updated At: </strong><span>{{ object.updated_at }}</span><br>
-                {% if perms.attributes.change_attribute or perms.attributes.delete_attribute %}
+                {% if perms.attributes.change_attribute %}
                     <strong class="text-gray-800" >Actions: </strong>
                     {% if perms.attributes.change_attribute %}
                         <a href="{% url 'attributes:edit_attribute' attribute_id=object.pk %}"
                            class="btn btn-success">Edit</a>
-                    {% endif %}
-                    {% if perms.attributes.delete_attribute %}
-                        <a href="{% url 'attributes:delete_attribute' attribute_id=object.pk %}"
-                           class="btn btn-danger">Delete</a>
                     {% endif %}
                 {% endif %}
             </div>
