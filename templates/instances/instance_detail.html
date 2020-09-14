@@ -229,7 +229,7 @@
                             <tbody>
                                 {% for attribute in instance.get_attributes %}
                                     <tr>
-                                        <td><a href="{% url 'attributes:attribute_detail' attribute_id=attribute.pk %}">{{ attribute }}</a></td>
+                                        <td>{{ attribute }}</td>
                                         <td>{{ attribute.assign.value }}</td>
                                         <td>{{ attribute.assign.created_at }}</td>
                                         <td>
