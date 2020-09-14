@@ -69,12 +69,12 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
         quick_replies = []
-        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply')
+        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply').order_by('-id')
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
-            question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1).first()
-            rep['question'] = Message.objects.filter(field_id=question_field.id).first().text
+            question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1).last()
+            rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
             answer = Reply.objects.filter(field_id=field.id, value=reply.value)
             if answer.exists():
                 rep['answer'] = answer.first().label
