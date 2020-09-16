@@ -70,10 +70,6 @@
                                             <a href="{% url 'attributes:edit_attribute' attribute_id=attribute.pk %}"
                                                class="btn btn-success"><i class="fas fa-pen"></i></a>
                                         {% endif %}
-                                        {% if perms.attributes.delete_attribute %}
-                                            <a href="{% url 'attributes:delete_attribute' attribute_id=attribute.pk %}"
-                                               class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
