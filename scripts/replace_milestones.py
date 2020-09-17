@@ -31,4 +31,4 @@ def run():
                 m.secondary_value = lf
                 m.second_code = row[1].value
                 m.save()
-                print(m.pk, m.second_value, m.second_code)
+                print(m.pk, m.secondary_value, m.second_code)
