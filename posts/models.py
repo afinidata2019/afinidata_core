@@ -56,7 +56,7 @@ class Post(models.Model):
         return self.interaction_set.filter(instance_id=instance.pk,
                                            created_at__gte=first_limit,
                                            created_at__lte=last_limit,
-                                           type='session')
+                                           type='opened')
 
     def get_user_last_session_interaction(self, instance, first_limit, last_limit):
         interactions = self.get_user_session_interactions(instance, first_limit, last_limit)
