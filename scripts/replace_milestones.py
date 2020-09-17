@@ -28,7 +28,7 @@ def run():
                 if not up:
                     lf = int(lf) * -1
 
-                m.second_value = lf
+                m.secondary_value = lf
                 m.second_code = row[1].value
                 m.save()
                 print(m.pk, m.second_value, m.second_code)
