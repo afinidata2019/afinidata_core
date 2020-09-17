@@ -26,8 +26,8 @@
                 <strong class="text-gray-900">Created At: </strong>{{ object.created_at }}<br>
                 <strong class="text-gray-900">Last Updated At: </strong>{{ object.updated_at }}<br><br>
                 <strong class="text-gray-900">Actions: </strong>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
+                <a href="{% url 'bot_interactions:bot_interaction_edit' interaction_id=object.pk %}" class="btn btn-success">Edit</a>
+                <a href="{% url 'bot_interactions:bot_interaction_delete' interaction_id=object.pk %}" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>

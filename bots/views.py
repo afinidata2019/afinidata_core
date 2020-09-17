@@ -164,3 +164,21 @@ class UpdateBotInteractionView(PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, 'The interaction "%s" has been updated.' % self.object.name)
         return reverse_lazy('bot_interactions:bot_interaction_detail', kwargs={'interaction_id': self.object.pk})
+
+
+class DeleteBotInteractionView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'bots.delete_interaction'
+    login_url = reverse_lazy('pages:login')
+    model = models.Interaction
+    pk_url_kwarg = 'interaction_id'
+    template_name = 'bots/interaction_form.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(DeleteBotInteractionView, self).get_context_data(**kwargs)
+        c['action'] = 'Delete'
+        c['delete_message'] = 'Are you sure to delete the interaction with ID: %s' % self.object.pk
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'The interaction "%s" has been deleted.' % self.object.name)
+        return reverse_lazy('bot_interactions:bot_interaction_list')
