@@ -28,7 +28,7 @@
                           <th>Code</th>
                           <th>2ºCode</th>
                           <th>Name</th>
-                          <th>Area</th>
+                          <th>Areas</th>
                           <th>Value</th>
                           <th>Actions</th>
                         </tr>
@@ -38,7 +38,7 @@
                           <th>Code</th>
                           <th>2ºCode</th>
                           <th>Name</th>
-                          <th>Area</th>
+                          <th>Areas</th>
                           <th>Value</th>
                           <th>Actions</th>
                         </tr>
@@ -50,7 +50,10 @@
                                 <td>{{ milestone.second_code }}</td>
                                 <td>{{ milestone.name }}</td>
                                 <td>
-                                    <a href="{% url 'areas:area_detail' area_id=milestone.area_id %}">{{ milestone.area.name }}</a>
+                                    {% for area in milestone.areas.all %}
+                                    <a href="{% url 'areas:area_detail' area_id=area.pk %}">{{ area.name }}</a>
+                                    {% endfor %}
+
                                 </td>
                                 <td>{{ milestone.value }}</td>
                                 <td>
