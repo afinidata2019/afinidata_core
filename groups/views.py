@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
+from posts.models import Interaction
 from django.urls import reverse_lazy
 from django.contrib import messages
 from groups import models
@@ -42,8 +43,8 @@ class GroupView(PermissionRequiredMixin, DetailView):
         for assign in self.object.assignationmessengeruser_set.all():
             data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
             children = children + data.count()
-            for child in data:
-                assignations = assignations + child.postinteraction_set.filter(type='dispatched').count()
+            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
+                                                                     type='dispatched').count()
         c['children'] = children
         c['assignations'] = assignations
         return c
