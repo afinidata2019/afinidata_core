@@ -20,6 +20,9 @@
                 {% if perms.bots.add_bot %}
                     <a class="collapse-item" href="{% url 'bots:create_bot' %}">Add New</a>
                 {% endif %}
+                {% if perms.bots.view_interaction %}
+                    <a href="{% url 'bot_interactions:bot_interaction_list' %}" class="collapse-item">Interactions</a>
+                {% endif %} 
           </div>
         </div>
     </li>
