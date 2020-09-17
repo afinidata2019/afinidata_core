@@ -1,6 +1,6 @@
 from user_sessions.models import Session, RedirectBlock, SessionType
 from areas.models import Area
-from content_manager.settings import BASE_DIR
+from core.settings import BASE_DIR
 from openpyxl import load_workbook
 import os
 
