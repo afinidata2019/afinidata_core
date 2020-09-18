@@ -3,7 +3,6 @@ from articles.models import Interaction as ArticleInteraction
 from posts.models import Interaction as PostInteraction
 from posts.models import Post
 from instances import models as InstanceModels
-from bots.models import Bot
 from django.db import models
 from entities.models import Entity
 import uuid
@@ -91,7 +90,7 @@ class User(models.Model):
         return InstanceModels.Instance.objects.filter(instanceassociationuser__user_id=self.pk)
 
     def get_bot(self):
-        return Bot.objects.get(id=self.bot_id)
+        return None
 
     def get_email(self):
         keys = self.userdata_set.filter(data_key='email')

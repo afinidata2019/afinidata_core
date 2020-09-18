@@ -1,4 +1,3 @@
-from instances import models as instance_models
 from django.db import models
 
 STATUS_CHOICES = (
