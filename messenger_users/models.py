@@ -5,6 +5,7 @@ from posts.models import Post
 from instances import models as InstanceModels
 from bots.models import Bot
 from django.db import models
+from entities.models import Entity
 import uuid
 
 PRE_REGISTER = 'pre_register'
@@ -136,6 +137,20 @@ class User(models.Model):
             if s.instance_id:
                 s.instance = InstanceModels.Instance.objects.filter(id=s.instance_id).first()
         return si
+
+    def get_attributes(self):
+        entities = Entity.objects.filter(id__in=[4, 5])  # Cargiver and Educator
+        attributes_keys = set()
+        for a in entities:
+            attributes_keys = attributes_keys | set([x.name for x in a.attributes.all()])
+        data = self.userdata_set.filter(data_key__in=attributes_keys)
+        attribute_set = dict()
+        for x in data:
+            attribute_set[x.data_key] = dict(data_key=x.data_key, value=x.data_value, created_at=x.created)
+        attributes = []
+        for data_key in attribute_set:
+            attributes.append(attribute_set[data_key])
+        return attributes
 
 
 class UserData(models.Model):
