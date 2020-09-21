@@ -210,49 +210,10 @@
 
     <div class="container-fluid">
         <div class="row">
-
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Last Attributes</h6>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                  <th>Attribute</th>
-                                  <th>Last Value</th>
-                                  <th>Last Response</th>
-                                  <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for attribute in instance.get_attributes %}
-                                    <tr>
-                                        <td>{{ attribute }}</td>
-                                        <td>{{ attribute.assign.value }}</td>
-                                        <td>{{ attribute.assign.created_at }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="{% url 'instances:edit_instance_attribute' instance_id=object.pk attribute_id=attribute.assign.pk %}" class="btn btn-success"><i class="fa fa-pen"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Quick replies</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Last attributes</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">

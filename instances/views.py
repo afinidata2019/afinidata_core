@@ -69,7 +69,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
         quick_replies = []
-        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply').order_by('-id')
+        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply').order_by('id')
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
@@ -82,11 +82,23 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             else:
                 rep['answer'] = reply.text or ''
                 rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
-            Attribute.objects.filter(name=rep['attribute']).first()
             rep['value'] = reply.value or 0
             rep['response'] = reply.created_at
             quick_replies.append(rep)
-        c['quick_replies'] = quick_replies
+        attribute_set = []
+        for attribute in self.object.get_attributes():
+            rep = dict()
+            rep['question'] = ''
+            rep['answer'] = attribute.assign.value
+            rep['attribute'] = attribute.name
+            rep['value'] = ''
+            rep['response'] = attribute.assign.created_at
+            attribute_set.append(rep)
+        for reply in quick_replies:
+            for i in range(len(attribute_set)):
+                if reply['attribute'] == attribute_set[i]['attribute']:
+                    attribute_set[i] = reply
+        c['quick_replies'] = attribute_set
         return c
 
 
