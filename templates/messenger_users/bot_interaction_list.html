@@ -1,0 +1,53 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Post Interactions for {{ user }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Post Interactions for {{ user }}</h1>
+            <div>
+                <a href="{% url 'messenger_users:user' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to User</a>
+                <a href="{% url 'messenger_users:user_interactions' id=user.pk %}"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                     Back to All Interactions</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Post Interactions</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in object_list %}
+                                    <tr>
+                                        <td>{{ interaction.interaction.name }}</td>
+                                        <td>{{ interaction.value }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        {% include 'base/pagination.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
