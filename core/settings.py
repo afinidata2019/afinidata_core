@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'utilities.apps.UtilitiesConfig',
     'groups.apps.GroupsConfig',
     'languages.apps.LanguagesConfig',
+    'licences.apps.LicencesConfig',
     'programs.apps.ProgramsConfig',
     'django_extensions',
     'colorfield',
