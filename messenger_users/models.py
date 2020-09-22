@@ -4,7 +4,9 @@ from posts.models import Interaction as PostInteraction
 from posts.models import Post
 from instances import models as InstanceModels
 from django.db import models
+from licences.models import License
 from entities.models import Entity
+from languages.models import Language
 import uuid
 
 PRE_REGISTER = 'pre_register'
@@ -63,6 +65,9 @@ class User(models.Model):
     last_name = models.CharField(max_length=50, null=True)
     bot_id = models.IntegerField(default=1)
     username = models.CharField(max_length=100, null=True, unique=True)
+    license = models.ForeignKey(License, on_delete=models.DO_NOTHING, null=True)
+    entity = models.ForeignKey(Entity, on_delete=models.DO_NOTHING, null=True)
+    language = models.ForeignKey(Language, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         permissions = (
