@@ -8,6 +8,7 @@ urlpatterns = [
     path('create_user_afini/', views.CreateAfinidataUser.as_view(), name='create_afini_user'),
     path('<int:id>/', views.UserView.as_view(), name='user'),
     path('<int:id>/interactions/', views.UserInteractionsView.as_view(), name='user_interactions'),
+    path('<int:id>/bot_interactions/', views.UserBotInteractionListView.as_view(), name='user_bot_interactions'),
     path('<int:id>/post_interactions/', views.UserPostInteractionListView.as_view(), name='user_post_interactions'),
     path('<int:id>/article_interactions/', views.UserArticleInteractionListView.as_view(),
          name='user_article_interactions'),

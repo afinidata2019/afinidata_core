@@ -17,6 +17,41 @@
 
     <div class="container-fluid">
         <div class="row">
+
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Bot Interactions</h6>
+                      <div>
+                          <a href="{% url 'messenger_users:user_bot_interactions' id=object.pk %}"
+                             class="btn btn-primary">
+                              View All
+                          </a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for interaction in bot_interactions %}
+                                    <tr>
+                                        <td>{{ interaction.interaction.name }}</td>
+                                        <td>{{ interaction.value }}</td>
+                                        <td>{{ interaction.created_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex align-items-center justify-content-between">
