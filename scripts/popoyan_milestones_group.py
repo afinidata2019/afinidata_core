@@ -13,10 +13,17 @@ def run():
     users = User.objects.filter(id__in=[u.messenger_user_id for u in group.assignationmessengeruser_set.all()])
 
     with open(os.path.join(BASE_DIR, 'popoyan_children_milestones.csv'), 'w', newline='') as csvfile:
-        fieldnames = ['User ID', 'User', 'dispatched']
+        fieldnames = ['Child', 'Parent', 'Milestones']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
         for u in users:
             children = u.get_instances()
             if children.exists():
                 for c in children:
-                    print(c)
-                    print(c.response_set.all())
+                    data = dict(Child=c, Parent=u, Milestones=[])
+                    milestones = Milestone.objects.filter(
+                        id__in=[r.milestone_id for r in c.response_set.filter(response='done')])
+                    for m in milestones:
+                        data['Milestones'].append(m.name)
+                    writer.writerow(data)
+
