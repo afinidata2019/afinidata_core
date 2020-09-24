@@ -20,10 +20,10 @@ def run():
             children = u.get_instances()
             if children.exists():
                 for c in children:
-                    data = dict(Child=c, Parent=u, Milestones=[])
+                    data = dict(Child=c, Parent=u, Milestones="")
                     milestones = Milestone.objects.filter(
                         id__in=[r.milestone_id for r in c.response_set.filter(response='done')])
-                    for m in milestones:
-                        data['Milestones'].append(m.name)
+                    if milestones.exists():
+                        data['Milestones'] = 'https://contentmanager.afinidata.com/instances/%s/milestones_list/' % c.pk
                     writer.writerow(data)
 
