@@ -23,7 +23,8 @@ def run():
                       dict(name='Mayo', init='2020-05-01 00:00:00', finish='2020-05-31 23:59:59'),
                       dict(name='Junio', init='2020-06-01 00:00:00', finish='2020-06-30 23:59:59'),
                       dict(name='Julio', init='2020-07-01 00:00:00', finish='2020-07-31 23:59:59'),
-                      dict(name='Agosto', init='2020-08-01 00:00:00', finish='2020-08-30 23:59:59')]
+                      dict(name='Agosto', init='2020-08-01 00:00:00', finish='2020-08-31 23:59:59'),
+                      dict(name='Septiembre', init='2020-09-01 00:00:00', finish='2020-09-30 23:59:59')]
 
         for p in param_list:
             print(p['name'], p['init'], p['finish'])
