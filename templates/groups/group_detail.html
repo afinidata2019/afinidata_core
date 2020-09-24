@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Group: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
         </div>
     </div>
 
@@ -50,7 +50,7 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sent Activities</div>
-                                <h3 class="h5 mb-0 font-weight-bold text-gray-800">{{ assignations }}</h3>
+                                <h3 class="h5 mb-0 font-weight-bold text-gray-800 assignations">Loading...</h3>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -304,4 +304,31 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        (() => {
+           window.addEventListener('load', e => {
+               const DOMAIN =  window.location.origin
+               const GROUP_ID = document.querySelector('.group-title').dataset.groupId
+
+               if(GROUP_ID) {
+                   const URI = `${DOMAIN}/utilities/group_assignations/`
+
+                   let data = new FormData()
+                   data.append('group', String(GROUP_ID))
+                   let request = fetch(URI, {
+                       method: 'post',
+                       body: data
+                   })
+                    .then(r => r.json())
+                    .then(r => {
+                        let assign = document.querySelector('.assignations')
+                        assign.textContent = r.data.count
+                    })
+               }
+           })
+        })()
+    </script>
 {% endblock %}

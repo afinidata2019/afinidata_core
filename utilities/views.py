@@ -8,11 +8,31 @@ from instances.models import Instance, Response
 from milestones.models import Milestone
 from django.http import JsonResponse
 from posts.models import Interaction
-from django.shortcuts import Http404
 from entities.models import Entity
+from groups.models import Group
+from django.http import Http404
 from bots.models import Bot
+from utilities import forms
 import boto3
 import os
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GroupAssignationsView(View):
+
+    def get(self, request, *args, **kwargs):
+        return Http404()
+
+    def post(self, request):
+        form = forms.GroupForm(request.POST)
+        if form.is_valid():
+            group = form.cleaned_data['group']
+            assigns = group.assignationmessengeruser_set.all()
+            print([a.messenger_user_id for a in assigns])
+            count = Interaction.objects.filter(user_id__in=[a.messenger_user_id for a in assigns],
+                                               type='dispatched').count()
+            return JsonResponse(dict(data=dict(count=count)))
+        return JsonResponse(dict(data=dict(count=0)))
 
 
 class TranslateView(View):
