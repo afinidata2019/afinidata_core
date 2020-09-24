@@ -30,7 +30,7 @@ class ProgramCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'programs.add_program'
     model = Program
     login_url = reverse_lazy('pages:login')
-    fields = ('name', 'description')
+    fields = ('name', 'description', 'languages')
 
     def get_context_data(self, **kwargs):
         c = super(ProgramCreateView, self).get_context_data()
@@ -46,7 +46,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'programs.change_program'
     model = Program
     login_url = reverse_lazy('pages:login')
-    fields = ('name', 'description')
+    fields = ('name', 'description', 'languages')
     pk_url_kwarg = 'program_id'
 
     def get_context_data(self, **kwargs):
