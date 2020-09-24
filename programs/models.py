@@ -1,10 +1,12 @@
 from milestones.models import Milestone
+from languages.models import Language
 from django.db import models
 
 
 class Program(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField()
+    languages = models.ManyToManyField(Language)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
