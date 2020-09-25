@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from instances.models import InstanceAssociationUser
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from posts.models import Interaction
@@ -40,12 +41,14 @@ class GroupView(PermissionRequiredMixin, DetailView):
         c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
         children = 0
         assignations = 0
-        for assign in self.object.assignationmessengeruser_set.all():
+        assigns = InstanceAssociationUser.objects.filter(
+            user_id__in=[u.messenger_user_id for u in self.object.assignationmessengeruser_set.all()])
+        '''for assign in self.object.assignationmessengeruser_set.all():
             data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
             children = children + data.count()
-            '''assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
+            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
                                                                      type='dispatched').count()'''
-        c['children'] = children
+        c['children'] = assigns.count()
         c['assignations'] = assignations
         return c
 
