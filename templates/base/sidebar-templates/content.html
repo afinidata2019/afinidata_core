@@ -1,8 +1,8 @@
-{% if perms.milestones.view_milestone %}
-
 <hr class="sidebar-divider">
 
 <div class="sidebar-heading">Content</div>
+
+{% if perms.milestones.view_milestone %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMilestones" aria-expanded="true" aria-controls="collapseMilestones">
@@ -18,4 +18,21 @@
     </div>
 </li>
 
-{% endif %} 
+{% endif %}
+
+{% if perms.milestones.view_milestone %}
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseTopics">
+      <i class="fas fa-book-open"></i>
+      <span>Topics</span>
+    </a>
+    <div id="collapseTopics" class="collapse" aria-labelledby="collapseTopics" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Topics:</h6>
+        <a class="collapse-item" href="{% url 'topics:topic_list' %}">All Topics</a>
+      </div>
+    </div>
+</li>
+
+{% endif %}
