@@ -164,3 +164,30 @@ class GetChildrenInteractionsView(LoginRequiredMixin, TemplateView):
             .create(last_register_id=last_register_id, last_data_id=last_data_id, qty_register=qty_register)
 
         return context
+
+
+class CreateProgramDemoView(TemplateView):
+    template_name = 'utilities/create_program.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(CreateProgramDemoView, self).get_context_data(**kwargs)
+        c['form'] = forms.CreateProgramForm()
+        return c
+
+
+class NewProgramDemoView(TemplateView):
+    template_name = 'utilities/new_program.html'
+
+
+class EditLevelDemoView(TemplateView):
+    template_name = 'utilities/edit_level.html'
+
+
+class CognitiveExampleView(TemplateView):
+    template_name = 'utilities/example_area.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(CognitiveExampleView, self).get_context_data(**kwargs)
+        c['uri'] = 'https://afinicontent.com/boxes-boxes-boxes/'
+        c['area'] = 'Cognitive and Language Activity'
+        return c
