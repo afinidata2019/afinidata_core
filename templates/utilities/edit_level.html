@@ -1,0 +1,248 @@
+{% extends 'base/private.html' %}
+
+{% block title %}A new program{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">The cuddlers (0 - 3 months old)</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div style="text-align: center; margin-bottom: 2em;">
+                    <h2 class="font-weight-bold"><span class="text-warning">754</span> Content Materials</h2>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Health</h3>
+                            <h1 class="text-primary font-weight-bold">3</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Sleeping <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Higiene <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Baby Basic Care <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Potty Training <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Prevention <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Vaccination <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Responsive Caregiving</h3>
+                            <h1 class="text-primary font-weight-bold">8</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Behavior <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Discipline <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Temper Tantrums <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Hyperactivity and Distractible Child <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Personality <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Responsiveness and sensitivity <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Family Relationships <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Preparing for change <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Technology Usage <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Creating Habits and Routines <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Childcare and Education <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Attachment <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Caring for the caregiver</h3>
+                            <h1 class="text-primary font-weight-bold">4</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Caregiver physical Health <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Caregiver Mental Health <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>New Mom <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Nutrition</h3>
+                            <h1 class="text-primary font-weight-bold">4</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Feeding and Nutrition <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Breastfeeding <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Supplementation <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Safety</h3>
+                            <h1 class="text-primary font-weight-bold">2</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Safe Inside Home <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Safe Outside Home <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Baby Equipment <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+
+                            <tr>
+                                <td>Daily routines and Activities Safety <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <h3>Development and Early Learning</h3>
+                            <h1 class="text-primary font-weight-bold">2</h1>
+                            <span class="text-primary font-weight-bold">Sessions</span>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>Cognitive and Language <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Motor <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Social Emotional <a href="{% url 'utilities:cognitive_example' %}">View Example</a></td>
+                                <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

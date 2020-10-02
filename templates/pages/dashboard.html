@@ -9,4 +9,18 @@
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
         </div>
     </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class="text-gray-800">Programs:</h5>
+                        <br>
+                        <a href="{% url 'utilities:create_program' %}" class="btn btn-primary">Create program</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
