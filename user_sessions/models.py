@@ -50,17 +50,32 @@ class Lang(models.Model):
         return self.pk
 
 
+FIELD_TYPES = (('text', 'Text'),
+               ('quick_replies', 'Quick Replies'),
+               ('save_values_block', 'Redirect Chatfuel block'),
+               ('user_input', 'Save user input'),
+               ('image', 'Send image'),
+               ('condition', 'Condition'),
+               ('set_attributes', 'Set Attributes'),
+               ('redirect_session', 'Redirect session'),
+               ('consume_service', 'Consume service'))
+
+
 class Field(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     position = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    field_type = models.CharField(max_length=50, choices=(('text', 'Text'), ('quick_replies', 'Quick Replies'),
-                                           ('save_values_block', 'Save Values Block')))
+    field_type = models.CharField(max_length=50, choices=FIELD_TYPES)
 
     def __str__(self):
         return "%s" % self.pk
 
+    def field_type_display(self):
+        for field_type in FIELD_TYPES:
+            if field_type[0] == self.field_type:
+                return field_type[1]
+        return self.field_type
 
 class Interaction(models.Model):
     """
@@ -112,6 +127,39 @@ class Reply(models.Model):
 
     def __str__(self):
         return self.label
+
+
+class SetAttribute(models.Model):
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    value = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.attribute.name + ':' + self.value
+
+
+CONDITIONS = (('equal', 'Equal'), ('not_equal', 'Not equal'), ('in', 'Is in'), ('lt', 'Less than'),
+              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'))
+
+
+class Condition(models.Model):
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    condition = models.CharField(max_length=50, choices=CONDITIONS)
+    value = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.attribute.name + ' ' + self.condition + ' ' + self.value
+
+    def condition_display(self):
+        for condition in CONDITIONS:
+            if condition[0] == self.condition:
+                return condition[1]
+        return self.condition
 
 
 class Response(models.Model):
