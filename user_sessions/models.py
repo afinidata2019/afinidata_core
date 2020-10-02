@@ -51,6 +51,17 @@ class Lang(models.Model):
         return self.pk
 
 
+FIELD_TYPES = (('text', 'Text'),
+               ('quick_replies', 'Quick Replies'),
+               ('save_values_block', 'Redirect Chatfuel block'),
+               ('user_input', 'Save user input'),
+               ('image', 'Send image'),
+               ('condition', 'Condition'),
+               ('set_attributes', 'Set Attributes'),
+               ('redirect_session', 'Redirect session'),
+               ('consume_service', 'Consume service'))
+
+
 class Field(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     position = models.IntegerField()
@@ -68,6 +79,11 @@ class Field(models.Model):
     def __str__(self):
         return "%s" % self.pk
 
+    def field_type_display(self):
+        for field_type in FIELD_TYPES:
+            if field_type[0] == self.field_type:
+                return field_type[1]
+        return self.field_type
 
 class Interaction(models.Model):
     """
