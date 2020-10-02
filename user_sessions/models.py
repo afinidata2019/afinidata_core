@@ -1,3 +1,4 @@
+from articles.models import Topic, Demographic
 from django.db import models
 from areas.models import Area
 from entities.models import Entity
@@ -67,14 +68,7 @@ class Field(models.Model):
     position = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    field_type = models.CharField(max_length=50, choices=(('text', 'Text'), ('quick_replies', 'Quick Replies'),
-                                                          ('save_values_block', 'Redirect Chatfuel block'),
-                                                          ('set_attributes', 'Set attribute'),
-                                                          ('user_input', 'Save user input'),
-                                                          ('image', 'Send image'),
-                                                          ('condition', 'Condition'),
-                                                          ('redirect_session', 'Redirect session'),
-                                                          ('consume_service', 'Consume service')))
+    field_type = models.CharField(max_length=50, choices=FIELD_TYPES)
 
     def __str__(self):
         return "%s" % self.pk
@@ -162,17 +156,26 @@ class SetAttribute(models.Model):
         return self.attribute.name + ':' + self.value
 
 
+CONDITIONS = (('equal', 'Equal'), ('not_equal', 'Not equal'), ('in', 'Is in'), ('lt', 'Less than'),
+              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'))
+
+
 class Condition(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
-    condition = models.CharField(max_length=50, choices=(('equal', 'Equal'), ('not_equal', 'Not equal'),
-                                                         ('in', 'Is in')))
+    condition = models.CharField(max_length=50, choices=CONDITIONS)
     value = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.attribute.name + ' ' + self.condition + ' ' + self.value
+
+    def condition_display(self):
+        for condition in CONDITIONS:
+            if condition[0] == self.condition:
+                return condition[1]
+        return self.condition
 
 
 class Response(models.Model):
