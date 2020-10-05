@@ -256,7 +256,33 @@
                                 {% else %}
                                     <a href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}">Add Block</a>
                                 {% endif %}
-                            {% endif %} 
+                            {% endif %}
+
+                            {% if field.field_type == 'redirect_session' %}
+                                {% if field.redirectsession %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Session</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>{{ field.redirectsession }}</td>
+                                            <td>
+                                                <a href="{% url 'sessions:redirectsession_edit' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
+                                                   class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                                <a href="{% url 'sessions:redirectsession_delete' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
+                                                   class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <a href="{% url 'sessions:redirectsession_create' session_id=object.pk field_id=field.pk %}">Add Session</a>
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
