@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView, UpdateView, DeleteView, C
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
-from user_sessions import models
+from user_sessions import models, forms
 
 
 class SessionListView(PermissionRequiredMixin, ListView):
@@ -27,7 +27,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
 class SessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_session'
     model = models.Session
-    fields = ('name', 'min', 'max')
+    fields = ('name', 'min', 'max', 'session_type')
 
     def get_context_data(self, **kwargs):
         c = super(SessionCreateView, self).get_context_data()
@@ -42,7 +42,7 @@ class SessionCreateView(PermissionRequiredMixin, CreateView):
 class SessionUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_session'
     model = models.Session
-    fields = ('name', 'min', 'max')
+    fields = ('name', 'min', 'max', 'session_type')
     pk_url_kwarg = 'session_id'
 
     def get_context_data(self, **kwargs):
@@ -182,6 +182,55 @@ class MessageDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class UserInputCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_userinput'
+    form_class = forms.UserInputForm
+    template_name = 'user_sessions/userinput_form.html'
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        return super(UserInputCreateView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        c = super(UserInputCreateView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        c['action'] = 'Create'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "UserInput added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class UserInputEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_userinput'
+    model = models.UserInput
+    pk_url_kwarg = 'userinput_id'
+    form_class = forms.UserInputForm
+
+    def get_context_data(self, **kwargs):
+        c = super(UserInputEditView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        c['action'] = 'Update'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "UserInput changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class UserInputDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_userinput'
+    model = models.UserInput
+    pk_url_kwarg = 'userinput_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "UserInput deleted in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class ReplyCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_reply'
     model = models.Reply
@@ -238,6 +287,118 @@ class ReplyDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class SetAttributeCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_setattribute'
+    model = models.SetAttribute
+    fields = ('attribute', 'value')
+
+    def get_context_data(self, **kwargs):
+        c = super(SetAttributeCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        form.instance.session_id = self.kwargs['session_id']
+        return super(SetAttributeCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "SetAttribute added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class SetAttributeEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_setattribute'
+    model = models.SetAttribute
+    fields = ('attribute', 'value')
+    pk_url_kwarg = 'setattribute_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(SetAttributeEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "SetAttribute changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class SetAttributeDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_setattribute'
+    model = models.SetAttribute
+    pk_url_kwarg = 'setattribute_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(SetAttributeDeleteView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "SetAttribute deleted in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class ConditionCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_condition'
+    model = models.Condition
+    fields = ('attribute', 'condition', 'value')
+
+    def get_context_data(self, **kwargs):
+        c = super(ConditionCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        form.instance.session_id = self.kwargs['session_id']
+        return super(ConditionCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Condition added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class ConditionEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_condition'
+    model = models.Condition
+    fields = ('attribute', 'condition', 'value')
+    pk_url_kwarg = 'condition_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ConditionEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Condition changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class ConditionDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_condition'
+    model = models.Condition
+    pk_url_kwarg = 'condition_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ConditionDeleteView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Condition deleted in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class RedirectBlockCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_redirectblock'
     model = models.RedirectBlock
@@ -284,4 +445,53 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, "Redirect Block has deleted.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_redirectsession'
+    model = models.RedirectSession
+    fields = ('session', )
+
+    def get_context_data(self, **kwargs):
+        c = super(RedirectSessionCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        return super(RedirectSessionCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_redirectsession'
+    model = models.RedirectSession
+    fields = ('session', )
+    pk_url_kwarg = 'redirectsession_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(RedirectSessionEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_redirectsession'
+    model = models.RedirectSession
+    pk_url_kwarg = 'redirectsession_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
