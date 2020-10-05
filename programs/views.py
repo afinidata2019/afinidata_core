@@ -1,22 +1,21 @@
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
-from programs.models import Program, Level, LevelMilestoneAssociation
 from django.urls import reverse_lazy
-from milestones.models import Milestone
 from django.contrib import messages
+from programs import models, forms
 
 
 class ProgramListView(PermissionRequiredMixin, ListView):
     permission_required = 'programs.view_program'
-    model = Program
+    model = models.Program
     login_url = reverse_lazy('pages:login')
     paginate_by = 10
 
 
 class ProgramDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'programs.view_program'
-    model = Program
+    model = models.Program
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'program_id'
 
@@ -28,7 +27,7 @@ class ProgramDetailView(PermissionRequiredMixin, DetailView):
 
 class ProgramCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'programs.add_program'
-    model = Program
+    model = models.Program
     login_url = reverse_lazy('pages:login')
     fields = ('name', 'description', 'languages')
 
@@ -44,7 +43,7 @@ class ProgramCreateView(PermissionRequiredMixin, CreateView):
 
 class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'programs.change_program'
-    model = Program
+    model = models.Program
     login_url = reverse_lazy('pages:login')
     fields = ('name', 'description', 'languages')
     pk_url_kwarg = 'program_id'
@@ -61,7 +60,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
 
 class ProgramDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = 'programs.change_program'
-    model = Program
+    model = models.Program
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'program_id'
     template_name = 'programs/program_form.html'
@@ -79,25 +78,22 @@ class ProgramDeleteView(PermissionRequiredMixin, DeleteView):
 
 class LevelListView(PermissionRequiredMixin, ListView):
     permission_required = 'programs.view_level'
-    model = Level
+    model = models.Level
     login_url = reverse_lazy('pages:login')
     paginate_by = 10
 
     def get_queryset(self):
-        qs = super(LevelListView, self).get_queryset()
-        print(qs)
-        qs = qs.filter(program_id=self.kwargs['program_id'])
-        return qs
+        return models.Program.objects.get(id=self.kwargs['program_id']).levels.all()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         c = super(LevelListView, self).get_context_data()
-        c['program'] = get_object_or_404(Program, id=self.kwargs['program_id'])
+        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
 
 class LevelDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'programs.view_level'
-    model = Level
+    model = models.Level
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'level_id'
 
@@ -105,24 +101,24 @@ class LevelDetailView(PermissionRequiredMixin, DetailView):
         c = super(LevelDetailView, self).get_context_data()
         if self.object.program_id != self.kwargs['program_id']:
             raise Http404
-        c['program'] = get_object_or_404(Program, id=self.kwargs['program_id'])
+        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
 
 class LevelCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'programs.add_level'
-    model = Level
+    model = models.Level
     login_url = reverse_lazy('pages:login')
     fields = ('name', 'description', 'assign_min', 'assign_max')
 
     def get_context_data(self, **kwargs):
         c = super(LevelCreateView, self).get_context_data()
         c['action'] = 'Create'
-        c['program'] = get_object_or_404(Program, id=self.kwargs['program_id'])
+        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
     def form_valid(self, form):
-        form.instance.program = get_object_or_404(Program, id=self.kwargs['program_id'])
+        form.instance.program = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return super(LevelCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -133,7 +129,7 @@ class LevelCreateView(PermissionRequiredMixin, CreateView):
 
 class LevelUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'programs.change_level'
-    model = Level
+    model = models.Level
     login_url = reverse_lazy('pages:login')
     fields = ('name', 'description', 'assign_min', 'assign_max')
     pk_url_kwarg = 'level_id'
@@ -143,7 +139,7 @@ class LevelUpdateView(PermissionRequiredMixin, UpdateView):
         c['action'] = 'Edit'
         if self.object.program_id != self.kwargs['program_id']:
             raise Http404
-        c['program'] = get_object_or_404(Program, id=self.kwargs['program_id'])
+        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
     def get_success_url(self):
@@ -155,7 +151,7 @@ class LevelUpdateView(PermissionRequiredMixin, UpdateView):
 class LevelDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = 'programs.delete_level'
     template_name = 'programs/level_form.html'
-    model = Level
+    model = models.Level
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'level_id'
 
@@ -165,7 +161,7 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
         c['delete_message'] = 'Are you sure to delete: "%s" ?' % self.object.name
         if self.object.program_id != self.kwargs['program_id']:
             raise Http404
-        c['program'] = get_object_or_404(Program, id=self.kwargs['program_id'])
+        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
     def get_success_url(self):
@@ -175,18 +171,18 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
 
 class LevelMilestoneCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'programs.add_levelmilestoneassociation'
-    model = LevelMilestoneAssociation
+    model = models.LevelMilestoneAssociation
     fields = ('milestone',)
 
     def get_context_data(self, **kwargs):
         c = super(LevelMilestoneCreateView, self).get_context_data()
         c['action'] = 'Create'
-        c['level'] = Level.objects.get(id=self.kwargs['level_id'])
+        c['level'] = models.Level.objects.get(id=self.kwargs['level_id'])
         return c
 
     def get_form(self, form_class=None):
         form = super(LevelMilestoneCreateView, self).get_form()
-        level = Level.objects.get(id=self.kwargs['level_id'])
+        level = models.Level.objects.get(id=self.kwargs['level_id'])
         form.fields['milestone'].queryset = form.fields['milestone'].queryset\
             .filter(value__gte=level.assign_min, value__lte=level.assign_max)\
             .exclude(id__in=[m.pk for m in level.milestones.all()])
@@ -197,6 +193,18 @@ class LevelMilestoneCreateView(PermissionRequiredMixin, CreateView):
         return super(LevelMilestoneCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        level = Level.objects.get(id=self.kwargs['level_id'])
+        level = models.Level.objects.get(id=self.kwargs['level_id'])
         messages.success(self.request, "Milestone to level added.")
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=level.pk, program_id=level.program_id))
+
+
+class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
+    permission_required = 'programs.add_program'
+    login_url = reverse_lazy('pages:login')
+    model = models.Program
+    form_class = forms.GroupProgramForm
+
+    def get_context_data(self, **kwargs):
+        c = super(CreateGroupProgramView, self).get_context_data(**kwargs)
+        c['action'] = 'Create Group'
+        return c
