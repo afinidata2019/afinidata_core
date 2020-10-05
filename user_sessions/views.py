@@ -446,3 +446,52 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Redirect Block has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_redirectsession'
+    model = models.RedirectSession
+    fields = ('session', )
+
+    def get_context_data(self, **kwargs):
+        c = super(RedirectSessionCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        return super(RedirectSessionCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_redirectsession'
+    model = models.RedirectSession
+    fields = ('session', )
+    pk_url_kwarg = 'redirectsession_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(RedirectSessionEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_redirectsession'
+    model = models.RedirectSession
+    pk_url_kwarg = 'redirectsession_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "Redirect Session has deleted.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
