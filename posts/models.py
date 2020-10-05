@@ -1,3 +1,7 @@
+from django.contrib.auth.models import User
+from languages.models import Language
+from programs.models import Program
+from areas.models import Area
 from django.db import models
 
 STATUS_CHOICES = (
@@ -19,6 +23,13 @@ POST_TYPE_CHOICES = (
 )
 
 
+AREAS_CHOICES = (
+    (1, 'Cognitivo'),
+    (2, 'Motor'),
+    (3, 'Emocional')
+)
+
+
 class Post(models.Model):
 
     name = models.CharField(max_length=255)
@@ -26,13 +37,14 @@ class Post(models.Model):
     type = models.CharField(max_length=255, default='embeded', choices=POST_TYPE_CHOICES)
     content = models.TextField()
     content_activity = models.TextField()
-    user = models.IntegerField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     min_range = models.IntegerField(null=True, default=0)
     max_range = models.IntegerField(null=True, default=72)
     preview = models.TextField()
     new = models.BooleanField(default=False)
     thumbnail = models.TextField()
-    area_id = models.IntegerField(null=True, default=1)
+    ar_id = models.IntegerField(null=True, default=1, choices=AREAS_CHOICES, verbose_name='Area')
+    area = models.ForeignKey(Area, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
