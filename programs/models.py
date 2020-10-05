@@ -22,7 +22,7 @@ class Program(models.Model):
 
 class Level(models.Model):
     name = models.CharField(max_length=50)
-    program = models.ForeignKey(Program, on_delete=models.DO_NOTHING)
+    programs = models.ManyToManyField(Program)
     description = models.TextField()
     assign_min = models.IntegerField(null=True, blank=True, default=0)
     assign_max = models.IntegerField(null=True, blank=True, default=1)
