@@ -1,9 +1,12 @@
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView,TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 from programs import models, forms
+from areas.models import Area
+from posts.models import Post
 
 
 class ProgramListView(PermissionRequiredMixin, ListView):
@@ -208,3 +211,53 @@ class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
         c = super(CreateGroupProgramView, self).get_context_data(**kwargs)
         c['action'] = 'Create Group'
         return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'Program has been created')
+        return reverse_lazy('programs:program_set_areas', kwargs=dict(program_id=self.object.pk))
+
+
+class ProgramDetailContentView(PermissionRequiredMixin, DetailView):
+    permission_required = 'programs.view_program'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/program_content.html'
+    model = models.Program
+    pk_url_kwarg = 'program_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramDetailContentView, self).get_context_data(**kwargs)
+        c['levels'] = self.object.levels.all()
+        c['total'] = 0
+        for l in c['levels']:
+            l.post_count = self.object.post_set.filter(status='published', min_range__lte=l.assign_min,
+                                                       max_range__gte=l.assign_max).count()
+            c['total'] += l.post_count
+        return c
+
+
+class ProgramSetAreasView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'programs.change_program'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/program_areas.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramSetAreasView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['form'] = forms.GroupProgramAreasForm(self.request.POST or None)
+        return c
+
+    def post(self, request, *args, **kwargs):
+        form = forms.GroupProgramAreasForm(self.request.POST)
+        program = models.Program.objects.get(id=self.kwargs['program_id'])
+        for key in form.data:
+            if key != 'csrfmiddlewaretoken':
+                areas = Area.objects.filter(id__in=form.data.getlist(key))
+                result = [program.areas.add(a) for a in areas]
+
+        for l in program.levels.all():
+            posts = Post.objects.filter(status='published', min_range__lte=l.assign_min, max_range__gte=l.assign_max,
+                                        area__in=program.areas.all())
+            lp = lambda program: [p.programs.add(program) for p in posts]
+            lp(program)
+
+        return redirect('programs:program_content_detail', program_id=self.kwargs['program_id'])
