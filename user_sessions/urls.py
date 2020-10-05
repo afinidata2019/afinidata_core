@@ -53,8 +53,8 @@ urlpatterns = [
          views.RedirectBlockDeleteView.as_view(), name='block_delete'),
     path('<int:session_id>/fields/<int:field_id>/add_redirectsession/', views.RedirectSessionCreateView.as_view(),
          name='redirectsession_create'),
-    path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:block_id>/edit/',
+    path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/edit/',
          views.RedirectSessionEditView.as_view(), name='redirectsession_edit'),
-    path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:block_id>/delete/',
+    path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/delete/',
          views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete')
 ]
