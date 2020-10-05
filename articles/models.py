@@ -1,5 +1,5 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-from messenger_users.models import User as MessengerUser
+#from messenger_users.models import User as MessengerUser
 from django.contrib.auth.models import User
 from languages.models import Language
 from programs.models import Program
@@ -61,7 +61,7 @@ class ArticleTranslate(models.Model):
 
 
 class ArticleFeedback(models.Model):
-    user = models.ForeignKey(MessengerUser, on_delete=models.SET_NULL, null=True)
+    #user = models.ForeignKey(MessengerUser, on_delete=models.SET_NULL, null=True)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     value = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
