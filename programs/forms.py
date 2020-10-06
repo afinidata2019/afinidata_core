@@ -7,7 +7,7 @@ class GroupProgramForm(forms.ModelForm):
 
     class Meta:
         model = models.Program
-        fields = ('name', 'description', 'languages', 'levels')
+        fields = ('name', 'languages', 'levels')
         widgets = dict(
             languages=forms.CheckboxSelectMultiple(),
             levels=forms.CheckboxSelectMultiple()

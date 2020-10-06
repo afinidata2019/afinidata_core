@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import InstanceAssociationUser
 from django.shortcuts import get_object_or_404
@@ -68,6 +68,24 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, 'Group with name: "%s" has been created.' % self.object.name)
         print(self.object.pk, self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
+
+
+class EditGroupView(PermissionRequiredMixin, UpdateView):
+    model = models.Group
+    permission_required = 'groups.change_group'
+    fields = ('name', 'parent')
+    login_url = reverse_lazy('pages:login')
+    pk_url_kwarg = 'group_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(EditGroupView, self).get_context_data()
+        c['action'] = 'Edit'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'Group with name: "%s" has been updated.' % self.object.name)
+        return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
+
 
 
 class MessengerUsersListView(PermissionRequiredMixin, ListView):
