@@ -39,7 +39,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                        <div class="col-2"><a href="{% url 'programs:level_topic_detail' program_id=program.pk level_id=object.pk topic_id=topic.pk %}"
+                                              class="btn btn-primary">Tips and information</a></div>
                     </div>
 
                 {% endfor %}

@@ -276,6 +276,7 @@ class LevelContentView(PermissionRequiredMixin, DetailView):
     permission_required = 'programs.view_level'
     model = models.Level
     pk_url_kwarg = 'level_id'
+    login_url = reverse_lazy('pages:login')
     template_name = 'programs/level_content.html'
 
     def get_context_data(self, **kwargs):
@@ -297,4 +298,23 @@ class LevelContentView(PermissionRequiredMixin, DetailView):
             print(session_count)
             c['total'] += len(post_count) + len(session_count)
             t.session_count = len(session_count)
+        return c
+
+
+class ProgramLevelTopicDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = 'topics.view_topic'
+    model = Topic
+    pk_url_kwarg = 'topic_id'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/topic_detail.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramLevelTopicDetailView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['level'] = models.Level.objects.get(id=self.kwargs['level_id'])
+        c['sessions'] = Session.objects.filter(id__in=set(s.pk for s in
+                                                          Session.objects.filter(programs=c['program'],
+                                                                                 min__lte=c['level'].assign_max,
+                                                                                 max__gte=c['level'].assign_min,
+                                                                                 areas__topic=self.object)))
         return c
