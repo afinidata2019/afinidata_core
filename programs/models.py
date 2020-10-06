@@ -1,5 +1,6 @@
 from milestones.models import Milestone
 from languages.models import Language
+from areas.models import Area
 from django.db import models
 
 
@@ -7,6 +8,8 @@ class Program(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField()
     languages = models.ManyToManyField(Language)
+    levels = models.ManyToManyField('Level')
+    areas = models.ManyToManyField(Area)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -22,7 +25,6 @@ class Program(models.Model):
 
 class Level(models.Model):
     name = models.CharField(max_length=50)
-    programs = models.ManyToManyField(Program)
     description = models.TextField()
     assign_min = models.IntegerField(null=True, blank=True, default=0)
     assign_max = models.IntegerField(null=True, blank=True, default=1)
@@ -31,7 +33,7 @@ class Level(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return "%s (%s - %s  Months)" % (self.name, self.assign_min, self.assign_max)
 
 
 class LevelMilestoneAssociation(models.Model):

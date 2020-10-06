@@ -35,11 +35,11 @@
                 <strong class="text-gray-900">Assign Max: </strong>{{ object.assign_max }}<br>
                 <strong class="text-gray-900">Actions: </strong>
                 {% if perms.programs.change_level %}
-                    <a href="{% url 'programs:level_edit' program_id=object.program_id level_id=object.pk %}"
+                    <a href="{% url 'programs:level_edit' program_id=program.pk level_id=object.pk %}"
                        class="btn btn-success">Edit</a>
                 {% endif %}
                 {% if perms.programs.delete_level %}
-                    <a href="{% url 'programs:level_delete' program_id=object.program_id level_id=object.pk %}"
+                    <a href="{% url 'programs:level_delete' program_id=program.pk level_id=object.pk %}"
                        class="btn btn-danger">Delete</a>
                 {% endif %}
             </div>
@@ -51,7 +51,7 @@
             <h1 class="h3 mb-0 text-gray-800">Milestones</h1>
             <div>
                 {% if perms.programs.add_levelmilestoneassociation %}
-                    <a href="{% url 'programs:add_level_milestone' level_id=object.pk program_id=object.program_id %}"
+                    <a href="{% url 'programs:add_level_milestone' level_id=object.pk program_id=program.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Assign Milestone</a>
                 {% endif %}
