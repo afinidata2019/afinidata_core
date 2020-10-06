@@ -15,6 +15,7 @@ urlpatterns = [
     path('<int:program_id>/levels/', views.LevelListView.as_view(), name='level_list'),
     path('<int:program_id>/new_level/', views.LevelCreateView.as_view(), name='level_create'),
     path('<int:program_id>/level/<int:level_id>/', views.LevelDetailView.as_view(), name='level_detail'),
+    path('<int:program_id>/level/<int:level_id>/content/', views.LevelContentView.as_view(), name='level_content'),
     path('<int:program_id>/level/<int:level_id>/edit/', views.LevelUpdateView.as_view(), name='level_edit'),
     path('<int:program_id>/level/<int:level_id>/delete/', views.LevelDeleteView.as_view(), name='level_delete'),
     path('<int:program_id>/level/<int:level_id>/add_milestone/', views.LevelMilestoneCreateView.as_view(),

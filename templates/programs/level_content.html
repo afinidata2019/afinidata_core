@@ -1,0 +1,49 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Level Content for {{ object.name }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ object }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div style="text-align: center; margin-bottom: 2em;">
+                    <h2 class="font-weight-bold"><span class="text-warning">{{ total }}</span> Content Materials</h2>
+                </div>
+
+                {% for topic in topics %}
+
+                    <div class="row mb-5">
+                        <div class="col-2">
+                            <div class="text-center">
+                                <h3>{{ topic }}</h3>
+                                <h1 class="text-primary font-weight-bold">{{ topic.session_count }}</h1>
+                                <span class="text-primary font-weight-bold">Sessions</span>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <table class="table">
+                                <tbody>
+                                {% for area in topic.areas %}
+                                    <tr>
+                                        <td>{{area}}</td>
+                                        <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-2"><a href="#" class="btn btn-primary">Tips and information</a></div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 from programs import models, forms
+from topics.models import Topic
 from areas.models import Area
 from posts.models import Post
 
@@ -103,8 +104,6 @@ class LevelDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(LevelDetailView, self).get_context_data()
-        if self.object.program_id != self.kwargs['program_id']:
-            raise Http404
         c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
@@ -271,3 +270,31 @@ class ProgramSetAreasView(PermissionRequiredMixin, TemplateView):
         results = [s.programs.add(program) for s in sessions]
         print(results)
         return redirect('programs:program_content_detail', program_id=self.kwargs['program_id'])
+
+
+class LevelContentView(PermissionRequiredMixin, DetailView):
+    permission_required = 'programs.view_level'
+    model = models.Level
+    pk_url_kwarg = 'level_id'
+    template_name = 'programs/level_content.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(LevelContentView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['topics'] = Topic.objects.all()
+        c['total'] = 0
+        for t in c['topics']:
+            t.areas = [a for a in c['program'].areas.filter(topic_id=t.pk)]
+            post_count = set(p.pk for p in Post.objects.filter(min_range__lte=self.object.assign_max,
+                                                               programs__in=[c['program']], status='published',
+                                                               max_range__gte=self.object.assign_min,
+                                                               area__in=[a.pk for a in t.areas]))
+
+            session_count = set(s.pk for s in Session.objects.filter(min__lte=self.object.assign_max,
+                                                                     programs__in=[c['program']],
+                                                                     max__gte=self.object.assign_min,
+                                                                     areas__in=[a.pk for a in t.areas]))
+            print(session_count)
+            c['total'] += len(post_count) + len(session_count)
+            t.session_count = len(session_count)
+        return c

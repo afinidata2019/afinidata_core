@@ -33,7 +33,8 @@
                             <td>{{ level }}</td>
                             <td>{{ level.post_count }}</td>
                             <td>
-                                <a href="{% url 'utilities:edit_level' %}" class="btn btn-primary">Choose Content</a>
+                                <a href="{% url 'programs:level_content' program_id=object.pk level_id=level.pk %}"
+                                   class="btn btn-primary">Choose Content</a>
                             </td>
                         </tr>
                     {% endfor %}
