@@ -26,7 +26,7 @@ class ProgramDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramDetailView, self).get_context_data()
-        c['levels'] = self.object.level_set.all()[:5]
+        c['levels'] = self.object.levels.all()[:5]
         return c
 
 
