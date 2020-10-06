@@ -23,8 +23,11 @@
                     <thead>
                         <tr>
                           <th>ID</th>
+                          <th>Type</th>
                           <th>Name</th>
-                          <th>Fields</th>
+                          <th>Topics</th>
+                          <th>Areas</th>
+                          <th>Programs</th>
                           <th>Min</th>
                           <th>Max</th>
                           <th>Actions</th>
@@ -33,21 +36,25 @@
                     <tfoot>
                         <tr>
                           <th>ID</th>
+                          <th>Type</th>
                           <th>Name</th>
-                          <th>Fields</th>
+                          <th>Topics</th>
+                          <th>Areas</th>
+                          <th>Programs</th>
                           <th>Min</th>
                           <th>Max</th>
                           <th>Actions</th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        {% for object in object_list %}
+                        {% for object in sessions %}
                             <tr>
                                 <td>{{ object.pk }}</td>
+                                <td>{{ object.type }}</td>
                                 <td>{{ object.name }}</td>
-                                <td>
-                                    {{ object.field_set.count }}
-                                </td>
+                                <td>{{ object.topics }}</td>
+                                <td>{{ object.areas_list }}</td>
+                                <td>{{ object.programs_list }}</td>
                                 <td>{{ object.min }}</td>
                                 <td>{{ object.max }}</td>
                                 <td>
