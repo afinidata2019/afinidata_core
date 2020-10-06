@@ -72,6 +72,9 @@
                     </div>
                     <div class="card-body">
                         <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        {% if object.parent %}
+                            <strong class="text-gray-900">Parent: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
+                        {% endif %}
                     </div>
                 </div>
             </div>
