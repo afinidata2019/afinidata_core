@@ -56,7 +56,7 @@ class GroupView(PermissionRequiredMixin, DetailView):
 class CreateGroupView(PermissionRequiredMixin, CreateView):
     model = models.Group
     permission_required = 'groups.add_group'
-    fields = ('name',)
+    fields = ('name', 'parent')
     login_url = reverse_lazy('pages:login')
 
     def get_context_data(self, **kwargs):
