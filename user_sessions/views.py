@@ -36,6 +36,8 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c['topics'] = ', '.join(set([area.topic.name for area in self.object.areas.all() if area.topic]))
         c['areas_list'] = ', '.join([area.name for area in self.object.areas.all()])
         c['programs_list'] = ', '.join([program.name.replace('Afini ', '') for program in self.object.programs.all()])
+        c['entities_list'] = ', '.join([entity.name for entity in self.object.entities.all()])
+        c['licences_list'] = ', '.join([user_license.name for user_license in self.object.licences.all()])
         return c
 
 
