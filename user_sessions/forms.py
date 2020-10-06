@@ -3,6 +3,8 @@ from user_sessions import models
 from attributes.models import Attribute
 from areas.models import Area
 from programs.models import Program
+from entities.models import Entity
+from licences.models import License
 
 
 class SessionForm(forms.ModelForm):
@@ -15,10 +17,18 @@ class SessionForm(forms.ModelForm):
         queryset=Program.objects.all().order_by('name'),
         widget=forms.CheckboxSelectMultiple,
         required=False)
+    entities = forms.ModelMultipleChoiceField(
+        queryset=Entity.objects.all().order_by('name'),
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
+    licences = forms.ModelMultipleChoiceField(
+        queryset=License.objects.all().order_by('name'),
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
 
     class Meta:
         model = models.Session
-        fields = ('name', 'min', 'max', 'session_type', 'areas', 'programs')
+        fields = ('name', 'min', 'max', 'session_type', 'areas', 'programs', 'entities', 'licences')
 
 
 class UserInputForm(forms.ModelForm):
