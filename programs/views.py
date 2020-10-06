@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView,TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
+from user_sessions.models import Session
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -249,15 +250,23 @@ class ProgramSetAreasView(PermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         form = forms.GroupProgramAreasForm(self.request.POST)
         program = models.Program.objects.get(id=self.kwargs['program_id'])
+        session_ids = set()
         for key in form.data:
             if key != 'csrfmiddlewaretoken':
                 areas = Area.objects.filter(id__in=form.data.getlist(key))
                 result = [program.areas.add(a) for a in areas]
 
         for l in program.levels.all():
-            posts = Post.objects.filter(status='published', min_range__lte=l.assign_min, max_range__gte=l.assign_max,
+            posts = Post.objects.filter(status='published', min_range__lte=l.assign_max, max_range__gte=l.assign_min,
                                         area__in=program.areas.all())
             lp = lambda program: [p.programs.add(program) for p in posts]
             lp(program)
 
+            session_ids.update([s.pk for s in Session.objects.filter(min__lte=l.assign_max, max__gte=l.assign_min,
+                                                                     areas__in=program.areas.all())])
+            print(session_ids)
+
+        sessions = Session.objects.filter(id__in=session_ids)
+        results = [s.programs.add(program) for s in sessions]
+        print(results)
         return redirect('programs:program_content_detail', program_id=self.kwargs['program_id'])
