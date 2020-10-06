@@ -48,6 +48,8 @@
                                     <div class="btn-group">
                                         <a href="{% url 'groups:group' group_id=object.pk %}" class="btn btn-primary">
                                             <i class="fas fa-eye"></i>
+                                            <a href="{% url 'groups:group_edit' group_id=object.pk %}" class="btn btn-success">
+                                            <i class="fas fa-pen"></i>
                                         </a>
                                     </div>
                                 </td>
