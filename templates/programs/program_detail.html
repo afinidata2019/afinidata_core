@@ -37,6 +37,10 @@
                 <strong class="text-gray-900">Updated At: </strong>{{ object.updated_at }}<br>
                 {% if perms.programs.change_program or perms.programs.delete_program %}
                     <strong class="text-gray-900">Actions: </strong>
+                    {% if perms.programs.view_program %}
+                        <a href="{% url 'programs:program_content_detail' program_id=object.pk %}"
+                           class="btn btn-primary">View Content</a>
+                    {% endif %}
                     {% if perms.programs.change_program %}
                         <a href="{% url 'programs:program_edit' program_id=object.pk %}" class="btn btn-success">Edit</a>
                     {% endif %}
