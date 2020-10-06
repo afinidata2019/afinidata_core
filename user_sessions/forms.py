@@ -1,6 +1,24 @@
 from django import forms
 from user_sessions import models
 from attributes.models import Attribute
+from areas.models import Area
+from programs.models import Program
+
+
+class SessionForm(forms.ModelForm):
+    permission_required = 'user_sessions.add_session'
+    areas = forms.ModelMultipleChoiceField(
+        queryset=Area.objects.all().order_by('name'),
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
+    programs = forms.ModelMultipleChoiceField(
+        queryset=Program.objects.all().order_by('name'),
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
+
+    class Meta:
+        model = models.Session
+        fields = ('name', 'min', 'max', 'session_type', 'areas', 'programs')
 
 
 class UserInputForm(forms.ModelForm):
