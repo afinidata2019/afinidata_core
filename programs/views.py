@@ -230,8 +230,9 @@ class ProgramDetailContentView(PermissionRequiredMixin, DetailView):
         c['levels'] = self.object.levels.all()
         c['total'] = 0
         for l in c['levels']:
-            l.post_count = self.object.post_set.filter(status='published', min_range__lte=l.assign_min,
-                                                       max_range__gte=l.assign_max).count()
+            l.post_count = self.object.post_set.filter(status='published', min_range__lte=l.assign_max,
+                                                       max_range__gte=l.assign_min).count()
+            l.post_count += self.object.session_set.filter(min__lte=l.assign_max, max__gte=l.assign_min).count()
             c['total'] += l.post_count
         return c
 
