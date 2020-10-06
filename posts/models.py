@@ -45,6 +45,7 @@ class Post(models.Model):
     thumbnail = models.TextField()
     ar_id = models.IntegerField(null=True, default=1, choices=AREAS_CHOICES, verbose_name='Area')
     area = models.ForeignKey(Area, on_delete=models.CASCADE)
+    programs = models.ManyToManyField(Program)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

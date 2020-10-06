@@ -47,7 +47,7 @@
                             <td>{{ object.name }}</td>
                             <td>{{ object.description }}</td>
                             <td>
-                                Count: {{ object.level_set.all.count }}
+                                Count: {{ object.levels.all.count }}
                                 <a href="{% url 'programs:level_list' program_id=object.pk %}">View</a>
                             </td>
                             <td>{{ object.created_at }}</td>
