@@ -10,6 +10,17 @@ class SessionListView(PermissionRequiredMixin, ListView):
     model = models.Session
     paginate_by = 30
 
+    def get_context_data(self, **kwargs):
+        c = super(SessionListView, self).get_context_data()
+        sessions = models.Session.objects.all().order_by('-session_type', 'name')
+        for session in sessions:
+            session.type = session.session_type.name
+            session.topics = ', '.join(set([area.topic.name for area in session.areas.all() if area.topic]))
+            session.areas_list = ', '.join([area.name for area in session.areas.all()])
+            session.programs_list = ', '.join([program.name.replace('Afini ', '') for program in session.programs.all()])
+        c['sessions'] = sessions
+        return c
+
 
 class SessionDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'user_sessions.view_session'
@@ -21,13 +32,17 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c = super(SessionDetailView, self).get_context_data()
         c['fields'] = self.object.field_set.order_by('position')
         c['last_field'] = c['fields'].last()
+        c['type'] = self.object.session_type.name
+        c['topics'] = ', '.join(set([area.topic.name for area in self.object.areas.all() if area.topic]))
+        c['areas_list'] = ', '.join([area.name for area in self.object.areas.all()])
+        c['programs_list'] = ', '.join([program.name.replace('Afini ', '') for program in self.object.programs.all()])
         return c
 
 
 class SessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_session'
-    model = models.Session
-    fields = ('name', 'min', 'max', 'session_type')
+    form_class = forms.SessionForm
+    template_name = 'user_sessions/session_form.html'
 
     def get_context_data(self, **kwargs):
         c = super(SessionCreateView, self).get_context_data()
@@ -42,8 +57,8 @@ class SessionCreateView(PermissionRequiredMixin, CreateView):
 class SessionUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_session'
     model = models.Session
-    fields = ('name', 'min', 'max', 'session_type')
     pk_url_kwarg = 'session_id'
+    form_class = forms.SessionForm
 
     def get_context_data(self, **kwargs):
         c = super(SessionUpdateView, self).get_context_data()
