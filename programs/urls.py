@@ -23,5 +23,7 @@ urlpatterns = [
     path('<int:program_id>/level/<int:level_id>/edit/', views.LevelUpdateView.as_view(), name='level_edit'),
     path('<int:program_id>/level/<int:level_id>/delete/', views.LevelDeleteView.as_view(), name='level_delete'),
     path('<int:program_id>/level/<int:level_id>/add_milestone/', views.LevelMilestoneCreateView.as_view(),
-         name='add_level_milestone')
+         name='add_level_milestone'),
+    path('<int:program_id>/exclude_field/<int:field_id>/', views.ExcludeFieldToProgramView.as_view(),
+         name='exclude_field')
 ]

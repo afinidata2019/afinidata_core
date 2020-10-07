@@ -1,7 +1,7 @@
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView, TemplateView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView, TemplateView, RedirectView
+from user_sessions.models import Session, Field, FieldProgramExclusion
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
-from user_sessions.models import Session
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -329,6 +329,21 @@ class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramSessionDetailView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
         c['topics'] = Topic.objects.filter(id__in=set(a.topic_id for a in self.object.areas.all()))
-        c['fields'] = self.object.field_set.all().order_by('position')
+        c['fields'] = self.object.field_set.all().order_by('position')\
+            .exclude(id__in=[x.field_id for x in c['program'].fieldprogramexclusion_set.all()])
         return c
+
+
+class ExcludeFieldToProgramView(PermissionRequiredMixin, RedirectView):
+    permission_required = 'program.change_program'
+
+    def get_redirect_url(self, *args, **kwargs):
+        field = Field.objects.get(id=kwargs['field_id'])
+        new_exclusion = FieldProgramExclusion.objects.create(field_id=kwargs['field_id'],
+                                                             program_id=kwargs['program_id'],
+                                                             user=self.request.user)
+        messages.success(self.request, "Field excluded for the program.")
+        return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=field.session_id,
+                                                                         program_id=kwargs['program_id']))
