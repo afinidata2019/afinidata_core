@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView,TemplateView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
 from user_sessions.models import Session
@@ -317,4 +317,18 @@ class ProgramLevelTopicDetailView(PermissionRequiredMixin, DetailView):
                                                                                  min__lte=c['level'].assign_max,
                                                                                  max__gte=c['level'].assign_min,
                                                                                  areas__topic=self.object)))
+        return c
+
+
+class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = 'user_sessions.view_session'
+    model = Session
+    pk_url_kwarg = 'session_id'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/session_detail.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramSessionDetailView, self).get_context_data(**kwargs)
+        c['topics'] = Topic.objects.filter(id__in=set(a.topic_id for a in self.object.areas.all()))
+        c['fields'] = self.object.field_set.all().order_by('position')
         return c

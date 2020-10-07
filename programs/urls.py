@@ -18,6 +18,8 @@ urlpatterns = [
     path('<int:program_id>/level/<int:level_id>/content/', views.LevelContentView.as_view(), name='level_content'),
     path('<int:program_id>/level/<int:level_id>/topic/<int:topic_id>/', views.ProgramLevelTopicDetailView.as_view(),
          name='level_topic_detail'),
+    path('<int:program_id>/session/<int:session_id>/', views.ProgramSessionDetailView.as_view(),
+         name='level_session_detail'),
     path('<int:program_id>/level/<int:level_id>/edit/', views.LevelUpdateView.as_view(), name='level_edit'),
     path('<int:program_id>/level/<int:level_id>/delete/', views.LevelDeleteView.as_view(), name='level_delete'),
     path('<int:program_id>/level/<int:level_id>/add_milestone/', views.LevelMilestoneCreateView.as_view(),
