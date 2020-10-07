@@ -51,10 +51,16 @@
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <span class="m-0 font-weight-bold text-primary">{{ field.field_type_display }}</span>
+                                <span class="m-0 font-weight-bold text-primary">#{{ field.pk }} {{ field.field_type_display }}</span>
                                 <div>
+                                    <button class="btn btn-success btn-icon-split" data-toggle="modal"
+                                            data-target="#modal-{{ field.pk }}">
+                                        <span class="icon text-white-50"><i class="fas fa-comment"></i></span>
+                                        <span class="text">Comment</span>
+                                    </button>
                                     <a href="{% url 'programs:exclude_field' program_id=program.pk field_id=field.pk %}"
-                                       class="btn btn-danger">Do Not Include</a>
+                                       class="btn btn-danger btn-icon-split">
+                                        <span class="icon text-white-50"><i class="fas fa-trash"></i></span><span class="text">Exclude Field</span></a>
                                 </div>
                             </div>
                             <br>
@@ -220,6 +226,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="modal fade" id="modal-{{ field.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="{% url 'programs:comment_field' program_id=program.pk field_id=field.pk %}"
+                              class="form" method="post">
+                            {% csrf_token %}
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Comment for field #{{field.pk}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                                  <div class="form-group">
+                                      <label for="">Field: </label>
+                                      <input type="text" class="form-control" disabled value="{{ field.pk }}">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="message">Field: </label>
+                                      <textarea name="comment" id="" cols="20" rows="10" class="form-control"></textarea>
+                                  </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add comment</button>
+                          </div>
+                        </form>
+                    </div>
+                  </div>
             </div>
         {% endfor %}
     </div>
