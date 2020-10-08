@@ -333,6 +333,8 @@ class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
         c['topics'] = Topic.objects.filter(id__in=set(a.topic_id for a in self.object.areas.all()))
         c['fields'] = self.object.field_set.all().order_by('position')\
             .exclude(id__in=[x.field_id for x in c['program'].fieldprogramexclusion_set.all()])
+        for f in c['fields']:
+            f.comment_set = f.fieldprogramcomment_set.filter(program_id=self.kwargs['program_id'])
         return c
 
 
