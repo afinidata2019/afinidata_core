@@ -1,0 +1,296 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Session: {{ object.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+            </div>
+            <div class="card-body">
+                <strong class="text-gray-900">Program: </strong>
+                <a href="{% url 'programs:program_content_detail' program_id=program.pk %}">{{ program }}</a><br>
+                {% if object.areas.exists %}
+                <strong class="text-gray-900">Areas: </strong>
+                <ul>
+                    {% for area in object.areas.all %}
+                        <li>{{ area }}</li>
+                    {% endfor %}
+                </ul>
+                <strong class="text-gray-900">Topics: </strong>
+                <ul>
+                    {% for topic in topics %}
+                        <li>{{ topic }}</li>
+                    {% endfor %}
+                </ul>
+                <br>
+                {% endif %}
+                <strong class="text-gray-900">Fields: </strong><span>{{ object.field_set.count }}</span><br>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Fields: </h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        {% for field in fields %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span class="m-0 font-weight-bold text-primary">#{{ field.pk }} {{ field.field_type_display }}</span>
+                                <div>
+                                    <button class="btn btn-primary btn-icon-split" data-toggle="modal"
+                                            data-target="#comment-modal-{{ field.pk }}">
+                                        <span class="icon text-white-50"><i class="fas fa-eye"></i></span>
+                                        <span class="text">View comments</span>
+                                    </button>
+                                    <button class="btn btn-success btn-icon-split" data-toggle="modal"
+                                            data-target="#modal-{{ field.pk }}">
+                                        <span class="icon text-white-50"><i class="fas fa-comment"></i></span>
+                                        <span class="text">Comment</span>
+                                    </button>
+                                    <a href="{% url 'programs:exclude_field' program_id=program.pk field_id=field.pk %}"
+                                       class="btn btn-danger btn-icon-split">
+                                        <span class="icon text-white-50"><i class="fas fa-trash"></i></span><span class="text">Exclude Field</span></a>
+                                </div>
+                            </div>
+                            <br>
+                            {% if field.field_type == 'text' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Message</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for message in field.message_set.all %}
+                                            <tr>
+                                                <td>{{ message.text }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+
+                            {% if field.field_type == 'image' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>URL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for message in field.message_set.all %}
+                                            <tr>
+                                                <td>{{ message.text }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+
+                            {% if field.field_type == 'user_input' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Message</th>
+                                            <th>Validation</th>
+                                            <th>Attribute</th>
+                                            <th>If fail</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for userinput in field.userinput_set.all %}
+                                            <tr>
+                                                <td>{{ userinput.text }}</td>
+                                                <td>{{ userinput.validation }}</td>
+                                                <td>{{ userinput.attribute.name }}</td>
+                                                <td>{{ userinput.session.name }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+
+                            {% if field.field_type == 'quick_replies' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Label</th>
+                                            <th>Attribute</th>
+                                            <th>Value</th>
+                                            <th>Redirect Block</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reply in field.reply_set.all %}
+                                            <tr>
+                                                <td>{{ reply.label }}</td>
+                                                <td>{% if reply.attribute %}<span>{{ reply.attribute }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.value %}<span>{{ reply.value }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.redirect_block %}<span>{{ reply.redirect_block }}</span>{% else %}--{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+
+                            {% if field.field_type == 'set_attributes' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Attribute</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for setattribute in field.setattribute_set.all %}
+                                            <tr>
+                                                <td>{{ setattribute.attribute.name }}</td>
+                                                <td>{{ setattribute.value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+
+                            {% if field.field_type == 'condition' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Attribute</th>
+                                            <th>Condition</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for condition in field.condition_set.all %}
+                                            <tr>
+                                                <td>{{ condition.attribute.name }}</td>
+                                                <td>{{ condition.condition_display }}</td>
+                                                <td>{{ condition.value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+                        
+                            {% if field.field_type == 'save_values_block' %}
+                                {% if field.redirectblock %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Block</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>{{ field.redirectblock }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if field.field_type == 'redirect_session' %}
+                                {% if field.redirectsession %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Session</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>{{ field.redirectsession }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-{{ field.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="{% url 'programs:comment_field' program_id=program.pk field_id=field.pk %}"
+                              class="form" method="post">
+                            {% csrf_token %}
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Comment for field #{{field.pk}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                                  <div class="form-group">
+                                      <label for="">Field: </label>
+                                      <input type="text" class="form-control" disabled value="{{ field.pk }}">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="message">Field: </label>
+                                      <textarea name="comment" id="" cols="20" rows="10" class="form-control"></textarea>
+                                  </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add comment</button>
+                          </div>
+                        </form>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="modal fade" id="comment-modal-{{ field.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Comment for field #{{field.pk}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                          {% if field.comment_set %}
+                            <ul>
+                                {% for comment in field.comment_set.all %}
+                                    <li>{{ comment }}</li>
+                                {% endfor %}
+                            </ul>
+                          {% else %}
+                              No comments for this field
+                          {% endif %}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
