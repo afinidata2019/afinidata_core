@@ -1,7 +1,7 @@
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView,TemplateView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView, TemplateView, RedirectView
+from user_sessions.models import Session, Field, FieldProgramExclusion, FieldProgramComment
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, Http404
-from user_sessions.models import Session
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -318,3 +318,52 @@ class ProgramLevelTopicDetailView(PermissionRequiredMixin, DetailView):
                                                                                  max__gte=c['level'].assign_min,
                                                                                  areas__topic=self.object)))
         return c
+
+
+class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = 'user_sessions.view_session'
+    model = Session
+    pk_url_kwarg = 'session_id'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/session_detail.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramSessionDetailView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['topics'] = Topic.objects.filter(id__in=set(a.topic_id for a in self.object.areas.all()))
+        c['fields'] = self.object.field_set.all().order_by('position')\
+            .exclude(id__in=[x.field_id for x in c['program'].fieldprogramexclusion_set.all()])
+        for f in c['fields']:
+            f.comment_set = f.fieldprogramcomment_set.filter(program_id=self.kwargs['program_id'])
+        return c
+
+
+class ExcludeFieldToProgramView(PermissionRequiredMixin, RedirectView):
+    permission_required = 'program.change_program'
+
+    def get_redirect_url(self, *args, **kwargs):
+        field = Field.objects.get(id=kwargs['field_id'])
+        new_exclusion = FieldProgramExclusion.objects.create(field_id=kwargs['field_id'],
+                                                             program_id=kwargs['program_id'],
+                                                             user=self.request.user)
+        messages.success(self.request, "Field excluded for the program.")
+        return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=field.session_id,
+                                                                         program_id=kwargs['program_id']))
+
+
+class FieldProgramCommentCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'program.change_program'
+    model = FieldProgramComment
+    fields = ('comment', )
+    template_name = 'programs/program_form.html'
+    
+    def form_valid(self, form):
+        form.instance.program_id = self.kwargs['program_id']
+        form.instance.field_id = self.kwargs['field_id']
+        form.instance.user = self.request.user
+        return super(FieldProgramCommentCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "The comment has been added.")
+        return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=self.object.field.session_id,
+                                                                         program_id=self.kwargs['program_id']))

@@ -1,10 +1,11 @@
-from articles.models import Topic, Demographic
-from django.db import models
-from areas.models import Area
-from entities.models import Entity
+from django.contrib.auth.models import User
+from articles.models import Demographic
+from attributes.models import Attribute
 from licences.models import License
 from programs.models import Program
-from attributes.models import Attribute
+from entities.models import Entity
+from areas.models import Area
+from django.db import models
 
 
 class SessionType(models.Model):
@@ -219,3 +220,21 @@ class Service(models.Model):
 
     def __str__(self):
         return self.service
+
+
+class FieldProgramExclusion(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FieldProgramComment(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment
