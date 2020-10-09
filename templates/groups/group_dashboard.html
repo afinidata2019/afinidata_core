@@ -1,0 +1,334 @@
+{% extends 'base/private.html' %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-2 col-md-6 mb">
+                <div class="card bg-dark text-white">
+                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <div class="card-img-overlay">
+                    <h5 class="card-title">Total de usuarios</h5>
+                    <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
+                  </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-6 mb">
+                <div class="card bg-dark text-white">
+                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <div class="card-img-overlay">
+                    <h5 class="card-title">Total children</h5>
+                    <h3 class="card-text">{{ children }}</h3>
+                  </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-6 mb">
+                <div class="card bg-dark text-white">
+                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <div class="card-img-overlay">
+                    <h5 class="card-title">Sent activities</h5>
+                    <h5 class="card-text assignations">Loading...</h5>
+                  </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-6 mb">
+                <div class="card bg-dark text-white">
+                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <div class="card-img-overlay">
+                    <h5 class="card-title">Usuarios activos</h5>
+                    <h5 class="card-text">0</h5>
+                  </div>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-6 mb">
+                <div class="card bg-dark text-white">
+                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <div class="card-img-overlay">
+                    <h5 class="card-title">Sesiones entregadas</h5>
+                    <h5 class="card-text">0</h5>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        {% if object.parent %}
+                            <strong class="text-gray-900">Parent: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
+                    </div>
+                    <div class="card-body">
+                        <strong class="text-gray-900">Bots: </strong>
+                        <ul>
+                            {% for bot_assign in object.botassignation_set.all %}
+                                <li>
+                                    <strong class="text-gray-900">{{ bot_assign.bot.name }}</strong>
+                                    <a href="{% url 'bots:bot_detail' bot_id=bot_assign.bot_id %}">View</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <strong class="text-gray-900">Programs: </strong>
+                        <ul>
+                            {% for program in object.programs.all %}
+                                <li>
+                                    <strong class="text-gray-900">{{ program.name }}</strong>
+                                    <a href="{% url 'programs:program_detail' program_id=program.pk %}">View</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Users</h1>
+            {% if perms.groups.add_rolegroupuser %}
+                <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Role</th>
+                          <th>Assigned Date</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Username</th>
+                          <th>Role</th>
+                          <th>Assigned Date</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for assignation in object.rolegroupuser_set.all %}
+                            <tr>
+                                <td>{{ assignation.user.username }}</td>
+                                <td>{{ assignation.role }}</td>
+                                <td>{{ assignation.created_at }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="" class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Messenger Users</h1>
+            <div>
+                <a href="{% url 'groups:messenger_user_list' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-list fa-sm text-white-50"></i> View Messenger Users</a>
+                {% if permsgroups.add_assignationmessengeruser %}
+                    <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between">
+              <h6 class="m-0 font-weight-bold text-primary">New Users</h6>
+               <div>
+                   <span>Total: {{ object.assignationmessengeruser_set.all.count }}</span>
+               </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Messenger User</th>
+                          <th>Instances</th>
+                          <th>Created At</th>
+                          <th>Assigned Date</th>
+                          <th>Code</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Messenger User</th>
+                          <th>Instances</th>
+                          <th>Created At</th>
+                          <th>Assigned Date</th>
+                          <th>Code</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for assignation in last_assignations %}
+                            <tr>
+                                <td>
+                                    (<a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.messenger_user_id }}</a>)
+                                    {{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}
+                                </td>
+                                <td>
+                                    {% for instance in assignation.get_messenger_user.get_instances %}
+                                        (<a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.pk }}</a>)
+                                        <span>{{ instance.name }}</span>
+                                        (<a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a>)
+                                        <br>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ assignation.get_messenger_user.created_at }}</td>
+                                <td>{{ assignation.created_at }}</td>
+                                <td>{% if assignation.code %}{{ assignation.code }}{% else %}--{% endif %}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'groups:remove_user_to_group' group_id=object.pk assignation_id=assignation.pk %}"
+                                           class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Codes</h1>
+            <div>
+                {% if perms.groups.add_code %}
+                    <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Code List</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Code</th>
+                          <th>Exchanges</th>
+                          <th>Available</th>
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Code</th>
+                          <th>Exchanges</th>
+                          <th>Available</th>
+                          <th>Created At</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for code in object.code_set.all %}
+                            <tr>
+                                <td>{{ code }}</td>
+                                <td>{{ code.exchanges }}</td>
+                                <td>
+                                    {% if code.available %}
+                                         <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>{{ code.created_at }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="" class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        (() => {
+           window.addEventListener('load', e => {
+               const DOMAIN =  window.location.origin
+               const GROUP_ID = document.querySelector('.group-title').dataset.groupId
+
+               if(GROUP_ID) {
+                   const URI = `${DOMAIN}/utilities/group_assignations/`
+
+                   let data = new FormData()
+                   data.append('group', String(GROUP_ID))
+                   let request = fetch(URI, {
+                       method: 'post',
+                       body: data
+                   })
+                    .then(r => r.json())
+                    .then(r => {
+                        let assign = document.querySelector('.assignations')
+                        assign.textContent = r.data.count
+                    })
+               }
+           })
+        })()
+    </script>
+{% endblock %}

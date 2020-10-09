@@ -53,6 +53,31 @@ class GroupView(PermissionRequiredMixin, DetailView):
         return c
 
 
+class GroupDashboardView(PermissionRequiredMixin, DetailView):
+    model = models.Group
+    permission_required = 'groups.view_group'
+    pk_url_kwarg = 'group_id'
+    login_url = reverse_lazy('pages:login')
+    permission_denied_message = 'Unauthorized'
+    template_name = 'groups/group_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(GroupDashboardView, self).get_context_data()
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
+        children = 0
+        assignations = 0
+        assigns = InstanceAssociationUser.objects.filter(
+            user_id__in=[u.messenger_user_id for u in self.object.assignationmessengeruser_set.all()])
+        '''for assign in self.object.assignationmessengeruser_set.all():
+            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
+            children = children + data.count()
+            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
+                                                                     type='dispatched').count()'''
+        c['children'] = assigns.count()
+        c['assignations'] = assignations
+        return c
+
+
 class CreateGroupView(PermissionRequiredMixin, CreateView):
     model = models.Group
     permission_required = 'groups.add_group'
