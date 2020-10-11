@@ -6,10 +6,9 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-black-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
         </div>
     </div>
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-2 col-md-6 mb">
@@ -23,10 +22,10 @@
             </div>
             <div class="col-xl-2 col-md-6 mb">
                 <div class="card bg-dark text-white">
-                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <img class="card-img" src="https://www.compassion.com/Images/what-the-bible-says-about-children-hero_156017_1280x554.jpg" alt="Card image">
                   <div class="card-img-overlay">
                     <h5 class="card-title">Total children</h5>
-                    <h3 class="card-text">{{ children }}</h3>
+                    <h5 class="card-text">{{ children }}</h5>
                   </div>
                 </div>
             </div>
@@ -35,13 +34,13 @@
                   <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
                   <div class="card-img-overlay">
                     <h5 class="card-title">Sent activities</h5>
-                    <h5 class="card-text assignations">Loading...</h5>
+                    <h5 class="card-text assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
             </div>
             <div class="col-xl-2 col-md-6 mb">
                 <div class="card bg-dark text-white">
-                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <img class="card-img" src="https://www.compassion.com/Images/what-the-bible-says-about-children-hero_156017_1280x554.jpg" alt="Card image">
                   <div class="card-img-overlay">
                     <h5 class="card-title">Usuarios activos</h5>
                     <h5 class="card-text">0</h5>
@@ -59,126 +58,58 @@
             </div>
         </div>
     </div>
-
-    <div class="container-fluid">
+    <br/>
+<div class="container-fluid bg-white">
+    <div class="container-fluid d-flex flex-column" style="height:55vh;" >
         <div class="row">
-            <div class="col-8">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+            <div class="col-xl-2 col-md-2 mb-2">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="milestonesCard">
+                              <img class="card-img shadow-none" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
+                              <div class="card-img-overlay shadow-none d-flex flex-column justify-content-end">
+                                <h5 class="card-title" id="milestones_count"><i class="fas fa-spinner fa-pulse"></i></h5>
+                                <p class="card-text">Niños con Riesgo de desarrollo</p>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="riesgos_actuales">
+                              <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.57.53.png" alt="Card image">
+                              <div class="card-img-overlay d-flex flex-column justify-content-end">
+                                <h5 class="card-title">40</h5>
+                                <p class="card-text">Niños con riesgos actuales</p>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="antecedentes">
+                              <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
+                              <div class="card-img-overlay d-flex flex-column justify-content-end">
+                                <h5 class="card-title">50</h5>
+                                <p class="card-text">Niños con antecedentes de reisgo</p>
+                              </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
-                        {% if object.parent %}
-                            <strong class="text-gray-900">Parent: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
-                        {% endif %}
-                    </div>
+            </div>
+            <div class="col-xl-10 col-md-10 mb-10 border-0">
+                <div class="card bg-white shadow-none border-10 m-md-5">
+                    <canvas id="chart" width="0" height="0" style=""></canvas>
+                    <div id="chartContainer1" style="height: 90%; width: 80%;"></div>
+                    <div id="chartContainer2" style="height: 90%; width: 80%;"></div>
+                    <div id="chartMilestonesContainer" style="height: 90%; width: 80%;"></div>
                 </div>
             </div>
-
-            <div class="col-4">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
-                    </div>
-                    <div class="card-body">
-                        <strong class="text-gray-900">Bots: </strong>
-                        <ul>
-                            {% for bot_assign in object.botassignation_set.all %}
-                                <li>
-                                    <strong class="text-gray-900">{{ bot_assign.bot.name }}</strong>
-                                    <a href="{% url 'bots:bot_detail' bot_id=bot_assign.bot_id %}">View</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <strong class="text-gray-900">Programs: </strong>
-                        <ul>
-                            {% for program in object.programs.all %}
-                                <li>
-                                    <strong class="text-gray-900">{{ program.name }}</strong>
-                                    <a href="{% url 'programs:program_detail' program_id=program.pk %}">View</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Users</h1>
-            {% if perms.groups.add_rolegroupuser %}
-                <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                          <th>Username</th>
-                          <th>Role</th>
-                          <th>Assigned Date</th>
-                          <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Username</th>
-                          <th>Role</th>
-                          <th>Assigned Date</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        {% for assignation in object.rolegroupuser_set.all %}
-                            <tr>
-                                <td>{{ assignation.user.username }}</td>
-                                <td>{{ assignation.role }}</td>
-                                <td>{{ assignation.created_at }}</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="" class="btn btn-primary"><i class="fas fa-eye"></i></a>
-                                        <a href="" class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Messenger Users</h1>
-            <div>
-                <a href="{% url 'groups:messenger_user_list' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-list fa-sm text-white-50"></i> View Messenger Users</a>
-                {% if permsgroups.add_assignationmessengeruser %}
-                    <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
+</div>
+    <br/>
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">New Users</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Filtrado por: Riesgo</h6>
                <div>
                    <span>Total: {{ object.assignationmessengeruser_set.all.count }}</span>
                </div>
@@ -188,49 +119,43 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
+                            <th scope="col"></th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Encargado</th>
+                            <th scope="col">Edad</th>
+                            <th scope="col">Nacimiento</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Dirección</th>
+                            <th scope="col">Antecedentes de Riesgo</th>
+                            <th scope="col">Riesgos actuales</th>
+                            <th scope="col">Reporte</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for assignation in last_assignations %}
+                        {% for instance in assignation.instances %}
                             <tr>
+                                <td><img class="img-circle" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" width="40" height="40"></img></td>
                                 <td>
-                                    (<a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.messenger_user_id }}</a>)
-                                    {{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}
+                                    <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
                                 </td>
                                 <td>
-                                    {% for instance in assignation.get_messenger_user.get_instances %}
-                                        (<a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.pk }}</a>)
-                                        <span>{{ instance.name }}</span>
-                                        (<a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a>)
-                                        <br>
-                                    {% endfor %}
+                                    <a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}</a>
                                 </td>
-                                <td>{{ assignation.get_messenger_user.created_at }}</td>
-                                <td>{{ assignation.created_at }}</td>
-                                <td>{% if assignation.code %}{{ assignation.code }}{% else %}--{% endif %}</td>
+                                <td>{{ instance.months }}</td>
+                                <td>{{ instance.birthday }}</td>
+                                <td>{{ instance.telefono }}</td>
+                                <td>{{ instance.direccion }}</td>
                                 <td>
-                                    <div class="btn-group">
-                                        <a href="{% url 'groups:remove_user_to_group' group_id=object.pk assignation_id=assignation.pk %}"
-                                           class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                    </div>
+                                    <button type="button" class="btn btn-danger"><i class="far fa-arrow-circle-up"></i>Alto</button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger"><i class="far fa-chart-line"></i>Alto</button>
+                                </td>
+                                <td><button class="btn"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/report/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
                                 </td>
                             </tr>
+                            {% endfor %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -239,74 +164,145 @@
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Codes</h1>
-            <div>
-                {% if perms.groups.add_code %}
-                    <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Code List</h6>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                          <th>Code</th>
-                          <th>Exchanges</th>
-                          <th>Available</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Code</th>
-                          <th>Exchanges</th>
-                          <th>Available</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        {% for code in object.code_set.all %}
-                            <tr>
-                                <td>{{ code }}</td>
-                                <td>{{ code.exchanges }}</td>
-                                <td>
-                                    {% if code.available %}
-                                         <i class="fas fa-check-circle fa-2x text-success"></i>
-                                    {% else %}
-                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
-                                    {% endif %}
-                                </td>
-                                <td>{{ code.created_at }}</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="" class="btn btn-primary"><i class="fas fa-eye"></i></a>
-                                        <a href="" class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block scripts %}
+<style>
+/* Boostrap Buttons Styling */
+
+p{
+    font-size: 13px;
+    font-size: 0.7vw;
+}
+
+h5{
+    font-size: 13px;
+    font-size: 0.9vw;
+}
+
+show{
+  transition: opacity 0.6s linear;
+  transform: scale(1.1);
+}
+
+.zoom:hover {
+  transform: scale(1.1); /* (120% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+  cursor: pointer;
+}
+
+.hide {
+
+}
+
+.btn-default {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(108, 88, 179, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(108, 89, 179, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-default:hover {
+  color: #FFF;
+  background: rgba(108, 88, 179, 0.75);
+  border: 2px solid rgba(108, 89, 179, 0.75);
+}
+
+.btn-primary {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(58, 133, 191, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(58, 133, 191, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-primary:hover {
+  color: #FFF;
+  background: rgba(58, 133, 191, 0.75);
+  border: 2px solid rgba(58, 133, 191, 0.75);
+}
+
+.btn-success {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(103, 192, 103, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(103, 192, 103, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-success:hover {
+  color: #FFF;
+  background: rgb(103, 192, 103, 0.75);
+  border: 2px solid rgb(103, 192, 103, 0.75);
+}
+
+.btn-info {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(91, 192, 222, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(91, 192, 222, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-info:hover {
+  color: #FFF;
+  background: rgba(91, 192, 222, 0.75);
+  border: 2px solid rgba(91, 192, 222, 0.75);
+}
+
+.btn-warning {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(240, 173, 78, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(240, 173, 78, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-warning:hover {
+  color: #FFF;
+  background: rgb(240, 173, 78, 0.75);
+  border: 2px solid rgba(240, 173, 78, 0.75);
+}
+
+.btn-danger {
+  font-family: Raleway-SemiBold;
+  font-size: 13px;
+  color: rgba(217, 83, 78, 0.75);
+  letter-spacing: 1px;
+  line-height: 15px;
+  border: 2px solid rgba(217, 83, 78, 0.75);
+  border-radius: 40px;
+  background: transparent;
+  transition: all 0.3s ease 0s;
+}
+
+.btn-danger:hover {
+  color: #FFF;
+  background: rgba(217, 83, 78, 0.75);
+  border: 2px solid rgba(217, 83, 78, 0.75);
+}
+</style>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script>
         (() => {
            window.addEventListener('load', e => {
@@ -326,9 +322,129 @@
                     .then(r => {
                         let assign = document.querySelector('.assignations')
                         assign.textContent = r.data.count
+                        document.querySelector('#milestones_count').textContent = r.milestones_count;
+                        chartMilestones.options.data[0].dataPoints = r.milestones;
+	                    chartMilestones.render();
                     })
                }
            })
         })()
+
+        window.onload = function () {
+            var bar_ctx = document.getElementById('chart').getContext('2d');
+            var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
+            background_1.addColorStop(0, 'rgb(0,89,217)');
+            background_1.addColorStop(1, 'rgb(105,176,255)');
+            chart1 = new CanvasJS.Chart("chartContainer1", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisY: {
+                    includeZero: true,
+                    valueFormatString:" "
+                },
+                data: [{
+                    type: "bar",
+                    click: filterInstances,
+                    color: background_1,
+                    indexLabelPlacement: "inside",
+                    indexLabel: "{y} Casos",
+                    toolTipContent: "{label}: {y}",
+                    showInLegend: false,
+                    indexLabelFontColor: "white",
+                    legendMarkerColor: "white",
+                    legendText: "Respuestas",
+                    includeZero: true,
+                    cursor: "pointer",
+                    dataPoints: [
+                        { y: 25, label: "No lactancia" },
+                        { y: 40, label: "No ha visitado centro de salud" },
+                        { y: 15, label: "Tiene alguna discapacidad" },
+                        { y: 20, label: "Riesgos en desarrollo" },
+                        { y: 50, label: "Anemia diagnosticada" },
+                        { y: 30, label: "No tiene vacunación" }
+                    ]
+                }]
+            });
+            chart1.render();
+            chart2 = new CanvasJS.Chart("chartContainer2", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisY: {
+                    includeZero: true,
+                    valueFormatString:" "
+                },
+                data: [{
+                    type: "bar",
+                    click: filterInstances,
+                    color: background_1,
+                    indexLabelPlacement: "inside",
+                    indexLabel: "{y} Casos",
+                    toolTipContent: "{label}: {y}",
+                    showInLegend: false,
+                    indexLabelFontColor: "white",
+                    legendMarkerColor: "white",
+                    legendText: "Respuestas",
+                    includeZero: true,
+                    cursor: "pointer",
+                    dataPoints: [
+                        { y: 30, percent: 30, label: "Madre adolescente" },
+                        { y: 20, percent: 20, label: "No cuenta con estación de lavado" },
+                        { y: 50, percent: 50, label: "No cuenta con extractor de humo" },
+                        { y: 40, percent: 40, label: "No reciben lactancia materna" },
+                        { y: 15, percent: 15, label: "No tienen servicio de salud cercano" },
+                        { y: 25, percent: 20, label: "Bebés prematuros" },
+                    ]
+                }]
+            });
+            chart2.render();
+            chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisY: {
+                    includeZero: true,
+                    valueFormatString:" "
+                },
+                data: [{
+                    type: "bar",
+                    click: filterInstances,
+                    color: background_1,
+                    indexLabelPlacement: "inside",
+                    indexLabel: "{y} Casos",
+                    toolTipContent: "{label}: {y}",
+                    showInLegend: false,
+                    indexLabelFontColor: "white",
+                    legendMarkerColor: "white",
+                    legendText: "Respuestas",
+                    includeZero: true,
+                    cursor: "pointer",
+                    dataPoints: [{ y: 0, label: "Loading..." }]
+                }]
+            });
+            chartMilestones.render();
+            $("#chartMilestonesContainer").hide();
+            $("#chartContainer2").hide();
+        }
+        function filterInstances(e) {
+            console.log(e);
+        }
+        $('#milestonesCard').click(function () {
+            $("#chartContainer1").hide();
+            $("#chartContainer2").hide();
+            $("#chartMilestonesContainer").show();
+            chartMilestones.render();
+        });
+        $('#riesgos_actuales').click(function () {
+            $("#chartMilestonesContainer").hide();
+            $("#chartContainer2").hide();
+            $("#chartContainer1").show();
+            chart1.render();
+        });
+        $('#antecedentes').click(function () {
+            $("#chartMilestonesContainer").hide();
+            $("#chartContainer1").hide();
+            $("#chartContainer2").show();
+            chart2.render();
+        });
     </script>
+
 {% endblock %}
