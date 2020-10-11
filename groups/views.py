@@ -7,6 +7,9 @@ from posts.models import Interaction
 from django.urls import reverse_lazy
 from django.contrib import messages
 from groups import models
+import datetime
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -63,7 +66,35 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(GroupDashboardView, self).get_context_data()
-        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:20]
+        for assignation in c['last_assignations']:
+            assignation.instances = assignation.get_messenger_user().get_instances()
+            for instance in assignation.instances:
+                if instance.get_attribute_values('birthday'):
+                    instance.birthday = parse(instance.get_attribute_values('birthday').value).strftime('%d-%m-%Y')
+                else:
+                    instance.birthday = '---'
+                if instance.get_attribute_values('telefono'):
+                    instance.telefono = instance.get_attribute_values('teléfono').value
+                else:
+                    instance.telefono = '---'
+                if instance.get_attribute_values('direccion'):
+                    instance.direccion = instance.get_attribute_values('direccion').value
+                else:
+                    instance.direccion = '---'
+                try:
+                    age = relativedelta(datetime.datetime.now(), parse(instance.get_attribute_values('birthday').value))
+                    months = ''
+                    if age.months:
+                        months = str(age.months) + ' meses'
+                    if age.years:
+                        if age.years == 1:
+                            months = str(age.years) + ' año ' + months
+                        else:
+                            months = str(age.years) + ' años ' + months
+                except:
+                    months = '---'
+                instance.months = months
         children = 0
         assignations = 0
         assigns = InstanceAssociationUser.objects.filter(
