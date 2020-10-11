@@ -9,12 +9,15 @@ from milestones.models import Milestone
 from django.http import JsonResponse
 from posts.models import Interaction
 from entities.models import Entity
-from groups.models import Group
+from groups.models import Group, MilestoneRisk
 from django.http import Http404
 from bots.models import Bot
 from utilities import forms
 import boto3
 import os
+import datetime
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -31,7 +34,37 @@ class GroupAssignationsView(View):
             print([a.messenger_user_id for a in assigns])
             count = Interaction.objects.filter(user_id__in=[a.messenger_user_id for a in assigns],
                                                type='dispatched').count()
-            return JsonResponse(dict(data=dict(count=count)))
+            milestones = dict()
+            milestones_count = 0
+            for assignation in assigns:
+                assignation.instances = assignation.get_messenger_user().get_instances()
+                for instance in assignation.instances:
+                    try:
+                        age = relativedelta(datetime.datetime.now(),
+                                            parse(instance.get_attribute_values('birthday').value))
+                        months = 0
+                        if age.months:
+                            months = age.months
+                        if age.years:
+                            months = months + (age.years * 12)
+                    except:
+                        months = 0
+                    risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+                    responses = instance.response_set.filter(response='failed', milestone_id__in=risks)
+                    if responses.exists():
+                        milestones_count = milestones_count + 1
+                    for response in responses:
+                        if response.milestone_id in milestones:
+                            milestones[response.milestone_id] = milestones[response.milestone_id] + 1
+                        else:
+                            milestones[response.milestone_id] = 1
+            milestones_data = []
+            for milestone in milestones:
+                milestones_data.append(dict(y=milestones[milestone], label=Milestone.objects.get(id=milestone).name))
+            if len(milestones_data) == 0:
+                milestones_data = [dict(y=0, label='No hay niños con riesgos de desarrollo')]
+            return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
+                                     milestones_count=milestones_count))
         return JsonResponse(dict(data=dict(count=0)))
 
 
