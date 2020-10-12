@@ -5,7 +5,7 @@ app_name = 'programs'
 
 urlpatterns = [
     path('', views.ProgramListView.as_view(), name='program_list'),
-    path('new_program/', views.ProgramCreateView.as_view(), name='program_create'),
+    path('new_program/', views.CreateGroupProgramView.as_view(), name='program_create'),
     path('new_group_program/', views.CreateGroupProgramView.as_view(), name='group_program_create'),
     path('<int:program_id>/', views.ProgramDetailView.as_view(), name='program_detail'),
     path('<int:program_id>/metrics/', views.ProgramMetricsView.as_view(), name='program_metrics'),
