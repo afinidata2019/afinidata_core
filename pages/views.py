@@ -6,11 +6,15 @@ from django.contrib import messages
 from django.utils import timezone
 
 
-class HomeView(TemplateView):
-    template_name = 'pages/index.html'
+class HomeView(RedirectView):
+    permanent = False
+    query_string = False
 
-    def get_context_data(self, **kwargs):
-        return dict(today=timezone.now())
+    def get_redirect_url(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return reverse_lazy('pages:login')
+
+        return reverse_lazy('pages:dashboard')
 
 
 class LoginView(AuthLoginView):
