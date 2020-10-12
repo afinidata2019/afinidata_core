@@ -94,7 +94,7 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <strong class="text-gray-900">Programs: </strong>
+                        <strong class="text-gray-900">Programs: <a href="{% url 'groups:add_program' group_id=object.pk %}">Add</a></strong>
                         <ul>
                             {% for program in object.programs.all %}
                                 <li>

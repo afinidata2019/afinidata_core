@@ -1,0 +1,30 @@
+{% extends 'base/private.html' %}
+
+{% block title %}{{ action }} Code{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Add program to group: {{ group }}</h1>
+        </div>
+    </div>
+
+     <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Group:</label>
+                        <input type="text" disabled class="disabled form-control" value="{{ group.name }}">
+                    </div>
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button role="submit" class="btn btn-primary">{{ action }} Code</button>
+                </form>
+            </div>
+        </div>
+     </div>
+
+{% endblock %}
