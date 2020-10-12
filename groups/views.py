@@ -1,14 +1,15 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import InstanceAssociationUser
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User
 from posts.models import Interaction
+from programs.models import Program
 from django.urls import reverse_lazy
 from django.contrib import messages
-from groups import models
+from groups import models, forms
 import datetime
-from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 
 
@@ -42,6 +43,7 @@ class GroupView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(GroupView, self).get_context_data()
         c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:5]
+        print(self.object.programs.all())
         children = 0
         assignations = 0
         assigns = InstanceAssociationUser.objects.filter(
@@ -143,7 +145,6 @@ class EditGroupView(PermissionRequiredMixin, UpdateView):
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
 
-
 class MessengerUsersListView(PermissionRequiredMixin, ListView):
     model = models.AssignationMessengerUser
     permission_required = 'groups.view_assignationmessengeruser'
@@ -160,3 +161,24 @@ class MessengerUsersListView(PermissionRequiredMixin, ListView):
         qs = super(MessengerUsersListView, self).get_queryset()
         qs = qs.filter(group_id=self.kwargs['group_id']).order_by('-pk')
         return qs
+
+
+class AddProgramView(PermissionRequiredMixin, CreateView):
+    template_name = 'groups/add_program.html'
+    permission_required = 'groups.change_program'
+    model = models.ProgramAssignation
+    fields = ('program', )
+
+    def get_context_data(self, **kwargs):
+        c = super(AddProgramView, self).get_context_data(**kwargs)
+        c['group'] = models.Group.objects.get(id=self.kwargs['group_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.group_id = self.kwargs['group_id']
+        form.instance.user = self.request.user
+        return super(AddProgramView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, 'Program added to group')
+        return reverse_lazy('groups:group', kwargs={'group_id': self.kwargs['group_id']})
