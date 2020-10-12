@@ -1,16 +1,21 @@
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
+from django.views.generic import TemplateView, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
+from groups.models import RoleGroupUser
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils import timezone
 
 
-class HomeView(TemplateView):
-    template_name = 'pages/index.html'
+class HomeView(RedirectView):
+    permanent = False
+    query_string = False
 
-    def get_context_data(self, **kwargs):
-        return dict(today=timezone.now())
+    def get_redirect_url(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return reverse_lazy('pages:login')
+
+        return reverse_lazy('pages:dashboard')
 
 
 class LoginView(AuthLoginView):
@@ -30,7 +35,14 @@ class LogoutView(AuthLogoutView):
         return super(LogoutView, self).dispatch(request, *args, **kwargs)
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'pages/dashboard.html'
-    login_url = reverse_lazy('pages:login')
+class DashboardView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    query_string = False
 
+    def get_redirect_url(self, *args, **kwargs):
+        roles = RoleGroupUser.objects.filter(user_id=self.request.user.pk)
+        if self.request.user.is_superuser:
+            return reverse_lazy('groups:groups')
+        if roles.count() == 1:
+            return reverse_lazy('groups:group_dashboard', kwargs=dict(group_id=roles.first().group_id))
+        return reverse_lazy('groups:my_groups')
