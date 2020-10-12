@@ -30,6 +30,14 @@ class ProgramDetailView(PermissionRequiredMixin, DetailView):
         return c
 
 
+class ProgramMetricsView(PermissionRequiredMixin, DetailView):
+    permission_required = 'programs.view_program'
+    model = models.Program
+    login_url = reverse_lazy('pages:login')
+    pk_url_kwarg = 'program_id'
+    template_name = 'programs/program_metrics.html'
+
+
 class ProgramCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'programs.add_program'
     model = models.Program

@@ -8,6 +8,7 @@ urlpatterns = [
     path('new_program/', views.ProgramCreateView.as_view(), name='program_create'),
     path('new_group_program/', views.CreateGroupProgramView.as_view(), name='group_program_create'),
     path('<int:program_id>/', views.ProgramDetailView.as_view(), name='program_detail'),
+    path('<int:program_id>/metrics/', views.ProgramMetricsView.as_view(), name='program_metrics'),
     path('<int:program_id>/content/', views.ProgramDetailContentView.as_view(), name='program_content_detail'),
     path('<int:program_id>/set_areas/', views.ProgramSetAreasView.as_view(), name='program_set_areas'),
     path('<int:program_id>/edit/', views.ProgramUpdateView.as_view(), name='program_edit'),
