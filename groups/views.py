@@ -110,6 +110,10 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                                                                      type='dispatched').count()'''
         c['children'] = assigns.count()
         c['assignations'] = assignations
+        try:
+            c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
+        except:
+            c['ref'] = "m.me/afinidatatutor?ref="
         return c
 
 
