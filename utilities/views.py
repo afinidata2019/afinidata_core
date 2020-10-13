@@ -60,7 +60,11 @@ class GroupAssignationsView(View):
                             milestones[response.milestone_id] = 1
             milestones_data = []
             for milestone in milestones:
-                milestones_data.append(dict(y=milestones[milestone], label=Milestone.objects.get(id=milestone).name))
+                y_label = "Casos"
+                if milestones[milestone] == 0:
+                    y_label = "Caso"
+                milestones_data.append(dict(y=milestones[milestone], y_label=y_label,
+                                            label=Milestone.objects.get(id=milestone).name))
             if len(milestones_data) == 0:
                 milestones_data = [dict(y=0, label='No hay niños con riesgos de desarrollo')]
             return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
