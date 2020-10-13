@@ -18,6 +18,16 @@ class ProgramListView(PermissionRequiredMixin, ListView):
     paginate_by = 10
 
 
+class UserProgramListView(PermissionRequiredMixin, ListView):
+    permission_required = 'programs.view_program'
+    model = models.Program
+    login_url = reverse_lazy('pages:login')
+    paginate_by = 10
+
+    def get_queryset(self):
+        return self.request.user.program_set.all()
+
+
 class ProgramDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'programs.view_program'
     model = models.Program
@@ -221,6 +231,8 @@ class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
         return c
 
     def get_success_url(self):
+        self.object.users.add(self.request.user)
+        print(self.object.users.all())
         messages.success(self.request, 'Program has been created')
         return reverse_lazy('programs:program_set_areas', kwargs=dict(program_id=self.object.pk))
 
@@ -310,7 +322,7 @@ class LevelContentView(PermissionRequiredMixin, DetailView):
 
 
 class ProgramLevelTopicDetailView(PermissionRequiredMixin, DetailView):
-    permission_required = 'topics.view_topic'
+    permission_required = 'programs.change_program'
     model = Topic
     pk_url_kwarg = 'topic_id'
     login_url = reverse_lazy('pages:login')
@@ -329,7 +341,7 @@ class ProgramLevelTopicDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
-    permission_required = 'user_sessions.view_session'
+    permission_required = 'programs.view_program'
     model = Session
     pk_url_kwarg = 'session_id'
     login_url = reverse_lazy('pages:login')
@@ -347,7 +359,7 @@ class ProgramSessionDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ExcludeFieldToProgramView(PermissionRequiredMixin, RedirectView):
-    permission_required = 'program.change_program'
+    permission_required = 'programs.view_program'
 
     def get_redirect_url(self, *args, **kwargs):
         field = Field.objects.get(id=kwargs['field_id'])
@@ -360,7 +372,7 @@ class ExcludeFieldToProgramView(PermissionRequiredMixin, RedirectView):
 
 
 class FieldProgramCommentCreateView(PermissionRequiredMixin, CreateView):
-    permission_required = 'program.change_program'
+    permission_required = 'programs.view_program'
     model = FieldProgramComment
     fields = ('comment', )
     template_name = 'programs/program_form.html'
