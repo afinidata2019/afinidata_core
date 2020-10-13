@@ -105,7 +105,7 @@
             <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
           {% endif %}
           {% if perms.programs.view_user_programs %}
-            <a class="collapse-item" href="{% url 'programs:program_list' %}">Group Programs</a>
+            <a class="collapse-item" href="{% url 'programs:user_program_list' %}">My Programs</a>
           {% endif %}
           {% if perms.programs.add_program %}
             <a class="collapse-item" href="{% url 'programs:program_create' %}">Add New</a>

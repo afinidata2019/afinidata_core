@@ -129,8 +129,8 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
         return c
 
     def get_success_url(self):
+        self.object.rolegroupuser_set.create(user=self.request.user, role='administrator')
         messages.success(self.request, 'Group with name: "%s" has been created.' % self.object.name)
-        print(self.object.pk, self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
 
@@ -171,7 +171,7 @@ class MessengerUsersListView(PermissionRequiredMixin, ListView):
 
 class AddProgramView(PermissionRequiredMixin, CreateView):
     template_name = 'groups/add_program.html'
-    permission_required = 'groups.change_program'
+    permission_required = 'groups.change_group'
     model = models.ProgramAssignation
     fields = ('program', )
 
@@ -179,6 +179,11 @@ class AddProgramView(PermissionRequiredMixin, CreateView):
         c = super(AddProgramView, self).get_context_data(**kwargs)
         c['group'] = models.Group.objects.get(id=self.kwargs['group_id'])
         return c
+
+    def get_form(self, form_class=None):
+        form = super(AddProgramView, self).get_form(form_class=None)
+        form.fields['program'].queryset = self.request.user.program_set.all()
+        return form
 
     def form_valid(self, form):
         form.instance.group_id = self.kwargs['group_id']
