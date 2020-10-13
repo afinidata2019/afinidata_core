@@ -76,12 +76,14 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                     instance.birthday = parse(instance.get_attribute_values('birthday').value).strftime('%d-%m-%Y')
                 else:
                     instance.birthday = '---'
-                if instance.get_attribute_values('telefono'):
-                    instance.telefono = instance.get_attribute_values('teléfono').value
+                if instance.get_users().last().userdata_set.filter(data_key='telefono').exists():
+                    instance.telefono = instance.get_users().last().userdata_set\
+                        .filter(data_key='telefono').last().data_value
                 else:
                     instance.telefono = '---'
-                if instance.get_attribute_values('direccion'):
-                    instance.direccion = instance.get_attribute_values('direccion').value
+                if instance.get_users().last().userdata_set.filter(data_key='direccion').exists():
+                    instance.direccion = instance.get_users().last().userdata_set\
+                        .filter(data_key='direccion').last().data_value
                 else:
                     instance.direccion = '---'
                 try:
