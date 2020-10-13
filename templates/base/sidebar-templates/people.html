@@ -18,13 +18,16 @@
           {% if perms.groups.view_user_groups %}
             <a class="collapse-item" href="{% url 'groups:my_groups' %}">My Groups</a>
           {% endif %}
+          {% if perms.groups.add_group %}
+            <a class="collapse-item" href="{% url 'groups:group_create' %}">Create Group</a>
+          {% endif %}
       </div>
     </div>
 </li>
 
 {% endif %}
 
-{% if perms.messenger_users.view_all_messenger_users or perms.groups.view_group %}
+{% if perms.messenger_users.view_all_messenger_users %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
