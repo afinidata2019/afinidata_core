@@ -125,12 +125,12 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(CreateGroupView, self).get_context_data()
-        c['action'] = 'Create'
+        c['action'] = 'Crear'
         return c
 
     def get_success_url(self):
         self.object.rolegroupuser_set.create(user=self.request.user, role='administrator')
-        messages.success(self.request, 'Group with name: "%s" has been created.' % self.object.name)
+        messages.success(self.request, 'Grupo con nombre: "%s" ha sido creado.' % self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
 
@@ -143,11 +143,11 @@ class EditGroupView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         c = super(EditGroupView, self).get_context_data()
-        c['action'] = 'Edit'
+        c['action'] = 'Editar'
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Group with name: "%s" has been updated.' % self.object.name)
+        messages.success(self.request, 'Grupo con nombre: "%s" ha sido editado.' % self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
 

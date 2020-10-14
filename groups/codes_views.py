@@ -13,7 +13,7 @@ class CreateCodeView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(CreateCodeView, self).get_context_data()
-        c['action'] = 'Create'
+        c['action'] = 'Crear'
         c['group'] = get_object_or_404(models.Group, id=self.kwargs['group_id'])
         return c
 
@@ -22,7 +22,7 @@ class CreateCodeView(PermissionRequiredMixin, CreateView):
         return super(CreateCodeView, self).form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, 'Code: "%s" has been added to group: "%s".' % (
+        messages.success(self.request, 'Código: "%s" ha sido añadido al grupo: "%s".' % (
             self.object.code, self.object.group.name
         ))
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.group.pk})

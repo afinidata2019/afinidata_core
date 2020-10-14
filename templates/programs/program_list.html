@@ -1,16 +1,16 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Programs{% endblock %}
+{% block title %}Programas{% endblock %}
 
 {% block content %}
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Programs</h1>
+            <h1 class="h3 mb-0 text-gray-800">Programas</h1>
             {% if perms.programs.add_program %}
                 <a href="{% url 'programs:program_create' %}"
                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add Program</a>
+                <i class="fas fa-plus fa-sm text-white-50"></i> Crear Programa</a>
             {% endif %}
         </div>
     </div>
@@ -18,41 +18,32 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Listado de Programas</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Name</th>
-                          <th>Description</th>
-                          <th>Levels</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
+                          <th>Nombre</th>
+                          <th>Descripción</th>
+                          <th>Etapas</th>
+                          <th>Fecha de Creación</th>
+                          <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Name</th>
-                          <th>Description</th>
-                          <th>Levels</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                     {% for object in object_list %}
                         <tr>
                             <td>{{ object.name }}</td>
                             <td>{{ object.description }}
                                 {% if perms.programs.view_program %}
-                                    <a href="{% url 'programs:program_content_detail' program_id=object.pk %}" >View Content</a>
+                                    <a href="{% url 'programs:program_content_detail' program_id=object.pk %}" >Ver Contenido</a>
                                     {% endif %}
                             </td>
                             <td>
                                 Count: {{ object.levels.all.count }}
-                                <a href="{% url 'programs:level_list' program_id=object.pk %}">View</a>
+                                <a href="{% url 'programs:level_list' program_id=object.pk %}">Ver</a>
                             </td>
                             <td>{{ object.created_at }}</td>
                             <td>
