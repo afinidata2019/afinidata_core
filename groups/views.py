@@ -99,7 +99,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                 except:
                     months = '---'
                 instance.months = months
-                instance.image = "child_user_" + str((instance.id % 10) + 1) + ".jpg"
+                instance.image = "images/child_user_" + str((instance.id % 10) + 1) + ".jpg"
         children = 0
         assignations = 0
         assigns = InstanceAssociationUser.objects.filter(

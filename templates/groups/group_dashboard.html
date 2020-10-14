@@ -3,7 +3,7 @@
 {% block title %}{{ object.name }}{% endblock %}
 
 {% block content %}
-
+{% load static %}
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <div class="col-xl-9 col-md-9 mb">
@@ -52,7 +52,7 @@
         <div class="row">
             <div class="col-xl-2 col-md-6 mb">
                 <div class="card bg-dark text-white">
-                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
                     <h5 class="card-title">Total de usuarios</h5>
                     <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
@@ -61,18 +61,18 @@
             </div>
             <div class="col-xl-2 col-md-6 mb">
                 <div class="card bg-dark text-white">
-                  <img class="card-img" src="https://www.compassion.com/Images/what-the-bible-says-about-children-hero_156017_1280x554.jpg" alt="Card image">
+                  <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total children</h5>
+                    <h5 class="card-title">Total de niños</h5>
                     <h5 class="card-text">{{ children }}</h5>
                   </div>
                 </div>
             </div>
             <div class="col-xl-2 col-md-6 mb">
                 <div class="card bg-dark text-white">
-                  <img class="card-img" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" alt="Card image">
+                  <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Sent activities</h5>
+                    <h5 class="card-title">Actividades enviadas</h5>
                     <h5 class="card-text assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
@@ -112,12 +112,12 @@
                     </div>
             </div>
             <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0" style="min-height: 300px">
-                <br/><br/>
+                <br/><br/><br/>
                 <canvas id="chart" width="0" height="0" style=""></canvas>
                 {% for attribute_type in attribute_types %}
-                    <div id="chartRiskContainer{{ attribute_type.id }}" style="height: 80%;"></div>
+                    <div id="chartRiskContainer{{ attribute_type.id }}" style="height: 70%;"></div>
                 {% endfor %}
-                <div id="chartMilestonesContainer" style="height: 80%;"></div>
+                <div id="chartMilestonesContainer" style="height: 75%;"></div>
             </div>
         </div>
     </div>
@@ -153,7 +153,7 @@
                         {% for assignation in last_assignations %}
                         {% for instance in assignation.instances %}
                             <tr>
-                                <td><img class="img-circle" src="{% static instance.image %}" width="40" height="40"></img></td>
+                                <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
                                     <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
                                 </td>
