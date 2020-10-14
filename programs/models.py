@@ -42,6 +42,7 @@ class Attributes(models.Model):
     attribute_type = models.ForeignKey(AttributeType, on_delete=models.CASCADE)
     weight = models.FloatField(null=True)
     threshold = models.FloatField(null=True)
+    label = models.CharField(max_length=50, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -52,6 +53,7 @@ class Level(models.Model):
     assign_min = models.IntegerField(null=True, blank=True, default=0)
     assign_max = models.IntegerField(null=True, blank=True, default=1)
     milestones = models.ManyToManyField(Milestone, through='LevelMilestoneAssociation')
+    image = models.CharField(max_length=30, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -74,5 +76,3 @@ class LevelMilestoneAssociation(models.Model):
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
