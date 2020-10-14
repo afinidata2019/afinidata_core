@@ -67,7 +67,7 @@ class GroupAssignationsView(View):
             milestones_data = []
             for milestone in milestones:
                 y_label = "Casos"
-                if milestones[milestone] == 0:
+                if milestones[milestone] == 1:
                     y_label = "Caso"
                 milestones_data.append(dict(y=milestones[milestone], y_label=y_label,
                                             label=Milestone.objects.get(id=milestone).name))
@@ -79,14 +79,17 @@ class GroupAssignationsView(View):
             factores_riesgo = []
             for attributes_type in program.attributetype_set.all():
                 factores_riesgo_data = []
+                factores_riesgo_count = set([])
                 for attribute in attributes_type.attributes_set.all():
                     risk_count = 0
                     risk_count_instance = AttributeValue.objects.filter(instance__id__in=group_instances,
                                                                         attribute=attribute.attribute,
                                                                         value__lte=attribute.threshold).\
-                        values('instance__id').distinct().count()
-                    if risk_count_instance > 0:
-                        risk_count = risk_count_instance
+                        values('instance__id').distinct()
+                    if risk_count_instance.count() > 0:
+                        factores_riesgo_count = factores_riesgo_count.union(set([x['instance__id']
+                                                                                 for x in risk_count_instance]))
+                        risk_count = risk_count_instance.count()
                     else:
                         risk_count_user = UserData.objects.filter(user__id__in=group_users,
                                                                   data_key=attribute.attribute.name,
@@ -94,11 +97,11 @@ class GroupAssignationsView(View):
                             values('user__id').distinct().count()
                         risk_count = risk_count_user
                     y_label = "Casos"
-                    if risk_count == 0:
+                    if risk_count == 1:
                         y_label = "Caso"
                     factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=attribute.label))
                 factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
-                                            factores_riesgo=factores_riesgo_data))
+                                            factores_riesgo=factores_riesgo_data, total=len(factores_riesgo_count)))
             return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
                                      milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
