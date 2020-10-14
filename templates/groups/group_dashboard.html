@@ -153,7 +153,7 @@
                         {% for assignation in last_assignations %}
                         {% for instance in assignation.instances %}
                             <tr>
-                                <td><img class="img-circle" src="https://assets.weforum.org/article/image/large_yEBA9Y3wb_EjQo_3AZG4RT0GMQkbiRRZEutdKfbnfR0.jpg" width="40" height="40"></img></td>
+                                <td><img class="img-circle" src="{% static instance.image %}" width="40" height="40"></img></td>
                                 <td>
                                     <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
                                 </td>
