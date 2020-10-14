@@ -94,8 +94,10 @@ class GroupAssignationsView(View):
                         risk_count_user = UserData.objects.filter(user__id__in=group_users,
                                                                   data_key=attribute.attribute.name,
                                                                   data_value__lte=attribute.threshold).\
-                            values('user__id').distinct().count()
-                        risk_count = risk_count_user
+                            values('user__id').distinct()
+                        factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
+                                                                                 for x in risk_count_user]))
+                        risk_count = risk_count_user.count()
                     y_label = "Casos"
                     if risk_count == 1:
                         y_label = "Caso"
