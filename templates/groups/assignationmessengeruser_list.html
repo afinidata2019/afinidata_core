@@ -1,21 +1,21 @@
 {% extends 'base/private.html' %}
 
-{% block title %}{{ group.name }} Messenger Users{% endblock %}
+{% block title %}Usuarios de Bot en grupo: {{ group.name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Messenger Users of: {{ group.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Usuarios de Bot en grupo: {{ group.name }}</h1>
             <div>
                 {% if perms.groups.view_group %}
                     <a href="{% url 'groups:group' group_id=group.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-eye fa-sm text-white-50"></i> View group</a>
+                    <i class="fas fa-eye fa-sm text-white-50"></i> Ver Grupo</a>
                 {% endif %}
                 {% if perms.groups.add_assignationmessengeruser %}
                     <a href="{% url 'groups:add_messenger_user_group' group_id=group.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Add messenger user</a>
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Adjuntar Usuario</a>
                 {% endif %}
             </div>
         </div>
@@ -24,7 +24,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 justify-content-between d-flex">
-              <h6 class="m-0 font-weight-bold text-primary">List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Listado</h6>
                 <div>
                     <span>Total: {{ count }}</span>
                 </div>
@@ -34,24 +34,14 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
+                          <th>Usuario del Bot</th>
+                          <th>Instancias</th>
+                          <th>Se unión en</th>
+                          <th>Fecha de Asignación</th>
+                          <th>Código de Asignación</th>
+                          <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for assignation in object_list %}
                             <tr>

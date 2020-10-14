@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total de Usuarios</div>
                                 <h3 class="h5 mb-0 font-weight-bold text-gray-800">{{ object.assignationmessengeruser_set.all.count }}</h3>
                             </div>
                             <div class="col-auto">
@@ -33,7 +33,7 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Children</div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total de Niños</div>
                                 <h3 class="h5 mb-0 font-weight-bold text-gray-800">{{ children }}</h3>
                             </div>
                             <div class="col-auto">
@@ -49,8 +49,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sent Activities</div>
-                                <h3 class="h5 mb-0 font-weight-bold text-gray-800 assignations">Loading...</h3>
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Actividades Enviadas</div>
+                                <h3 class="h5 mb-0 font-weight-bold text-gray-800 assignations">Cargando...</h3>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -68,12 +68,12 @@
             <div class="col-8">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Información</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        <strong class="text-gray-900">Fecha de Creación: </strong><span>{{ object.created_at }}</span><br>
                         {% if object.parent %}
-                            <strong class="text-gray-900">Parent: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
+                            <strong class="text-gray-900">Grupo Padre: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
                         {% endif %}
                     </div>
                 </div>
@@ -82,19 +82,14 @@
             <div class="col-4">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Asignaciones</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Bots: </strong>
-                        <ul>
-                            {% for bot_assign in object.botassignation_set.all %}
-                                <li>
-                                    <strong class="text-gray-900">{{ bot_assign.bot.name }}</strong>
-                                    <a href="{% url 'bots:bot_detail' bot_id=bot_assign.bot_id %}">View</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <strong class="text-gray-900">Programs: <a href="{% url 'groups:add_program' group_id=object.pk %}">Add</a></strong>
+                        <strong class="text-gray-900">Programas:
+                            {% if not object.programs.exists %}
+                                 <a href="{% url 'groups:add_program' group_id=object.pk %}">Añadir</a>
+                            {% endif %}
+                        </strong>
                         <ul>
                             {% for program in object.programs.all %}
                                 <li>
@@ -111,10 +106,10 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Users</h1>
+            <h1 class="h3 mb-0 text-gray-800">Usuarios de Plataforma</h1>
             {% if perms.groups.add_rolegroupuser %}
                 <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
+                <i class="fas fa-plus fa-sm text-white-50"></i> Añadir usuario</a>
             {% endif %}
         </div>
     </div>
@@ -122,7 +117,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Asignaciones</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -130,19 +125,11 @@
                     <thead>
                         <tr>
                           <th>Username</th>
-                          <th>Role</th>
-                          <th>Assigned Date</th>
-                          <th>Actions</th>
+                          <th>Rol</th>
+                          <th>Fecha de Asignación</th>
+                          <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Username</th>
-                          <th>Role</th>
-                          <th>Assigned Date</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for assignation in object.rolegroupuser_set.all %}
                             <tr>
@@ -166,13 +153,13 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Messenger Users</h1>
+            <h1 class="h3 mb-0 text-gray-800">Usuarios del Bot</h1>
             <div>
                 <a href="{% url 'groups:messenger_user_list' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-list fa-sm text-white-50"></i> View Messenger Users</a>
+                <i class="fas fa-list fa-sm text-white-50"></i> Ver Usuarios</a>
                 {% if permsgroups.add_assignationmessengeruser %}
                     <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Messenger User</a>
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Adjuntar Usuario</a>
                 {% endif %}
             </div>
         </div>
@@ -181,7 +168,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">New Users</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Nuevos Usuarios</h6>
                <div>
                    <span>Total: {{ object.assignationmessengeruser_set.all.count }}</span>
                </div>
@@ -191,24 +178,14 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
+                          <th>Usuario</th>
+                          <th>Instancias</th>
+                          <th>Se Unió en</th>
+                          <th>Fecha de Asignación</th>
+                          <th>Código de Asignación</th>
+                          <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Messenger User</th>
-                          <th>Instances</th>
-                          <th>Created At</th>
-                          <th>Assigned Date</th>
-                          <th>Code</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for assignation in last_assignations %}
                             <tr>
@@ -244,11 +221,11 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Codes</h1>
+            <h1 class="h3 mb-0 text-gray-800">Códigos</h1>
             <div>
                 {% if perms.groups.add_code %}
                     <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Código</a>
                 {% endif %}
             </div>
         </div>
@@ -257,29 +234,20 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Code List</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Lista de Códigos</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Code</th>
-                          <th>Exchanges</th>
-                          <th>Available</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
+                          <th>Códigos</th>
+                          <th>Canjeos</th>
+                          <th>Disponibilidad</th>
+                          <th>Fecha de Creación</th>
+                          <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                          <th>Code</th>
-                          <th>Exchanges</th>
-                          <th>Available</th>
-                          <th>Created At</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
                         {% for code in object.code_set.all %}
                             <tr>

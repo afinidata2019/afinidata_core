@@ -1,12 +1,12 @@
 {% extends 'base/private.html' %}
 
-{% block title %}{{ action }} Group{% endblock %}
+{% block title %}{{ action }} Grupo{% endblock %}
 
 {% block content %}
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ action }} Group</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Grupo</h1>
         </div>
     </div>
 
@@ -16,8 +16,8 @@
                 <form action="." method="post">
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
-                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button role="submit" class="btn btn-primary">{{ action }} Group</button>
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button role="submit" class="btn btn-primary">{{ action }} Grupo</button>
                 </form>
             </div>
         </div>
