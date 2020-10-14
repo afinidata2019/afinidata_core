@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ action }} Code</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Código</h1>
         </div>
     </div>
 
@@ -16,12 +16,12 @@
                 <form action="." method="post">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="">Group:</label>
+                        <label for="">Grupo:</label>
                         <input type="text" disabled class="disabled form-control" value="{{ group.name }}">
                     </div>
                     {% include 'base/default_form.html' %}
-                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button role="submit" class="btn btn-primary">{{ action }} Code</button>
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button role="submit" class="btn btn-primary">{{ action }} Código</button>
                 </form>
             </div>
         </div>

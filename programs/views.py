@@ -56,7 +56,7 @@ class ProgramCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramCreateView, self).get_context_data()
-        c['action'] = 'Create'
+        c['action'] = 'Crear'
         return c
 
     def get_success_url(self):
@@ -73,7 +73,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramUpdateView, self).get_context_data()
-        c['action'] = 'Edit'
+        c['action'] = 'Editar'
         return c
 
     def get_success_url(self):
