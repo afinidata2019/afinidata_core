@@ -1,10 +1,10 @@
 from utilities.models import InteractionInstanceMigrations
-from messenger_users.models import Child, User, ChildData
+from messenger_users.models import Child, User, UserData, ChildData
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
-from instances.models import Instance, Response
+from instances.models import Instance, Response, AttributeValue
 from milestones.models import Milestone
 from django.http import JsonResponse
 from posts.models import Interaction
@@ -18,6 +18,7 @@ import os
 import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
+from django.db.models import Count
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -31,14 +32,19 @@ class GroupAssignationsView(View):
         if form.is_valid():
             group = form.cleaned_data['group']
             assigns = group.assignationmessengeruser_set.all()
-            print([a.messenger_user_id for a in assigns])
-            count = Interaction.objects.filter(user_id__in=[a.messenger_user_id for a in assigns],
+            # Count Sent activities
+            group_users = set([a.messenger_user_id for a in assigns])
+            count = Interaction.objects.filter(user_id__in=group_users,
                                                type='dispatched').count()
+
+            # Count Cases of risk in Development through risk milestones
+            group_instances = set([])
             milestones = dict()
             milestones_count = 0
             for assignation in assigns:
                 assignation.instances = assignation.get_messenger_user().get_instances()
                 for instance in assignation.instances:
+                    group_instances = group_instances.union(set([instance.id]))
                     try:
                         age = relativedelta(datetime.datetime.now(),
                                             parse(instance.get_attribute_values('birthday').value))
@@ -67,8 +73,34 @@ class GroupAssignationsView(View):
                                             label=Milestone.objects.get(id=milestone).name))
             if len(milestones_data) == 0:
                 milestones_data = [dict(y=0, label='No hay niños con riesgos de desarrollo')]
+
+            # Count cases of risk attributes
+            program = group.programs.last()
+            factores_riesgo = []
+            for attributes_type in program.attributetype_set.all():
+                factores_riesgo_data = []
+                for attribute in attributes_type.attributes_set.all():
+                    risk_count = 0
+                    risk_count_instance = AttributeValue.objects.filter(instance__id__in=group_instances,
+                                                                        attribute=attribute.attribute,
+                                                                        value__lte=attribute.threshold).\
+                        values('instance__id').distinct().count()
+                    if risk_count_instance > 0:
+                        risk_count = risk_count_instance
+                    else:
+                        risk_count_user = UserData.objects.filter(user__id__in=group_users,
+                                                                  data_key=attribute.attribute.name,
+                                                                  data_value__lte=attribute.threshold).\
+                            values('user__id').distinct().count()
+                        risk_count = risk_count_user
+                    y_label = "Casos"
+                    if risk_count == 0:
+                        y_label = "Caso"
+                    factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=attribute.label))
+                factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
+                                            factores_riesgo=factores_riesgo_data))
             return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
-                                     milestones_count=milestones_count))
+                                     milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
 
 
