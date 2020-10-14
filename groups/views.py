@@ -73,7 +73,10 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
             assignation.instances = assignation.get_messenger_user().get_instances()
             for instance in assignation.instances:
                 if instance.get_attribute_values('birthday'):
-                    instance.birthday = parse(instance.get_attribute_values('birthday').value).strftime('%d-%m-%Y')
+                    try:
+                        instance.birthday = parse(instance.get_attribute_values('birthday').value).strftime('%d-%m-%Y')
+                    except:
+                        instance.birthday = instance.get_attribute_values('birthday').value
                 else:
                     instance.birthday = '---'
                 if instance.get_users().last().userdata_set.filter(data_key='telefono').exists():
@@ -115,7 +118,10 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
             c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
         except:
             c['ref'] = "m.me/afinidatatutor?ref="
-        c['attribute_types'] = self.object.programs.last().attributetype_set.all()
+        if self.object.programs.exists():
+            c['attribute_types'] = self.object.programs.last().attributetype_set.all()
+        else:
+            c['attribute_types'] = []
         return c
 
 
