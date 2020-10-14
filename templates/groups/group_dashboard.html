@@ -94,29 +94,29 @@
                               </div>
                             </div>
                         </div>
-                        <div class="col-xs-12">
-                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="riesgos_actuales">
-                              <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.57.53.png" alt="Card image">
-                              <div class="card-img-overlay d-flex flex-column justify-content-end">
-                                <p class="card-text">40<br/>Niños con riesgos actuales</p>
-                              </div>
+                        {% for attribute_type in attribute_types %}
+                            <div class="col-xs-12">
+                                <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="attribute_type_{{ attribute_type.id }}">
+                                {% if attribute_type.id == 2 %}
+                                    <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
+                                    {% else %}
+                                    <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.57.53.png" alt="Card image">
+                                {% endif %}
+                                  <div class="card-img-overlay d-flex flex-column justify-content-end">
+                                    <p class="card-text"><span id="attribute_type_count_{{ attribute_type.id }}"><i class="fas fa-spinner fa-pulse"></i></span>
+                                        <br/>{{ attribute_type.name }}</p>
+                                  </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-xs-12">
-                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="antecedentes">
-                              <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
-                              <div class="card-img-overlay d-flex flex-column justify-content-end">
-                                  <p class="card-text">50<br/>Niños con antecedentes de reisgo</p>
-                              </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
             </div>
             <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0" style="min-height: 300px">
                 <br/><br/>
                 <canvas id="chart" width="0" height="0" style=""></canvas>
-                <div id="chartContainer1" style="height: 80%;"></div>
-                <div id="chartContainer2" style="height: 80%;"></div>
+                {% for attribute_type in attribute_types %}
+                    <div id="chartRiskContainer{{ attribute_type.id }}" style="height: 80%;"></div>
+                {% endfor %}
                 <div id="chartMilestonesContainer" style="height: 80%;"></div>
             </div>
         </div>
@@ -380,11 +380,34 @@ show{
                    })
                     .then(r => r.json())
                     .then(r => {
-                        let assign = document.querySelector('.assignations')
-                        assign.textContent = r.data.count
+                        document.querySelector('.assignations').textContent = r.data.count
+                        chartsArray = []
+	                    for (i = 0; i < r.factores_riesgo.length; i++) {
+                            document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
+                            chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
+                            chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+                            chartsArray[i]['chart'].render();
+                            $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                        }
                         document.querySelector('#milestones_count').textContent = r.milestones_count;
                         chartMilestones.options.data[0].dataPoints = r.milestones;
+                        $("#chartMilestonesContainer").show();
 	                    chartMilestones.render();
+	                    $('#milestonesCard').click(function () {
+                            for(i = 0; i < chartsArray.length; i++){
+                                $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                            }
+                            $("#chartMilestonesContainer").show();
+                        });
+                        $(('[id^="attribute_type_"]')).click(function () {
+                            for(i = 0; i < chartsArray.length; i++){
+                                $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                                if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                                    $("#chartRiskContainer"+chartsArray[i]['id']).show();
+                                }
+                            }
+                            $("#chartMilestonesContainer").hide();
+                        });
                     })
                }
            })
@@ -395,69 +418,7 @@ show{
             var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
             background_1.addColorStop(0, 'rgb(0,89,217)');
             background_1.addColorStop(1, 'rgb(105,176,255)');
-            chart1 = new CanvasJS.Chart("chartContainer1", {
-                animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisY: {
-                    includeZero: true,
-                    valueFormatString:" "
-                },
-                data: [{
-                    type: "bar",
-                    click: filterInstances,
-                    color: background_1,
-                    indexLabelPlacement: "inside",
-                    indexLabel: "{y} Casos",
-                    toolTipContent: "{label}: {y}",
-                    showInLegend: false,
-                    indexLabelFontColor: "white",
-                    legendMarkerColor: "white",
-                    legendText: "Respuestas",
-                    includeZero: true,
-                    cursor: "pointer",
-                    dataPoints: [
-                        { y: 25, label: "No lactancia" },
-                        { y: 40, label: "No ha visitado centro de salud" },
-                        { y: 15, label: "Tiene alguna discapacidad" },
-                        { y: 20, label: "Riesgos en desarrollo" },
-                        { y: 50, label: "Anemia diagnosticada" },
-                        { y: 30, label: "No tiene vacunación" }
-                    ]
-                }]
-            });
-            chart1.render();
-            chart2 = new CanvasJS.Chart("chartContainer2", {
-                animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisY: {
-                    includeZero: true,
-                    valueFormatString:" "
-                },
-                data: [{
-                    type: "bar",
-                    click: filterInstances,
-                    color: background_1,
-                    indexLabelPlacement: "inside",
-                    indexLabel: "{y} Casos",
-                    toolTipContent: "{label}: {y}",
-                    showInLegend: false,
-                    indexLabelFontColor: "white",
-                    legendMarkerColor: "white",
-                    legendText: "Respuestas",
-                    includeZero: true,
-                    cursor: "pointer",
-                    dataPoints: [
-                        { y: 30, percent: 30, label: "Madre adolescente" },
-                        { y: 20, percent: 20, label: "No cuenta con estación de lavado" },
-                        { y: 50, percent: 50, label: "No cuenta con extractor de humo" },
-                        { y: 40, percent: 40, label: "No reciben lactancia materna" },
-                        { y: 15, percent: 15, label: "No tienen servicio de salud cercano" },
-                        { y: 25, percent: 20, label: "Bebés prematuros" },
-                    ]
-                }]
-            });
-            chart2.render();
-            chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", {
+            chartStartData = {
                 animationEnabled: true,
                 theme: "light2", // "light1", "light2", "dark1", "dark2"
                 axisY: {
@@ -479,32 +440,12 @@ show{
                     cursor: "pointer",
                     dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
                 }]
-            });
-            chartMilestones.render();
-            $("#chartMilestonesContainer").hide();
-            $("#chartContainer2").hide();
+            }
+            chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
         }
         function filterInstances(e) {
             console.log(e);
         }
-        $('#milestonesCard').click(function () {
-            $("#chartContainer1").hide();
-            $("#chartContainer2").hide();
-            $("#chartMilestonesContainer").show();
-            chartMilestones.render();
-        });
-        $('#riesgos_actuales').click(function () {
-            $("#chartMilestonesContainer").hide();
-            $("#chartContainer2").hide();
-            $("#chartContainer1").show();
-            chart1.render();
-        });
-        $('#antecedentes').click(function () {
-            $("#chartMilestonesContainer").hide();
-            $("#chartContainer1").hide();
-            $("#chartContainer2").show();
-            chart2.render();
-        });
     </script>
 
 {% endblock %}

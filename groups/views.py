@@ -114,6 +114,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
             c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
         except:
             c['ref'] = "m.me/afinidatatutor?ref="
+        c['attribute_types'] = self.object.programs.last().attributetype_set.all()
         return c
 
 
