@@ -392,6 +392,7 @@ show{
                         }
                         document.querySelector('#milestones_count').textContent = r.milestones_count;
                         chartMilestones.options.data[0].dataPoints = r.milestones;
+                        chartMilestones.options.axisX.labelFontSize = 14;
                         $("#chartMilestonesContainer").show();
 	                    chartMilestones.render();
 	                    $('#milestonesCard').click(function () {
@@ -426,10 +427,16 @@ show{
                     includeZero: true,
                     valueFormatString:" "
                 },
+                axisX:{
+                  labelFontFamily: "tahoma",
+                  labelFontSize: 16
+                },
                 data: [{
                     type: "bar",
                     click: filterInstances,
                     color: background_1,
+                    indexLabelFontFamily: "tahoma",
+                    indexLabelFontSize: 18,
                     indexLabelPlacement: "inside",
                     indexLabel: "{y} {y_label}",
                     toolTipContent: "{label}: {y}",
