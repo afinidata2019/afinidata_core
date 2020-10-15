@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
-from instances.models import Instance, Response, AttributeValue
+from instances.models import Instance, Response, AttributeValue, InstanceAssociationUser
 from milestones.models import Milestone
 from django.http import JsonResponse
 from posts.models import Interaction
@@ -61,16 +61,17 @@ class GroupAssignationsView(View):
                         milestones_count = milestones_count + 1
                     for response in responses:
                         if response.milestone_id in milestones:
-                            milestones[response.milestone_id] = milestones[response.milestone_id] + 1
+                            milestones[response.milestone_id].append(response.instance.id)
                         else:
-                            milestones[response.milestone_id] = 1
+                            milestones[response.milestone_id] = [response.instance.id]
             milestones_data = []
             for milestone in milestones:
                 y_label = "Casos"
-                if milestones[milestone] == 1:
+                if len(milestones[milestone]) == 1:
                     y_label = "Caso"
-                milestones_data.append(dict(y=milestones[milestone], y_label=y_label,
-                                            label=Milestone.objects.get(id=milestone).name))
+                milestones_data.append(dict(y=len(milestones[milestone]), y_label=y_label,
+                                            label=Milestone.objects.get(id=milestone).name,
+                                            instances=milestones[milestone]))
             if len(milestones_data) == 0:
                 milestones_data = [dict(y=0, label='No hay niños con riesgos de desarrollo')]
 
@@ -80,28 +81,34 @@ class GroupAssignationsView(View):
             for attributes_type in program.attributetype_set.all():
                 factores_riesgo_data = []
                 factores_riesgo_count = set([])
-                for attribute in attributes_type.attributes_set.all():
+                for program_attribute in attributes_type.attributes_set.all():
                     risk_count = 0
                     risk_count_instance = AttributeValue.objects.filter(instance__id__in=group_instances,
-                                                                        attribute=attribute.attribute,
-                                                                        value__lte=attribute.threshold).\
+                                                                        attribute=program_attribute.attribute,
+                                                                        value__lte=program_attribute.threshold).\
                         values('instance__id').distinct()
                     if risk_count_instance.count() > 0:
                         factores_riesgo_count = factores_riesgo_count.union(set([x['instance__id']
                                                                                  for x in risk_count_instance]))
                         risk_count = risk_count_instance.count()
+                        instance_list = [x['instance__id'] for x in risk_count_instance]
                     else:
                         risk_count_user = UserData.objects.filter(user__id__in=group_users,
-                                                                  data_key=attribute.attribute.name,
-                                                                  data_value__lte=attribute.threshold).\
+                                                                  data_key=program_attribute.attribute.name,
+                                                                  data_value__lte=program_attribute.threshold).\
                             values('user__id').distinct()
                         factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
                                                                                  for x in risk_count_user]))
                         risk_count = risk_count_user.count()
+                        associations = InstanceAssociationUser.objects.\
+                            filter(user_id__in=[x['user__id'] for x in risk_count_user])
+                        instance_list = [association.instance.id for association in associations]
                     y_label = "Casos"
                     if risk_count == 1:
                         y_label = "Caso"
-                    factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=attribute.label))
+                    factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=program_attribute.label,
+                                                     program_attribute_id=program_attribute.id,
+                                                     instances=instance_list))
                 factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
                                             factores_riesgo=factores_riesgo_data, total=len(factores_riesgo_count)))
             return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
