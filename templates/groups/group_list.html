@@ -6,11 +6,11 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Grupos</h1>
+            <h1 class="h3 mb-0 text-gray-800">Groups</h1>
             <div>
                 {% if perms.groups.add_group %}
                     <a href="{% url 'groups:group_create' %}"
-                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Crear Grupo</a>
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Create group</a>
                 {% endif %}
             </div>
         </div>
@@ -19,16 +19,16 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Listado de Grupos</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Group List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Nombre</th>
-                          <th>Fecha de Creación</th>
-                          <th>Acciones</th>
+                          <th>Name</th>
+                          <th>Created at</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
