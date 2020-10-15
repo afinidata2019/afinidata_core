@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total de Usuarios</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
                                 <h3 class="h5 mb-0 font-weight-bold text-gray-800">{{ object.assignationmessengeruser_set.all.count }}</h3>
                             </div>
                             <div class="col-auto">
@@ -33,7 +33,7 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total de Niños</div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Children</div>
                                 <h3 class="h5 mb-0 font-weight-bold text-gray-800">{{ children }}</h3>
                             </div>
                             <div class="col-auto">
@@ -49,8 +49,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Actividades Enviadas</div>
-                                <h3 class="h5 mb-0 font-weight-bold text-gray-800 assignations">Cargando...</h3>
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sent Activities</div>
+                                <h3 class="h5 mb-0 font-weight-bold text-gray-800 assignations">Loading...</h3>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -68,12 +68,12 @@
             <div class="col-xl-8 col-xs-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Información</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Information</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Fecha de Creación: </strong><span>{{ object.created_at }}</span><br>
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
                         {% if object.parent %}
-                            <strong class="text-gray-900">Grupo Padre: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
+                            <strong class="text-gray-900">Parent Group: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
                         {% endif %}
                     </div>
                 </div>
@@ -82,12 +82,12 @@
             <div class="col-xl-4 col-xs-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Asignaciones</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Asignations</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Programas:
+                        <strong class="text-gray-900">Programs:
                             {% if not object.programs.exists %}
-                                 <a href="{% url 'groups:add_program' group_id=object.pk %}">Añadir</a>
+                                 <a href="{% url 'groups:add_program' group_id=object.pk %}">Add</a>
                             {% endif %}
                         </strong>
                         <ul>
@@ -106,10 +106,10 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Usuarios de Plataforma</h1>
+            <h1 class="h3 mb-0 text-gray-800">Platform Users</h1>
             {% if perms.groups.add_rolegroupuser %}
                 <a href="{% url 'groups:add_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Añadir usuario</a>
+                <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
             {% endif %}
         </div>
     </div>
@@ -117,7 +117,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Asignaciones</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Assignations</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -125,9 +125,9 @@
                     <thead>
                         <tr>
                           <th>Username</th>
-                          <th>Rol</th>
-                          <th>Fecha de Asignación</th>
-                          <th>Acciones</th>
+                          <th>Role</th>
+                          <th>Assignation Date</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,10 +153,10 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Usuarios del Bot</h1>
+            <h1 class="h3 mb-0 text-gray-800">Bot Users</h1>
             <div>
                 <a href="{% url 'groups:messenger_user_list' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-list fa-sm text-white-50"></i> Ver Usuarios</a>
+                <i class="fas fa-list fa-sm text-white-50"></i> View Users</a>
                 {% if permsgroups.add_assignationmessengeruser %}
                     <a href="{% url 'groups:add_messenger_user_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Adjuntar Usuario</a>
@@ -168,7 +168,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">Nuevos Usuarios</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
                <div>
                    <span>Total: {{ object.assignationmessengeruser_set.all.count }}</span>
                </div>
@@ -178,12 +178,12 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Usuario</th>
-                          <th>Instancias</th>
-                          <th>Se Unió en</th>
-                          <th>Fecha de Asignación</th>
-                          <th>Código de Asignación</th>
-                          <th>Acciones</th>
+                          <th>User</th>
+                          <th>Instances</th>
+                          <th>Joined At</th>
+                          <th>Assigned At</th>
+                          <th>Assigned Code</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -221,11 +221,11 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Códigos</h1>
+            <h1 class="h3 mb-0 text-gray-800">Codes</h1>
             <div>
                 {% if perms.groups.add_code %}
                     <a href="{% url 'groups:add_code_group' group_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Código</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Code</a>
                 {% endif %}
             </div>
         </div>
@@ -234,18 +234,18 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Lista de Códigos</h6>
+              <h6 class="m-0 font-weight-bold text-primary">List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>Códigos</th>
-                          <th>Canjeos</th>
-                          <th>Disponibilidad</th>
-                          <th>Fecha de Creación</th>
-                          <th>Acciones</th>
+                          <th>Code</th>
+                          <th>Exchange</th>
+                          <th>Available</th>
+                          <th>Created At</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

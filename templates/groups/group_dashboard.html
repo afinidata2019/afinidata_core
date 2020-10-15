@@ -12,7 +12,7 @@
             <div class="col-xl-3 col-md-3 mb">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#invitarFamilias">
-                  Invitar familias
+                  Invite Families
                 </button>
 
                 <!-- Modal -->
@@ -20,13 +20,13 @@
                   <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Invitar familias</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Invite Families</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
                       <div class="modal-body">
-                          Copia el siguiente link para compartirlo con las familias <br/><br/>
+                          Copy the following link to invite families to Afinidata <br/><br/>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Ref:</span>
@@ -38,7 +38,7 @@
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
                       </div>
                     </div>
                   </div>
@@ -54,7 +54,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total de usuarios</h5>
+                    <h5 class="card-title">Total users</h5>
                     <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
                   </div>
                 </div>
@@ -63,7 +63,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total de niños</h5>
+                    <h5 class="card-title">Total children</h5>
                     <h5 class="card-text">{{ children }}</h5>
                   </div>
                 </div>
@@ -72,7 +72,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Actividades enviadas</h5>
+                    <h5 class="card-title">Sent Activities</h5>
                     <h5 class="card-text assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
@@ -90,7 +90,7 @@
                               <img class="card-img shadow-none" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
                               <div class="card-img-overlay shadow-none d-flex flex-column justify-content-end">
                                 <p class="card-text"><span id="milestones_count"><i class="fas fa-spinner fa-pulse"></i></span>
-                                    <br/>Niños con Riesgo de desarrollo</p>
+                                    <br/>Children with Development Risks</p>
                               </div>
                             </div>
                         </div>
@@ -127,10 +127,10 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrar todo: </h6>
+              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Show All: </h6>
                 <form class="form-inline" id="form_id">
-                  <input class="form-control mr-sm-2" type="search" placeholder="Buscar..." aria-label="Search">
-                  <button class="btn btn-outline-success my-2 my-sm-0">Buscar</button>
+                  <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search">
+                  <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
                 </form>
             </div>
             <div class="card-body">
@@ -139,15 +139,15 @@
                     <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Encargado</th>
-                            <th scope="col">Edad</th>
-                            <th scope="col">Nacimiento</th>
-                            <th scope="col">Teléfono</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Antecedentes de Riesgo</th>
-                            <th scope="col">Riesgos actuales</th>
-                            <th scope="col">Reporte</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Parent</th>
+                            <th scope="col">Ages</th>
+                            <th scope="col">Date of Birth</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Adress</th>
+                            <th scope="col">Risk Background</th>
+                            <th scope="col">Current Risks</th>
+                            <th scope="col">Report</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,7 +156,7 @@
                             <tr id="row_{{ instance.id }}">
                                 <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
-                                    <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
+                                    <a data-toggle="modal" data-target="#exampleModalCenter">{{ instance.name }}</a>
                                 </td>
                                 <td>
                                     <a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}</a>
@@ -166,12 +166,26 @@
                                 <td>{{ instance.telefono }}</td>
                                 <td>{{ instance.direccion }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">Alto</button>
+                                    {% if instance.risk == 0 %}
+                                        <button type="button" class="btn btn-success">Bajo</button>
+                                    {% elif instance.risk == 1 %}
+                                        <button type="button" class="btn btn-warning">Medio</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-danger">Alto</button>
+                                    {% endif %}
+
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">Alto</button>
+                                    {% if instance.risk == 0 %}
+                                        <button type="button" class="btn btn-success">Bajo</button>
+                                    {% elif instance.risk == 1 %}
+                                        <button type="button" class="btn btn-warning">Medio</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-danger">Alto</button>
+                                    {% endif %}
+
                                 </td>
-                                <td><button class="btn"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
+                                <td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -183,6 +197,89 @@
         </div>
     </div>
 
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">María Perez</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+        <h5 class="modal-title" style="padding: 10px;">Factores de riesgo:</h5>
+          <div class="row" >
+              <ul>
+                  <li>Nacimiento con bajo peso:
+                    <span class="badge badge-pill badge-warning">Bajo peso</span>
+                  </li>
+                  <li>Fue prematuro:
+                        <span class="badge badge-pill badge-success" id="prematuro_1">No fue prematuro</span>
+                        <span class="badge badge-pill badge-warning" id="prematuro_2">Fue prematuro</span>
+                  </li>
+                  <li>Discapacidad o riesgo:
+                    <span class="badge badge-pill badge-success">No tiene discapacidad o riesgo</span>
+                  </li>
+              </ul>
+            </div>
+          <h5 class="modal-title" style="padding: 10px;">Situación actual:</h5>
+          <div class="row" >
+
+              <ul><i>Has click para editar:</i>
+                  <li>Anemia:
+                    <span class="badge badge-pill badge-success" id="anemia_1">No diagnosticado</span>
+                    <span class="badge badge-pill badge-danger" id="anemia_2">Si tiene</span>
+                  </li>
+                  <li>Lactancia y suplementación:
+                    <span class="badge badge-pill badge-warning" id="lactancia_1">Le da suplementos</span>
+                    <span class="badge badge-pill badge-success" id="lactancia_2">Leche materna y comida</span>
+                    <span class="badge badge-pill badge-danger" id="lactancia_3">No se la da nada</span>
+                  </li>
+                  <li>Vacunación:
+                    <span class="badge badge-pill badge-danger" id="vacunacion_1">No se ha vacunado</span>
+                    <span class="badge badge-pill badge-success" id="vacunacion_2">Ya se vacunó</span>
+                  </li>
+              </ul>
+            </div>
+        <h5 class="modal-title" style="padding: 10px;">Datos del responsable:</h5>
+          <div class="row">
+              <ul>
+                  <li>Relación con el niño:
+                        <span class="badge badge-pill badge-success">Mamá</span>
+                  </li>
+                  <li>Educación:
+                      <span class="badge badge-pill badge-success">Secundaria</span>
+                  </li>
+                  <li>Edad:
+                     <span class="badge badge-pill badge-danger">Menos de 18</span>
+                  </li>
+                  <li>Cuenta con apoyo:
+                     <span class="badge badge-pill badge-danger">No cuenta con apoyo</span>
+                  </li>
+              </ul>
+            </div>
+            <h5 class="modal-title" style="padding: 10px;">Seguimiento:</h5>
+            <div class="row" style="width:100%; padding-left:40px;">
+                <select class="form-control">
+                  <option>Sin seguimiento</option>
+                  <option>Por llamar</option>
+                  <option>Se intentó contactar</option>
+                  <option>Ya se contactó</option>
+                </select>
+            </div>
+            <h5 class="modal-title" style="padding: 10px;">Observaciones:</h5>
+            <div class="row" style="width:100%; padding-left:40px;">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"></textarea>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Regresar</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -450,6 +547,29 @@ show{
                 }]
             }
             chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+            $("#anemia_1").hide();
+            $('[id^="anemia_"]').click(function() {
+              $( "#anemia_1" ).toggle();
+              $( "#anemia_2" ).toggle();
+            });
+
+            $("#prematuro_2").hide();
+            $('[id^="prematuro_"]').click(function() {
+              $( "#prematuro_1" ).toggle();
+              $( "#prematuro_2" ).toggle();
+            });
+
+            $("#vacunacion_2").hide();
+            $('[id^="vacunacion_"]').click(function() {
+              $( "#vacunacion_1" ).toggle();
+              $( "#vacunacion_2" ).toggle();
+            });
+
+            $("#lactancia_1").hide();
+            $("#lactancia_3").hide();
+            $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
+            $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
+            $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
         }
         function filterInstances(e) {
             // $("#form_program_attribute_id").val(e.dataPoint.program_attribute_id);
@@ -458,6 +578,10 @@ show{
             $("#table_id > tbody > tr").hide();
             for(i = 0; i < e.dataPoint.instances.length; i++){
                 $("#row_"+e.dataPoint.instances[i]).show();
+                $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
+                $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
+                $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").addClass("btn-danger");
+                $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").html("Alto");
                 console.log(e.dataPoint.instances[i]);
             }
             $("#table_id").focus()
