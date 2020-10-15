@@ -1,6 +1,6 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Instancia: {{ object.name }}{% endblock %}
+{% block title %}Instance: {{ object.name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
@@ -22,22 +22,22 @@
                       <h6 class="m-0 font-weight-bold text-primary">Info</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Tipo: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
-                        <strong class="text-gray-900">Encargados: </strong>
+                        <strong class="text-gray-900">Type: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
+                        <strong class="text-gray-900">Parents: </strong>
                             <ul>
                                 {% for user in instance.get_users %}
                                   <li>(<a href="{% url 'messenger_users:user' id=user.pk %}">{{ user.pk }}</a>) <span>{{ user.first_name }} {{ user.last_name }}</span></li>
                               {% endfor %}
                             </ul>
-                        <strong class="text-gray-900">Fecha de Creación: </strong><span>{{ object.created_at }}</span><br>
-                        <strong class="text-gray-900">Última Actualización: </strong><span>{{ object.updated_at }}</span><br>
+                        <strong class="text-gray-900">Created At: </strong><span>{{ object.created_at }}</span><br>
+                        <strong class="text-gray-900">Updated At: </strong><span>{{ object.updated_at }}</span><br>
                         {% if perms.instances.change_instance or perms.instances.delete_instance %}
-                        <strong class="text-gray-900">Acciones: </strong>
+                        <strong class="text-gray-900">Actions: </strong>
                             {% if perms.instances.change_instance %}
-                                <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Editar</a>
+                                <a href="{% url 'instances:edit' id=object.pk %}" class="btn btn-success">Edit</a>
                             {% endif %}
                             {% if perms.instances.delete_instance %}
-                                <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Borrar</a>
+                                <a href="{% url 'instances:delete' id=object.pk %}" class="btn btn-danger">Delete</a>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -59,7 +59,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Actividades</h1>
+            <h1 class="h3 mb-0 text-gray-800">Activities</h1>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Enviadas (Este mes)</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent (Month)</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assigned_activities }}</div>
                     </div>
                     <div class="col-auto">
@@ -87,7 +87,7 @@
                     <div class="card-body">
                       <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Completadas (Este mes)</div>
+                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Completed (Month)</div>
                           <div class="h5 mb-0 font-weight-bold text-gray-800">{{ completed_activities }}</div>
                         </div>
                         <div class="col-auto">
@@ -103,7 +103,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Enviadas</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sent</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_activities.count }}</div>
                     </div>
                     <div class="col-auto">
@@ -119,7 +119,7 @@
                     <div class="card-body">
                       <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Actividades Completadas</div>
+                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Completed</div>
                           <div class="h5 mb-0 font-weight-bold text-gray-800">{{ object.get_completed_activities.count }}</div>
                         </div>
                         <div class="col-auto">
@@ -133,18 +133,18 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Actividades Asignadas (Este mes)</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Assigned Activities (Month)</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-responsive">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de Asignación</th>
-                                    <th>Completada en</th>
-                                    <th>Acciones</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Assign Date</th>
+                                    <th>Finished At</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -198,11 +198,11 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Atributos</h1>
+            <h1 class="h3 mb-0 text-gray-800">Attributes</h1>
             <div>
                 {% if perms.instances.add_attributevalue %}
                     <a href="{% url 'instances:add_instance_attribute' instance_id=object.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Atributo</a>
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Add Attribute</a>
                 {% endif %}
             </div>
         </div>
@@ -219,11 +219,11 @@
                         <table class="table table-bordered table-responsive">
                             <thead>
                                 <tr>
-                                  <th>Atributo</th>
-                                  <th>Pregunta</th>
-                                  <th>Respuesta</th>
-                                  <th>Valor</th>
-                                  <th>Última Respuesta</th>
+                                  <th>Attribute</th>
+                                  <th>Question</th>
+                                  <th>Response</th>
+                                  <th>Value</th>
+                                  <th>Last Response</th>
                                 </tr>
                             </thead>
                             <tbody>
