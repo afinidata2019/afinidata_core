@@ -12,7 +12,7 @@
             <div class="col-xl-3 col-md-3 mb">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#invitarFamilias">
-                  Invitar familias
+                  Invite Families
                 </button>
 
                 <!-- Modal -->
@@ -20,13 +20,13 @@
                   <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Invitar familias</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Invite Families</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
                       <div class="modal-body">
-                          Copia el siguiente link para compartirlo con las familias <br/><br/>
+                          Copy the following link to invite families to Afinidata <br/><br/>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Ref:</span>
@@ -38,7 +38,7 @@
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
                       </div>
                     </div>
                   </div>
@@ -54,7 +54,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total de usuarios</h5>
+                    <h5 class="card-title">Total users</h5>
                     <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
                   </div>
                 </div>
@@ -63,7 +63,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total de niños</h5>
+                    <h5 class="card-title">Total children</h5>
                     <h5 class="card-text">{{ children }}</h5>
                   </div>
                 </div>
@@ -72,7 +72,7 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Actividades enviadas</h5>
+                    <h5 class="card-title">Sent Activities</h5>
                     <h5 class="card-text assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
@@ -90,7 +90,7 @@
                               <img class="card-img shadow-none" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
                               <div class="card-img-overlay shadow-none d-flex flex-column justify-content-end">
                                 <p class="card-text"><span id="milestones_count"><i class="fas fa-spinner fa-pulse"></i></span>
-                                    <br/>Niños con Riesgo de desarrollo</p>
+                                    <br/>Children with Development Risks</p>
                               </div>
                             </div>
                         </div>
@@ -127,10 +127,10 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrar todo: </h6>
+              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Show All: </h6>
                 <form class="form-inline" id="form_id">
-                  <input class="form-control mr-sm-2" type="search" placeholder="Buscar..." aria-label="Search">
-                  <button class="btn btn-outline-success my-2 my-sm-0">Buscar</button>
+                  <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search">
+                  <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
                 </form>
             </div>
             <div class="card-body">
@@ -139,15 +139,15 @@
                     <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Encargado</th>
-                            <th scope="col">Edad</th>
-                            <th scope="col">Nacimiento</th>
-                            <th scope="col">Teléfono</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Antecedentes de Riesgo</th>
-                            <th scope="col">Riesgos actuales</th>
-                            <th scope="col">Reporte</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Parent</th>
+                            <th scope="col">Ages</th>
+                            <th scope="col">Date of Birth</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Adress</th>
+                            <th scope="col">Risk Background</th>
+                            <th scope="col">Current Risks</th>
+                            <th scope="col">Report</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -166,10 +166,10 @@
                                 <td>{{ instance.telefono }}</td>
                                 <td>{{ instance.direccion }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">Alto</button>
+                                    <button type="button" class="btn btn-danger">High</button>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">Alto</button>
+                                    <button type="button" class="btn btn-danger">High</button>
                                 </td>
                                 <td><button class="btn"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
                                 </td>
