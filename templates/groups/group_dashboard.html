@@ -156,7 +156,7 @@
                             <tr id="row_{{ instance.id }}">
                                 <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
-                                    <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
+                                    <a data-toggle="modal" data-target="#exampleModalCenter">{{ instance.name }}</a>
                                 </td>
                                 <td>
                                     <a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}</a>
@@ -166,12 +166,26 @@
                                 <td>{{ instance.telefono }}</td>
                                 <td>{{ instance.direccion }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">High</button>
+                                    {% if instance.risk == 0 %}
+                                        <button type="button" class="btn btn-success">Bajo</button>
+                                    {% elif instance.risk == 1 %}
+                                        <button type="button" class="btn btn-warning">Medio</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-danger">Alto</button>
+                                    {% endif %}
+
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">High</button>
+                                    {% if instance.risk == 0 %}
+                                        <button type="button" class="btn btn-success">Bajo</button>
+                                    {% elif instance.risk == 1 %}
+                                        <button type="button" class="btn btn-warning">Medio</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-danger">Alto</button>
+                                    {% endif %}
+
                                 </td>
-                                <td><button class="btn"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
+                                <td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -183,6 +197,89 @@
         </div>
     </div>
 
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">María Perez</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+        <h5 class="modal-title" style="padding: 10px;">Factores de riesgo:</h5>
+          <div class="row" >
+              <ul>
+                  <li>Nacimiento con bajo peso:
+                    <span class="badge badge-pill badge-warning">Bajo peso</span>
+                  </li>
+                  <li>Fue prematuro:
+                        <span class="badge badge-pill badge-success" id="prematuro_1">No fue prematuro</span>
+                        <span class="badge badge-pill badge-warning" id="prematuro_2">Fue prematuro</span>
+                  </li>
+                  <li>Discapacidad o riesgo:
+                    <span class="badge badge-pill badge-success">No tiene discapacidad o riesgo</span>
+                  </li>
+              </ul>
+            </div>
+          <h5 class="modal-title" style="padding: 10px;">Situación actual:</h5>
+          <div class="row" >
+
+              <ul><i>Has click para editar:</i>
+                  <li>Anemia:
+                    <span class="badge badge-pill badge-success" id="anemia_1">No diagnosticado</span>
+                    <span class="badge badge-pill badge-danger" id="anemia_2">Si tiene</span>
+                  </li>
+                  <li>Lactancia y suplementación:
+                    <span class="badge badge-pill badge-warning" id="lactancia_1">Le da suplementos</span>
+                    <span class="badge badge-pill badge-success" id="lactancia_2">Leche materna y comida</span>
+                    <span class="badge badge-pill badge-danger" id="lactancia_3">No se la da nada</span>
+                  </li>
+                  <li>Vacunación:
+                    <span class="badge badge-pill badge-danger" id="vacunacion_1">No se ha vacunado</span>
+                    <span class="badge badge-pill badge-success" id="vacunacion_2">Ya se vacunó</span>
+                  </li>
+              </ul>
+            </div>
+        <h5 class="modal-title" style="padding: 10px;">Datos del responsable:</h5>
+          <div class="row">
+              <ul>
+                  <li>Relación con el niño:
+                        <span class="badge badge-pill badge-success">Mamá</span>
+                  </li>
+                  <li>Educación:
+                      <span class="badge badge-pill badge-success">Secundaria</span>
+                  </li>
+                  <li>Edad:
+                     <span class="badge badge-pill badge-danger">Menos de 18</span>
+                  </li>
+                  <li>Cuenta con apoyo:
+                     <span class="badge badge-pill badge-danger">No cuenta con apoyo</span>
+                  </li>
+              </ul>
+            </div>
+            <h5 class="modal-title" style="padding: 10px;">Seguimiento:</h5>
+            <div class="row" style="width:100%; padding-left:40px;">
+                <select class="form-control">
+                  <option>Sin seguimiento</option>
+                  <option>Por llamar</option>
+                  <option>Se intentó contactar</option>
+                  <option>Ya se contactó</option>
+                </select>
+            </div>
+            <h5 class="modal-title" style="padding: 10px;">Observaciones:</h5>
+            <div class="row" style="width:100%; padding-left:40px;">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"></textarea>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Regresar</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -450,6 +547,29 @@ show{
                 }]
             }
             chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+            $("#anemia_1").hide();
+            $('[id^="anemia_"]').click(function() {
+              $( "#anemia_1" ).toggle();
+              $( "#anemia_2" ).toggle();
+            });
+
+            $("#prematuro_2").hide();
+            $('[id^="prematuro_"]').click(function() {
+              $( "#prematuro_1" ).toggle();
+              $( "#prematuro_2" ).toggle();
+            });
+
+            $("#vacunacion_2").hide();
+            $('[id^="vacunacion_"]').click(function() {
+              $( "#vacunacion_1" ).toggle();
+              $( "#vacunacion_2" ).toggle();
+            });
+
+            $("#lactancia_1").hide();
+            $("#lactancia_3").hide();
+            $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
+            $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
+            $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
         }
         function filterInstances(e) {
             // $("#form_program_attribute_id").val(e.dataPoint.program_attribute_id);
@@ -458,6 +578,10 @@ show{
             $("#table_id > tbody > tr").hide();
             for(i = 0; i < e.dataPoint.instances.length; i++){
                 $("#row_"+e.dataPoint.instances[i]).show();
+                $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
+                $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
+                $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").addClass("btn-danger");
+                $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").html("Alto");
                 console.log(e.dataPoint.instances[i]);
             }
             $("#table_id").focus()
