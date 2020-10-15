@@ -38,7 +38,7 @@
                             <td>{{ object.name }}</td>
                             <td>{{ object.description }}
                                 {% if perms.programs.view_program %}
-                                    <a href="{% url 'programs:program_content_detail' program_id=object.pk %}" >Ver Contenido</a>
+                                    <a href="{% url 'programs:program_content_detail' program_id=object.pk %}" >View Content</a>
                                     {% endif %}
                             </td>
                             <td>
