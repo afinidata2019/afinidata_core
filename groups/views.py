@@ -68,7 +68,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(GroupDashboardView, self).get_context_data()
-        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:20]
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all()
         for assignation in c['last_assignations']:
             assignation.instances = assignation.get_messenger_user().get_instances()
             for instance in assignation.instances:

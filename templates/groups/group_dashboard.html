@@ -127,14 +127,15 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">Filtrado por: Riesgo</h6>
-               <div>
-                   <span>Total: {{ object.assignationmessengeruser_set.all.count }}</span>
-               </div>
+              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrar todo: </h6>
+                <form class="form-inline" id="form_id">
+                  <input class="form-control mr-sm-2" type="search" placeholder="Buscar..." aria-label="Search">
+                  <button class="btn btn-outline-success my-2 my-sm-0">Buscar</button>
+                </form>
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="table_id">
                     <thead>
                         <tr>
                             <th scope="col"></th>
@@ -152,7 +153,7 @@
                     <tbody>
                         {% for assignation in last_assignations %}
                         {% for instance in assignation.instances %}
-                            <tr>
+                            <tr id="row_{{ instance.id }}">
                                 <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
                                     <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
@@ -400,13 +401,13 @@ show{
                             $("#chartMilestonesContainer").show();
                         });
                         $(('[id^="attribute_type_"]')).click(function () {
+                            $("#chartMilestonesContainer").hide();
                             for(i = 0; i < chartsArray.length; i++){
                                 $("#chartRiskContainer"+chartsArray[i]['id']).hide();
                                 if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
                                     $("#chartRiskContainer"+chartsArray[i]['id']).show();
                                 }
                             }
-                            $("#chartMilestonesContainer").hide();
                         });
                     })
                }
@@ -444,7 +445,16 @@ show{
             chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
         }
         function filterInstances(e) {
-            console.log(e);
+            // $("#form_program_attribute_id").val(e.dataPoint.program_attribute_id);
+            // $("#form_id").submit();
+            $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
+            $("#table_id > tbody > tr").hide();
+            for(i = 0; i < e.dataPoint.instances.length; i++){
+                $("#row_"+e.dataPoint.instances[i]).show();
+                console.log(e.dataPoint.instances[i]);
+            }
+            $("#table_id").focus()
+            $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
         }
     </script>
 
