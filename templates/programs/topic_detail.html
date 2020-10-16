@@ -1,16 +1,16 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Tema: {{ object.name }}{% endblock %}
+{% block title %}Topic: {{ object.name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Tema: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Topic: {{ object.name }}</h1>
             <div>
                 {% if perms.topics.view_topic %}
                     <a href="{% url 'topics:topic_list' %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-list fa-sm text-white-50"></i>Listado de Temas</a>
+                    <i class="fas fa-list fa-sm text-white-50"></i> List Topics</a>
                 {% endif %}
             </div>
         </div>
@@ -19,13 +19,13 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Información</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
             </div>
             <div class="card-body">
                 <strong class="text-gray-900">ID: </strong>{{ object.pk }}<br>
-                <strong class="text-gray-900">Programa: </strong>{{ program }}<br>
-                <strong class="text-gray-900">Etapa: </strong>{{ level }}<br>
-                <strong class="text-gray-900">Descripción: </strong>{{ object.description }}<br>
+                <strong class="text-gray-900">Program: </strong>{{ program }}<br>
+                <strong class="text-gray-900">Level: </strong>{{ level }}<br>
+                <strong class="text-gray-900">Description: </strong>{{ object.description }}<br>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Sesiones</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Session List</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -42,12 +42,22 @@
                         <tr>
                           <th>ID</th>
                           <th>Name</th>
-                          <th>Casillas</th>
-                          <th>Mínimo</th>
-                          <th>Máximo</th>
-                          <th>Acciones</th>
+                          <th>Fields</th>
+                          <th>Min</th>
+                          <th>Max</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Fields</th>
+                          <th>Min</th>
+                          <th>Max</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         {% for session in sessions %}
                             <tr>
