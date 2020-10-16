@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 from instances.models import Instance, Response, AttributeValue, InstanceAssociationUser
 from milestones.models import Milestone
+from languages.models import MilestoneTranslation
 from django.http import JsonResponse
 from posts.models import Interaction
 from entities.models import Entity
@@ -31,6 +32,16 @@ class GroupAssignationsView(View):
         form = forms.GroupForm(request.POST)
         if form.is_valid():
             group = form.cleaned_data['group']
+            program = group.programs.last()
+            lang = program.languages.last()
+            if lang.name == 'en':
+                label_caso = 'Case'
+                label_casos = 'Cases'
+                label_nohay = 'No children with development risks'
+            else:
+                label_caso = 'Caso'
+                label_casos = 'Casos'
+                label_nohay = 'No hay niños con riesgos de desarrollo'
             assigns = group.assignationmessengeruser_set.all()
             # Count Sent activities
             group_users = set([a.messenger_user_id for a in assigns])
@@ -66,17 +77,17 @@ class GroupAssignationsView(View):
                             milestones[response.milestone_id] = [response.instance.id]
             milestones_data = []
             for milestone in milestones:
-                y_label = "Casos"
+                y_label = label_casos
                 if len(milestones[milestone]) == 1:
-                    y_label = "Caso"
+                    y_label = label_caso
                 milestones_data.append(dict(y=len(milestones[milestone]), y_label=y_label,
-                                            label=Milestone.objects.get(id=milestone).name,
+                                            label=MilestoneTranslation.objects.get(language_id=lang.id,
+                                                                                   milestone_id=milestone).name,
                                             instances=milestones[milestone]))
             if len(milestones_data) == 0:
-                milestones_data = [dict(y=0, label='No hay niños con riesgos de desarrollo')]
+                milestones_data = [dict(y=0, label=label_nohay)]
 
             # Count cases of risk attributes
-            program = group.programs.last()
             factores_riesgo = []
             for attributes_type in program.attributetype_set.all():
                 factores_riesgo_data = []
@@ -103,9 +114,9 @@ class GroupAssignationsView(View):
                         associations = InstanceAssociationUser.objects.\
                             filter(user_id__in=[x['user__id'] for x in risk_count_user])
                         instance_list = [association.instance.id for association in associations]
-                    y_label = "Casos"
+                    y_label = label_casos
                     if risk_count == 1:
-                        y_label = "Caso"
+                        y_label = label_caso
                     factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=program_attribute.label,
                                                      program_attribute_id=program_attribute.id,
                                                      instances=instance_list))
