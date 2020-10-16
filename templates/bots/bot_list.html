@@ -69,11 +69,6 @@
                                             <i class="fas fa-pen"></i>
                                         </a>
                                     {% endif %}
-                                    {% if perms.bots.delete_bot %}
-                                        <a class="btn btn-danger" href="{% url 'bots:delete_bot' bot_id=bot.pk %}">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
