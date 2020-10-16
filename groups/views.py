@@ -124,9 +124,9 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
         c['children'] = assigns.count()
         c['assignations'] = assignations
         try:
-            c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
+            c['ref'] = "m.me/afinitutor?ref="+self.object.code_set.all().last().code
         except:
-            c['ref'] = "m.me/afinidatatutor?ref="
+            c['ref'] = "m.me/afinitutor?ref="
         if self.object.programs.exists():
             c['attribute_types'] = self.object.programs.last().attributetype_set.all()
         else:
