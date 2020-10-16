@@ -1,6 +1,6 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Contenido de {{ object.name }}{% endblock %}
+{% block title %}Level Content for {{ object.name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
@@ -13,7 +13,7 @@
         <div class="card shadow mb-4">
             <div class="card-body">
                 <div style="text-align: center; margin-bottom: 2em;">
-                    <h2 class="font-weight-bold"><span class="text-warning">{{ total }}</span> Contenidos</h2>
+                    <h2 class="font-weight-bold"><span class="text-warning">{{ total }}</span> Content Materials</h2>
                 </div>
 
                 {% for topic in topics %}
@@ -21,13 +21,13 @@
                     <div class="row mb-5">
                         <div class="col-2">
                             <div class="text-center">
-                                <h3>{{ topic }}</h3>
+                                <h4>{{ topic }}</h4>
                                 <h1 class="text-primary font-weight-bold">{{ topic.session_count }}</h1>
-                                <span class="text-primary font-weight-bold">Sesiones</span>
+                                <span class="text-primary font-weight-bold">Sessions</span>
                             </div>
                         </div>
                         <div class="col-8">
-                            <table class="table">
+                            <table class="table table-responsive">
                                 <tbody>
                                 {% for area in topic.areas %}
                                     <tr>
@@ -40,7 +40,7 @@
                             </table>
                         </div>
                         <div class="col-2"><a href="{% url 'programs:level_topic_detail' program_id=program.pk level_id=object.pk topic_id=topic.pk %}"
-                                              class="btn btn-primary">Información y Tips</a></div>
+                                              class="btn btn-primary">Tips and information</a></div>
                     </div>
 
                 {% endfor %}
