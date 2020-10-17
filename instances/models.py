@@ -102,6 +102,12 @@ class Instance(models.Model):
             return None
         return attribute.last()
 
+    def get_attribute_value(self, attribute_id):
+        attribute = self.attributevalue_set.filter(attribute_id=attribute_id)
+        if not attribute.exists():
+            return None
+        return attribute.last()
+
 
 class InstanceAssociationUser(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
