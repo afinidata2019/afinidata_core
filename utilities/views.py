@@ -58,7 +58,7 @@ class GroupAssignationsView(View):
                     group_instances = group_instances.union(set([instance.id]))
                     try:
                         age = relativedelta(datetime.datetime.now(),
-                                            parse(instance.get_attribute_values('birthday').value))
+                                            parse(instance.get_attribute_value(191).value))# birthday
                         months = 0
                         if age.months:
                             months = age.months
@@ -105,7 +105,7 @@ class GroupAssignationsView(View):
                         instance_list = [x['instance__id'] for x in risk_count_instance]
                     else:
                         risk_count_user = UserData.objects.filter(user__id__in=group_users,
-                                                                  data_key=program_attribute.attribute.name,
+                                                                  attribute_id=program_attribute.attribute.id,
                                                                   data_value__lte=program_attribute.threshold).\
                             values('user__id').distinct()
                         factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
@@ -122,7 +122,14 @@ class GroupAssignationsView(View):
                                                      instances=instance_list))
                 factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
                                             factores_riesgo=factores_riesgo_data, total=len(factores_riesgo_count)))
-            return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
+            children = InstanceAssociationUser.objects.filter(
+                user_id__in=[u.messenger_user_id for u in group.assignationmessengeruser_set.all()]).count()
+            '''for assign in self.object.assignationmessengeruser_set.all():
+                        data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
+                        children = children + data.count()
+                        assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
+                                                                                 type='dispatched').count()'''
+            return JsonResponse(dict(data=dict(count=count, children=children), milestones=milestones_data,
                                      milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
 

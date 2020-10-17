@@ -69,10 +69,11 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(GroupDashboardView, self).get_context_data()
         c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')
-        dumm_total = self.object.assignationmessengeruser_set.all().count()
+        dumm_total = c['last_assignations'].count()
         dummy_risk_count = 0
         for assignation in c['last_assignations']:
-            assignation.instances = assignation.get_messenger_user().get_instances()
+            user = assignation.user
+            assignation.instances = user.get_instances()
             for instance in assignation.instances:
                 if min(dumm_total*0.2, 4) > dummy_risk_count:
                     instance.risk = 2
@@ -81,25 +82,23 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                 else:
                     instance.risk = 0
                 dummy_risk_count = dummy_risk_count + 1
-                if instance.get_attribute_values('birthday'):
+                if instance.get_attribute_value(191):# birthday
                     try:
-                        instance.birthday = parse(instance.get_attribute_values('birthday').value).strftime('%d-%m-%Y')
+                        instance.birthday = parse(instance.get_attribute_value(191).value).strftime('%d-%m-%Y')
                     except:
-                        instance.birthday = instance.get_attribute_values('birthday').value
+                        instance.birthday = instance.get_attribute_value(191).value
                 else:
                     instance.birthday = '---'
-                if instance.get_users().last().userdata_set.filter(data_key='telefono').exists():
-                    instance.telefono = instance.get_users().last().userdata_set\
-                        .filter(data_key='telefono').last().data_value
+                if user.userdata_set.filter(attribute_id=13).exists():#telefono
+                    instance.telefono = user.userdata_set.filter(attribute_id=13).last().data_value
                 else:
                     instance.telefono = '---'
-                if instance.get_users().last().userdata_set.filter(data_key='direccion').exists():
-                    instance.direccion = instance.get_users().last().userdata_set\
-                        .filter(data_key='direccion').last().data_value
+                if user.userdata_set.filter(attribute_id=190).exists():#direccion
+                    instance.direccion = user.userdata_set.filter(attribute_id=190).last().data_value
                 else:
                     instance.direccion = '---'
                 try:
-                    age = relativedelta(datetime.datetime.now(), parse(instance.get_attribute_values('birthday').value))
+                    age = relativedelta(datetime.datetime.now(), parse(instance.get_attribute_value(191).value))
                     months = ''
                     if age.months:
                         months = str(age.months) + ' meses'
@@ -112,17 +111,6 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                     months = '---'
                 instance.months = months
                 instance.image = "images/child_user_" + str((instance.id % 10) + 1) + ".jpg"
-        children = 0
-        assignations = 0
-        assigns = InstanceAssociationUser.objects.filter(
-            user_id__in=[u.messenger_user_id for u in self.object.assignationmessengeruser_set.all()])
-        '''for assign in self.object.assignationmessengeruser_set.all():
-            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
-            children = children + data.count()
-            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
-                                                                     type='dispatched').count()'''
-        c['children'] = assigns.count()
-        c['assignations'] = assignations
         try:
             c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
         except:
