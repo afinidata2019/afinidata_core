@@ -19,6 +19,7 @@ import os
 import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
+from django.db.models import Max
 from django.db.models import Count
 
 
@@ -67,14 +68,17 @@ class GroupAssignationsView(View):
                     except:
                         months = 0
                     risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
-                    responses = instance.response_set.filter(response='failed', milestone_id__in=risks)
+                    last_responses = instance.response_set.filter(milestone_id__in=risks).values('milestone_id').\
+                        annotate(max_id=Max('id'))
+                    responses = instance.response_set.filter(response='failed', id__in=[x['max_id']
+                                                                                        for x in last_responses])
                     if responses.exists():
                         milestones_count = milestones_count + 1
                     for response in responses:
                         if response.milestone_id in milestones:
-                            milestones[response.milestone_id].append(response.instance.id)
+                            milestones[response.milestone_id].append(instance.id)
                         else:
-                            milestones[response.milestone_id] = [response.instance.id]
+                            milestones[response.milestone_id] = [instance.id]
             milestones_data = []
             for milestone in milestones:
                 y_label = label_casos
@@ -94,9 +98,11 @@ class GroupAssignationsView(View):
                 factores_riesgo_count = set([])
                 for program_attribute in attributes_type.attributes_set.all():
                     risk_count = 0
-                    risk_count_instance = AttributeValue.objects.filter(instance__id__in=group_instances,
-                                                                        attribute=program_attribute.attribute,
-                                                                        value__lte=program_attribute.threshold).\
+                    last_attributes = AttributeValue.objects.filter(instance__id__in=group_instances,
+                                                                    attribute=program_attribute.attribute). \
+                        values('instance__id', 'attribute__id').annotate(max_id=Max('id'))
+                    risk_count_instance = AttributeValue.objects.filter(id__in=[x['max_id'] for x in last_attributes],
+                                                                        value__lte=program_attribute.threshold). \
                         values('instance__id').distinct()
                     if risk_count_instance.count() > 0:
                         factores_riesgo_count = factores_riesgo_count.union(set([x['instance__id']
@@ -104,9 +110,11 @@ class GroupAssignationsView(View):
                         risk_count = risk_count_instance.count()
                         instance_list = [x['instance__id'] for x in risk_count_instance]
                     else:
-                        risk_count_user = UserData.objects.filter(user__id__in=group_users,
-                                                                  attribute_id=program_attribute.attribute.id,
-                                                                  data_value__lte=program_attribute.threshold).\
+                        last_attributes = UserData.objects.filter(user__id__in=group_users,
+                                                                  attribute_id=program_attribute.attribute.id). \
+                            values('user__id', 'attribute_id').annotate(max_id=Max('id'))
+                        risk_count_user = UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
+                                                                  data_value__lte=program_attribute.threshold). \
                             values('user__id').distinct()
                         factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
                                                                                  for x in risk_count_user]))
