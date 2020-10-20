@@ -131,16 +131,45 @@
     <br/>
     <div class="container-fluid">
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrando últimos 10 usuarios: </h6>
-                <form class="form-inline" id="form_id">
-                  <input class="form-control mr-sm-2" type="search" placeholder="Buscar..." aria-label="Search">
-                  <button class="btn btn-outline-success my-2 my-sm-0">Buscar</button>
-                </form>
+            <div class="card-header py-3 d-flex"><div class="container-fluid d-flex flex-column justify-content-start">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrando últimos 10 usuarios: </h6><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Edad:</span>
+                          </div>
+                            <input type="text" class="form-control" placeholder="Buscar por edad (meses)" id="search_months" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" >Nombre:</span>
+                          </div>
+                          <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar por nombre" aria-label="Search">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Encargado:</span>
+                          </div>
+                          <input class="form-control mr-sm-2" type="search" id="search_username" placeholder="Buscar por encargado" aria-label="Search">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchInstances()">Buscar</button>
+                    </div>
+                </div></div>
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="table_id">
+                <table class="table" id="table_id" cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
                             <th scope="col"></th>
@@ -150,8 +179,7 @@
                             <th scope="col">Fecha de nacimiento</th>
                             <th scope="col">Teléfono</th>
                             <th scope="col">Direción</th>
-                            <th scope="col">Antecedentes</th>
-                            <th scope="col">Riesgos actuales</th>
+                            <th scope="col">Nivel de riesgo</th>
                             <th scope="col">Reporte</th>
                         </tr>
                     </thead>
@@ -159,7 +187,7 @@
                         {% for assignation in last_assignations %}
                         {% for instance in assignation.instances %}
                             <tr id="row_{{ instance.id }}">
-                                <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
+                                <td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
                                     <a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a>
                                     {{ instance.name }}
@@ -172,16 +200,6 @@
                                 <td>{{ instance.birthday }}</td>
                                 <td>{{ instance.telefono }}</td>
                                 <td>{{ instance.direccion }}</td>
-                                <td>
-                                    {% if instance.risk == 0 %}
-                                        <button type="button" class="btn btn-success">Bajo</button>
-                                    {% elif instance.risk == 1 %}
-                                        <button type="button" class="btn btn-warning">Medio</button>
-                                    {% else %}
-                                        <button type="button" class="btn btn-danger">Alto</button>
-                                    {% endif %}
-
-                                </td>
                                 <td>
                                     {% if instance.risk == 0 %}
                                         <button type="button" class="btn btn-success">Bajo</button>
@@ -306,7 +324,8 @@ h5{
     font-size: 13px;
     font-size: max(0.9vw, 13px);
 }
-
+table {border: 0px;}
+tr, td {border: 0px;}
 show{
   transition: opacity 0.6s linear;
   transform: scale(1.1);
@@ -315,10 +334,6 @@ show{
 .zoom:hover {
   transform: scale(1.1); /* (120% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
   cursor: pointer;
-}
-
-.hide {
-
 }
 
 .btn-default {
@@ -483,149 +498,153 @@ show{
        }
     }
 
-        (() => {
-           window.addEventListener('load', e => {
-                let data = new FormData();
-                data.append('group', String(GROUP_ID));
-                getRequest(data, function(r){
-                    document.querySelector('#assignations').textContent = r.data.count
-                    document.querySelector('#children').textContent = r.data.children
-                    chartsArray = []
-                    for (i = 0; i < r.factores_riesgo.length; i++) {
-                        document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                        chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
-                        chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
-                        chartsArray[i]['chart'].render();
-                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    }
-                    document.querySelector('#milestones_count').textContent = r.milestones_count;
-                    chartMilestones.options.data[0].dataPoints = r.milestones;
-                    chartMilestones.options.axisX.labelFontSize = 14;
-                    $("#chartMilestonesContainer").show();
-                    chartMilestones.render();
-                    $('#milestonesCard').click(function () {
-                        for(i = 0; i < chartsArray.length; i++){
-                            $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                        }
-                        $("#chartMilestonesContainer").show();
-                    });
-                    $(('[id^="attribute_type_"]')).click(function () {
-                        $("#chartMilestonesContainer").hide();
-                        for(i = 0; i < chartsArray.length; i++){
-                            $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                            if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
-                                $("#chartRiskContainer"+chartsArray[i]['id']).show();
-                            }
-                        }
-                    });
-                });
-           })
-        })()
+    function writeRow(instance){
+        rowHTML = '<tr id="row_'+instance.id+'">' +
+            '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="https://core.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td>'+instance.months+'</td>' +
+            '<td>'+instance.birthdate+'</td>' +
+            '<td>'+instance.tel+'</td>' +
+            '<td>'+instance.dir+'</td>';
+        if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
+        else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
+        else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
 
-        window.onload = function () {
-            var bar_ctx = document.getElementById('chart').getContext('2d');
-            var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
-            background_1.addColorStop(0, 'rgb(0,89,217)');
-            background_1.addColorStop(1, 'rgb(105,176,255)');
-            chartStartData = {
-                animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisY: {
-                    includeZero: true,
-                    valueFormatString:" "
-                },
-                axisX:{
-                  labelFontFamily: "tahoma",
-                  labelFontSize: 16
-                },
-                data: [{
-                    type: "bar",
-                    click: filterInstances,
-                    color: background_1,
-                    indexLabelFontFamily: "tahoma",
-                    indexLabelFontSize: 18,
-                    indexLabelPlacement: "inside",
-                    indexLabel: "{y} {y_label}",
-                    toolTipContent: "{label}: {y}",
-                    showInLegend: false,
-                    indexLabelFontColor: "white",
-                    legendMarkerColor: "white",
-                    legendText: "Respuestas",
-                    includeZero: true,
-                    cursor: "pointer",
-                    dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
-                }]
-            }
-            chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
-            $("#anemia_1").hide();
-            $('[id^="anemia_"]').click(function() {
-              $( "#anemia_1" ).toggle();
-              $( "#anemia_2" ).toggle();
-            });
+        rowHTML +='<td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/'+instance.id+'/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button></td></tr>';
+        $("#table_id tbody").append(rowHTML);
+    }
 
-            $("#prematuro_2").hide();
-            $('[id^="prematuro_"]').click(function() {
-              $( "#prematuro_1" ).toggle();
-              $( "#prematuro_2" ).toggle();
-            });
-
-            $("#vacunacion_2").hide();
-            $('[id^="vacunacion_"]').click(function() {
-              $( "#vacunacion_1" ).toggle();
-              $( "#vacunacion_2" ).toggle();
-            });
-
-            $("#lactancia_1").hide();
-            $("#lactancia_3").hide();
-            $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
-            $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
-            $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
-        }
-
-        function filterInstances(e) {
-            // $("#form_program_attribute_id").val(e.dataPoint.program_attribute_id);
-            // $("#form_id").submit();
-
-            //$("#table_id > tbody > tr").hide();
-            //for(i = 0; i < e.dataPoint.instances.length; i++){
-            //    $("#row_"+e.dataPoint.instances[i]).show();
-            //    $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
-            //    $("#row_"+e.dataPoint.instances[i]).find("button").removeClass("btn-success");
-            //    $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").addClass("btn-danger");
-            //    $("#row_"+e.dataPoint.instances[i]).find("button").not(".reportButton").html("Alto");
-            //    console.log(e.dataPoint.instances[i]);
-            //}
-            //$("#table_id").focus()
-            //$("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
-
-            let data = new FormData();
+    function filterInstances(e) {
+        let data = new FormData();
+        if('program_attribute_id' in e.dataPoint){
             data.append('attribute_id', String(e.dataPoint.program_attribute_id));
+        }
+        if('milestone_id' in e.dataPoint){
+            data.append('milestone_id', String(e.dataPoint.milestone_id));
+        }
+        $("#table_id tbody tr").remove();
+        getRequest(data, function(r){
+            $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
+            $("#search_name").val("");
+            r.data.forEach(function(instance){ writeRow(instance); });
+            $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
+        });
+    }
+
+    function searchInstances(){
+        let data = new FormData();
+        if($("#search_name").val() != '' || $("#search_username").val() != '' || $("#search_months").val()){
+            data.append('name', String($("#search_name").val()));
+            data.append('username', String($("#search_username").val()));
+            data.append('months', String($("#search_months").val()));
             $("#table_id tbody tr").remove();
             getRequest(data, function(r){
-                $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
-                r.data.forEach(function(instance){
-                    rowHTML = '<tr id="row_'+instance.id+'">' +
-                                    '<td style="padding:0px; border:0px;"><img class="img-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-                                    '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-                                    '<td><a href="https://core.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
-                                    '<td>'+instance.months+'</td>' +
-                                    '<td>'+instance.birthdate+'</td>' +
-                                    '<td>'+instance.tel+'</td>' +
-                                    '<td>'+instance.dir+'</td>';
-                    if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
-                    else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
-                    else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
-
-                    if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
-                    else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
-                    else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
-
-                    rowHTML +='<td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/'+instance.id+'/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button></td></tr>';
-                    $("#table_id tbody").append(rowHTML);
-                });
+                $("#filtrado_por").text("Filtrado por:");
+                r.data.forEach(function(instance){ writeRow(instance); });
                 $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
             });
         }
+    }
+
+    (() => {
+       window.addEventListener('load', e => {
+            let data = new FormData();
+            data.append('group', String(GROUP_ID));
+            getRequest(data, function(r){
+                document.querySelector('#assignations').textContent = r.data.count
+                document.querySelector('#children').textContent = r.data.children
+                chartsArray = []
+                for (i = 0; i < r.factores_riesgo.length; i++) {
+                    document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
+                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
+                    chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+                    chartsArray[i]['chart'].render();
+                    $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                }
+                document.querySelector('#milestones_count').textContent = r.milestones_count;
+                chartMilestones.options.data[0].dataPoints = r.milestones;
+                chartMilestones.options.axisX.labelFontSize = 14;
+                $("#chartMilestonesContainer").show();
+                chartMilestones.render();
+                $('#milestonesCard').click(function () {
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    }
+                    $("#chartMilestonesContainer").show();
+                });
+                $(('[id^="attribute_type_"]')).click(function () {
+                    $("#chartMilestonesContainer").hide();
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                        if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                            $("#chartRiskContainer"+chartsArray[i]['id']).show();
+                        }
+                    }
+                });
+            });
+       })
+    })()
+
+    window.onload = function () {
+        var bar_ctx = document.getElementById('chart').getContext('2d');
+        var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
+        background_1.addColorStop(0, 'rgb(0,89,217)');
+        background_1.addColorStop(1, 'rgb(105,176,255)');
+        chartStartData = {
+            animationEnabled: true,
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            axisY: {
+                includeZero: true,
+                valueFormatString:" "
+            },
+            axisX:{
+              labelFontFamily: "tahoma",
+              labelFontSize: 16
+            },
+            data: [{
+                type: "bar",
+                click: filterInstances,
+                color: background_1,
+                indexLabelFontFamily: "tahoma",
+                indexLabelFontSize: 18,
+                indexLabelPlacement: "inside",
+                indexLabel: "{y} {y_label}",
+                toolTipContent: "{label}: {y}",
+                showInLegend: false,
+                indexLabelFontColor: "white",
+                legendMarkerColor: "white",
+                legendText: "Respuestas",
+                includeZero: true,
+                cursor: "pointer",
+                dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
+            }]
+        }
+        chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+        $("#anemia_1").hide();
+        $('[id^="anemia_"]').click(function() {
+          $( "#anemia_1" ).toggle();
+          $( "#anemia_2" ).toggle();
+        });
+
+        $("#prematuro_2").hide();
+        $('[id^="prematuro_"]').click(function() {
+          $( "#prematuro_1" ).toggle();
+          $( "#prematuro_2" ).toggle();
+        });
+
+        $("#vacunacion_2").hide();
+        $('[id^="vacunacion_"]').click(function() {
+          $( "#vacunacion_1" ).toggle();
+          $( "#vacunacion_2" ).toggle();
+        });
+
+        $("#lactancia_1").hide();
+        $("#lactancia_3").hide();
+        $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
+        $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
+        $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
+    }
     </script>
 
 {% endblock %}

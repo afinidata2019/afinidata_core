@@ -105,7 +105,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                     instance.risk = 2
                 if instance.get_attribute_value(191):  # birthday
                     try:
-                        instance.birthday = parse(instance.get_attribute_value(191).value).strftime('%d-%m-%Y')
+                        instance.birthday = parse(instance.get_attribute_value(191).value).strftime('%d/%m/%Y')
                     except:
                         instance.birthday = instance.get_attribute_value(191).value
                 else:

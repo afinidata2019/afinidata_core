@@ -21,6 +21,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 from django.db.models import Max
+from django.db.models import Q
 from django.db.models import Count
 
 
@@ -38,11 +39,11 @@ class GroupAssignationsView(View):
             assigns = group.assignationmessengeruser_set.all()
             group_users = set([a.messenger_user_id for a in assigns])
             if 'attribute_id' in self.request.POST:
-                instances_data = []
                 program_attribute = ProgramAttribute.objects.get(id=self.request.POST['attribute_id'])
                 group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
-                last_attributes = AttributeValue.objects.filter(instance__id__in=group_instances,
-                                                                attribute=program_attribute.attribute). \
+                last_attributes = AttributeValue.objects.\
+                    filter(instance__id__in=[x.instance.id for x in group_instances],
+                           attribute=program_attribute.attribute). \
                     values('instance__id').annotate(max_id=Max('id'))
                 risk_count_instance = AttributeValue.objects.filter(id__in=[x['max_id'] for x in last_attributes],
                                                                     value__lte=program_attribute.threshold). \
@@ -59,10 +60,60 @@ class GroupAssignationsView(View):
                         values('user__id').distinct()
                     group_instances = InstanceAssociationUser.objects. \
                         filter(user_id__in=[x['user__id'] for x in risk_count_user]).all()
+            if 'milestone_id' in self.request.POST:
+                group_instances = set([])
+                for assignation in assigns:
+                    for instance in assignation.get_messenger_user().get_instances():
+                        try:
+                            age = relativedelta(datetime.datetime.now(),
+                                                parse(instance.get_attribute_value(191).value))# birthday
+                            months = 0
+                            if age.months:
+                                months = age.months
+                            if age.years:
+                                months = months + (age.years * 12)
+                        except:
+                            months = 0
+                        risks = [r.milestone_id for r in MilestoneRisk.objects.\
+                            filter(milestone_id=self.request.POST['milestone_id'], value__lte=months)]
+                        if len(risks) > 0:
+                            last_responses = instance.response_set.filter(milestone_id__in=risks).\
+                                values('milestone_id').annotate(max_id=Max('id'))
+                            responses = instance.response_set.filter(response='failed',
+                                                                     id__in=[x['max_id'] for x in last_responses])
+                            if responses.exists():
+                                group_instances = group_instances.union(set([instance.id]))
+                group_instances = InstanceAssociationUser.objects.filter(instance_id__in=group_instances).all()
+            if 'name' in self.request.POST:
+                group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
+                if self.request.POST['name'] != '':
+                    instances = Instance.objects.filter(id__in=[x.instance.id for x in group_instances],
+                                                        name__icontains=str(self.request.POST['name']))
+                    group_instances = InstanceAssociationUser.objects.filter(instance_id__in=instances)
+            if 'username' in self.request.POST:
+                usuarios = User.objects.filter(id__in=group_users).\
+                    filter(Q(first_name__icontains=str(self.request.POST['username'])) |
+                           Q(last_name__icontains=str(self.request.POST['username'])))
+                group_instances = group_instances.filter(user_id__in=[x.id for x in usuarios])
+            if 'months' in self.request.POST:
+                try:
+                    now = datetime.datetime.now()
+                    date1 = now + relativedelta(months=-int(self.request.POST['months'])-1)
+                    date2 = now + relativedelta(months=-int(self.request.POST['months']))
+                    instance_attributes = AttributeValue.objects. \
+                        filter(instance_id__in=[x.instance.id for x in group_instances],
+                               attribute_id=191, value__gte=date1, value__lte=date2)
+                    group_instances = group_instances.\
+                        filter(instance__id__in=[x.instance_id for x in instance_attributes])
+                except:
+                    group_instances = group_instances
+            if 'attribute_id' in self.request.POST or 'milestone_id' in self.request.POST\
+                    or 'name' in self.request.POST or 'username' in self.request.POST or 'months' in self.request.POST:
+                instances_data = []
                 for assoc in group_instances:
                     if assoc.instance.get_attribute_value(191):  # birthday
                         try:
-                            birthday = parse(assoc.instance.get_attribute_value(191).value).strftime('%d-%m-%Y')
+                            birthday = parse(assoc.instance.get_attribute_value(191).value).strftime('%d/%m/%Y')
                         except:
                             birthday = assoc.instance.get_attribute_value(191).value
                     else:
@@ -174,7 +225,7 @@ class GroupAssignationsView(View):
                     milestones_data.append(dict(y=len(milestones[milestone]), y_label=y_label,
                                                 label=MilestoneTranslation.objects.get(language_id=lang.id,
                                                                                        milestone_id=milestone).name,
-                                                instances=milestones[milestone]))
+                                                instances=milestones[milestone], milestone_id=milestone))
                 if len(milestones_data) == 0:
                     milestones_data = [dict(y=0, label=label_nohay)]
 
