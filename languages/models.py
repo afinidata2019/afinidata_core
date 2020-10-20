@@ -6,6 +6,7 @@ CODE_ORIGIN = (('generated', 'Generated'), ('created', 'Created'))
 
 class Language(models.Model):
     name = models.CharField(max_length=2, unique=True)
+    label = models.CharField(max_length=20, unique=True, null=True)
     description = models.TextField()
     available = models.BooleanField(default=True, blank=True)
     auto_translate = models.BooleanField(default=False, blank=True)
