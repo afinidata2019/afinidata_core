@@ -1,16 +1,16 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import InstanceAssociationUser
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
-from messenger_users.models import User
-from posts.models import Interaction
-from programs.models import Program
+from messenger_users.models import UserData
 from django.urls import reverse_lazy
 from django.contrib import messages
 from groups import models, forms
+from instances.models import AttributeValue
 import datetime
 from dateutil.parser import parse
+from django.db.models import Max
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -68,32 +68,53 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(GroupDashboardView, self).get_context_data()
-        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')
-        dumm_total = c['last_assignations'].count()
-        dummy_risk_count = 0
+        c['last_assignations'] = self.object.assignationmessengeruser_set.all().order_by('-id')[:10]
+        if self.object.programs.exists():
+            c['attribute_types'] = self.object.programs.last().attributetype_set.all()
+            program = self.object.programs.last()
+        else:
+            c['attribute_types'] = []
+            program = None
         for assignation in c['last_assignations']:
             user = assignation.user
             assignation.instances = user.get_instances()
             for instance in assignation.instances:
-                if min(dumm_total*0.2, 4) > dummy_risk_count:
-                    instance.risk = 2
-                elif min(dumm_total*0.5, 10) > dummy_risk_count:
+                risk_count = 0
+                if program:
+                    for attributes_type in program.attributetype_set.all():
+                        for program_attribute in attributes_type.attributes_set.all():
+                            last_attributes = AttributeValue.objects.filter(instance=instance,
+                                                                            attribute=program_attribute.attribute). \
+                                values('attribute__id').annotate(max_id=Max('id'))
+                            risk_count = risk_count + AttributeValue.objects.filter(
+                                id__in=[x['max_id'] for x in last_attributes],
+                                value__lte=program_attribute.threshold). \
+                                values('instance__id').distinct().count()
+                            last_attributes = UserData.objects.filter(user=user,
+                                                                      attribute=program_attribute.attribute). \
+                                values('user__id', 'attribute_id').annotate(max_id=Max('id'))
+                            risk_count = risk_count + \
+                                         UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
+                                                                 data_value__lte=program_attribute.threshold).\
+                                             values('user__id').distinct().count()
+                if risk_count == 0:
+                    instance.risk = 0
+                elif risk_count < 4:
                     instance.risk = 1
                 else:
-                    instance.risk = 0
-                dummy_risk_count = dummy_risk_count + 1
-                if instance.get_attribute_value(191):# birthday
+                    instance.risk = 2
+                if instance.get_attribute_value(191):  # birthday
                     try:
                         instance.birthday = parse(instance.get_attribute_value(191).value).strftime('%d-%m-%Y')
                     except:
                         instance.birthday = instance.get_attribute_value(191).value
                 else:
                     instance.birthday = '---'
-                if user.userdata_set.filter(attribute_id=13).exists():#telefono
+                if user.userdata_set.filter(attribute_id=13).exists():  # telefono
                     instance.telefono = user.userdata_set.filter(attribute_id=13).last().data_value
                 else:
                     instance.telefono = '---'
-                if user.userdata_set.filter(attribute_id=190).exists():#direccion
+                if user.userdata_set.filter(attribute_id=190).exists():  # direccion
                     instance.direccion = user.userdata_set.filter(attribute_id=190).last().data_value
                 else:
                     instance.direccion = '---'
@@ -112,13 +133,9 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                 instance.months = months
                 instance.image = "images/child_user_" + str((instance.id % 10) + 1) + ".jpg"
         try:
-            c['ref'] = "m.me/afinidatatutor?ref="+self.object.code_set.all().last().code
+            c['ref'] = "m.me/afinidatatutor?ref=" + self.object.code_set.all().last().code
         except:
             c['ref'] = "m.me/afinidatatutor?ref="
-        if self.object.programs.exists():
-            c['attribute_types'] = self.object.programs.last().attributetype_set.all()
-        else:
-            c['attribute_types'] = []
         return c
 
 
@@ -178,7 +195,7 @@ class AddProgramView(PermissionRequiredMixin, CreateView):
     template_name = 'groups/add_program.html'
     permission_required = 'groups.change_group'
     model = models.ProgramAssignation
-    fields = ('program', )
+    fields = ('program',)
 
     def get_context_data(self, **kwargs):
         c = super(AddProgramView, self).get_context_data(**kwargs)
