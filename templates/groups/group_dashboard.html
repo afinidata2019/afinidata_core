@@ -12,7 +12,7 @@
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <div class="col-xl-9 col-md-9 mb">
-                <h1 class="h3 mb-0 text-black-800 group-title" data-group-id="{{ object.pk }}">Group: {{ object.name }}</h1>
+                <h1 class="h3 mb-0 text-black-800 group-title" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
             </div>
             <div class="col-xl-3 col-md-3 mb">
                 <!-- Button trigger modal -->
@@ -38,7 +38,7 @@
                               </div>
                           <input type="text" class="form-control" readonly placeholder="{{ ref }}" aria-label="{{ ref }}" aria-describedby="basic-addon2" value="{{ ref }}" id="myref">
                           <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()"><i class="far fa-copy"></i></button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()"><i class="far fa-copy"></i> Copiar</button>
                           </div>
                         </div>
                       </div>
@@ -139,11 +139,58 @@
                 </div>
                 <div class="row">
                     <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Edad:</span>
+                        <div class="dropdown">
+                          <button class="btn btn-light dropdown-toggle" type="button" id="search_age" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Buscar por edad
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <div class="container-fluid">
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="0_3" id="search_age1" name="search_age_option">
+                                  <label class="form-check-label" for="search_age1">0 a 3 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="4_6" id="search_age2" name="search_age_option">
+                                  <label class="form-check-label" for="search_age2">4 a 6 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="7_9" id="search_age3" name="search_age_option">
+                                  <label class="form-check-label" for="search_age3">7 a 9 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="10_12" id="search_age4" name="search_age_option">
+                                  <label class="form-check-label" for="search_age4">10 a 12 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="13_15" id="search_age5" name="search_age_option">
+                                  <label class="form-check-label" for="search_age5">13 a 15 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="16_18" id="search_age6" name="search_age_option">
+                                  <label class="form-check-label" for="search_age6">16 a 18 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="19_21" id="search_age7" name="search_age_option">
+                                  <label class="form-check-label" for="search_age7">19 a 21 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="22_24" id="search_age8" name="search_age_option">
+                                  <label class="form-check-label" for="search_age8">22 a 24 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="25_30" id="search_age9" name="search_age_option">
+                                  <label class="form-check-label" for="search_age9">25 a 30 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="31_35" id="search_age10" name="search_age_option">
+                                  <label class="form-check-label" for="search_age10">31 a 35 meses</label>
+                                </div>
+                                <div class="form-check dropdown-item">
+                                  <input class="form-check-input" type="checkbox" value="-9_0" id="search_age11" name="search_age_option">
+                                  <label class="form-check-label" for="search_age11">Embarazo</label>
+                                </div>
+                              </div>
                           </div>
-                            <input type="text" class="form-control" placeholder="Buscar por edad (meses)" id="search_months" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
@@ -163,7 +210,7 @@
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchInstances()">Buscar</button>
+                        <button class="btn btn-primary my-2 my-sm-0" onclick="searchInstances()">Buscar <i class="fas fa-search"></i></button>
                     </div>
                 </div></div>
             </div>
@@ -534,10 +581,15 @@ show{
 
     function searchInstances(){
         let data = new FormData();
-        if($("#search_name").val() != '' || $("#search_username").val() != '' || $("#search_months").val()){
+        var edades = [];
+        $.each($("input[name='search_age_option']:checked"), function(){
+            edades.push($(this).val());
+        });
+        var search_edad = edades.join(",");
+        if($("#search_name").val() != '' || $("#search_username").val() != '' || search_edad != ''){
             data.append('name', String($("#search_name").val()));
             data.append('username', String($("#search_username").val()));
-            data.append('months', String($("#search_months").val()));
+            data.append('months', String(search_edad));
             $("#table_id tbody tr").remove();
             getRequest(data, function(r){
                 $("#filtrado_por").text("Filtrado por:");

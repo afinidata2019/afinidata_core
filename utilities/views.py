@@ -90,19 +90,23 @@ class GroupAssignationsView(View):
                     instances = Instance.objects.filter(id__in=[x.instance.id for x in group_instances],
                                                         name__icontains=str(self.request.POST['name']))
                     group_instances = InstanceAssociationUser.objects.filter(instance_id__in=instances)
-            if 'username' in self.request.POST:
+            if 'username' in self.request.POST and self.request.POST['username'] != '':
                 usuarios = User.objects.filter(id__in=group_users).\
                     filter(Q(first_name__icontains=str(self.request.POST['username'])) |
                            Q(last_name__icontains=str(self.request.POST['username'])))
                 group_instances = group_instances.filter(user_id__in=[x.id for x in usuarios])
             if 'months' in self.request.POST:
                 try:
+                    group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
+                    query = Q()
                     now = datetime.datetime.now()
-                    date1 = now + relativedelta(months=-int(self.request.POST['months'])-1)
-                    date2 = now + relativedelta(months=-int(self.request.POST['months']))
+                    for rango in self.request.POST['months'].split(','):
+                        date1 = now + relativedelta(months=-int(rango.split('_')[1])-1)
+                        date2 = now + relativedelta(months=-int(rango.split('_')[0]))
+                        query = query | Q(value__gte=date1, value__lte=date2)
                     instance_attributes = AttributeValue.objects. \
                         filter(instance_id__in=[x.instance.id for x in group_instances],
-                               attribute_id=191, value__gte=date1, value__lte=date2)
+                               attribute_id=191).filter(query)
                     group_instances = group_instances.\
                         filter(instance__id__in=[x.instance_id for x in instance_attributes])
                 except:
