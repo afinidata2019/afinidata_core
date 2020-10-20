@@ -35,7 +35,7 @@ class MyGroupsListView(PermissionRequiredMixin, ListView):
 
 class GroupView(PermissionRequiredMixin, DetailView):
     model = models.Group
-    permission_required = 'groups.view_group'
+    permission_required = 'groups.view_all_groups'
     pk_url_kwarg = 'group_id'
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
@@ -60,7 +60,7 @@ class GroupView(PermissionRequiredMixin, DetailView):
 
 class GroupDashboardView(PermissionRequiredMixin, DetailView):
     model = models.Group
-    permission_required = 'groups.view_group'
+    permission_required = 'groups.view_user_groups'
     pk_url_kwarg = 'group_id'
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
