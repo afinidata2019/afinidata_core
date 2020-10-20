@@ -12,14 +12,14 @@ from posts.models import Post
 
 
 class ProgramListView(PermissionRequiredMixin, ListView):
-    permission_required = 'programs.view_program'
+    permission_required = 'programs.view_all_programs'
     model = models.Program
     login_url = reverse_lazy('pages:login')
     paginate_by = 10
 
 
 class UserProgramListView(PermissionRequiredMixin, ListView):
-    permission_required = 'programs.view_program'
+    permission_required = 'programs.view_user_programs'
     model = models.Program
     login_url = reverse_lazy('pages:login')
     paginate_by = 10
@@ -29,7 +29,7 @@ class UserProgramListView(PermissionRequiredMixin, ListView):
 
 
 class ProgramDetailView(PermissionRequiredMixin, DetailView):
-    permission_required = 'programs.view_program'
+    permission_required = 'programs.view_all_programs'
     model = models.Program
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'program_id'
@@ -41,7 +41,7 @@ class ProgramDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ProgramMetricsView(PermissionRequiredMixin, DetailView):
-    permission_required = 'programs.view_program'
+    permission_required = 'programs.view_user_programs'
     model = models.Program
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'program_id'
