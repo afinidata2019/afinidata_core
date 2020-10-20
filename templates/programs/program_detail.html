@@ -44,9 +44,6 @@
                     {% if perms.programs.change_program %}
                         <a href="{% url 'programs:program_edit' program_id=object.pk %}" class="btn btn-success">Edit</a>
                     {% endif %}
-                    {% if perms.programs.delete_program %}
-                        <a href="{% url 'programs:program_delete' program_id=object.pk %}" class="btn btn-danger">Delete</a>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

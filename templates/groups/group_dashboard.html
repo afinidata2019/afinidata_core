@@ -4,6 +4,11 @@
 
 {% block content %}
 {% load static %}
+<div id="overlay" style="display:none;">
+    <div class="spinner"></div>
+    <br/>
+    Cargando...
+</div>
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <div class="col-xl-9 col-md-9 mb">
@@ -63,8 +68,8 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Total children</h5>
-                    <h5 class="card-text">{{ children }}</h5>
+                    <h5 class="card-title">Total niños</h5>
+                    <h5 class="card-text" id="children"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
             </div>
@@ -72,8 +77,8 @@
                 <div class="card bg-dark text-white">
                   <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
                   <div class="card-img-overlay">
-                    <h5 class="card-title">Sent Activities</h5>
-                    <h5 class="card-text assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
+                    <h5 class="card-title">Actividades enviadas</h5>
+                    <h5 class="card-text" id="assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
                   </div>
                 </div>
             </div>
@@ -126,40 +131,70 @@
     <br/>
     <div class="container-fluid">
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Show All: </h6>
-                <form class="form-inline" id="form_id">
-                  <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search">
-                  <button class="btn btn-outline-success my-2 my-sm-0">Search</button>
-                </form>
+            <div class="card-header py-3 d-flex"><div class="container-fluid d-flex flex-column justify-content-start">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrando últimos 10 usuarios: </h6><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Edad:</span>
+                          </div>
+                            <input type="text" class="form-control" placeholder="Buscar por edad (meses)" id="search_months" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" >Nombre:</span>
+                          </div>
+                          <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar por nombre" aria-label="Search">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Encargado:</span>
+                          </div>
+                          <input class="form-control mr-sm-2" type="search" id="search_username" placeholder="Buscar por encargado" aria-label="Search">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchInstances()">Buscar</button>
+                    </div>
+                </div></div>
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="table_id">
+                <table class="table" id="table_id" cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Caregiver</th>
-                            <th scope="col">Age</th>
-                            <th scope="col">Date of Birth</th>
-                            <th scope="col">Phone</th>
-                            <th scope="col">Address</th>
-                            <th scope="col">Risk Background</th>
-                            <th scope="col">Current Risks</th>
-                            <th scope="col">Report</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Encargado</th>
+                            <th scope="col">Edad</th>
+                            <th scope="col">Fecha de nacimiento</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Direción</th>
+                            <th scope="col">Nivel de riesgo</th>
+                            <th scope="col">Reporte</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for assignation in last_assignations %}
                         {% for instance in assignation.instances %}
                             <tr id="row_{{ instance.id }}">
-                                <td style="padding:0px; border:0px;"><img class="img-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
+                                <td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="{% static instance.image %}" width="50" height="50" style="padding:0px; border:0px;"></img></td>
                                 <td>
-                                    <a href="{% url 'instances:instance' id=instance.pk %}">{{ instance.name }}</a>
+                                    <a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a>
+                                    {{ instance.name }}
                                 </td>
                                 <td>
-                                    <a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}">{{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}</a>
+                                    <a href="{% url 'messenger_users:user' id=assignation.messenger_user_id %}"><i class="fas fa-chevron-circle-down"></i></a>
+                                    {{ assignation.get_messenger_user.first_name }} {{ assignation.get_messenger_user.last_name }}
                                 </td>
                                 <td>{{ instance.months }}</td>
                                 <td>{{ instance.birthday }}</td>
@@ -168,10 +203,7 @@
                                 <td>
                                     <button type="button" class="btn btn-danger">High</button>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger">High</button>
-                                </td>
-                                <td><button class="btn"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
+                                <td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/{{ instance.pk }}/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -202,7 +234,8 @@ h5{
     font-size: 13px;
     font-size: max(0.9vw, 13px);
 }
-
+table {border: 0px;}
+tr, td {border: 0px;}
 show{
   transition: opacity 0.6s linear;
   transform: scale(1.1);
@@ -211,10 +244,6 @@ show{
 .zoom:hover {
   transform: scale(1.1); /* (120% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
   cursor: pointer;
-}
-
-.hide {
-
 }
 
 .btn-default {
@@ -318,151 +347,214 @@ show{
   background: rgba(217, 83, 78, 0.75);
   border: 2px solid rgba(217, 83, 78, 0.75);
 }
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 140px;
-  background-color: #555;
-  color: #fff;
+#overlay {
+  background: #ffffff;
+  color: #666666;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 5000;
+  top: 0;
+  left: 0;
+  float: left;
   text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -75px;
-  opacity: 0;
-  transition: opacity 0.3s;
+  padding-top: 25%;
+  opacity: .80;
 }
-
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
+.spinner {
+    margin: 0 auto;
+    height: 64px;
+    width: 64px;
+    animation: rotate 0.8s infinite linear;
+    border: 5px solid #4F73DF;
+    border-right-color: transparent;
+    border-radius: 50%;
 }
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script>
+    const DOMAIN =  window.location.origin
+    const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
+    const URI = `${DOMAIN}/utilities/group_assignations/`
+
     function copyToClipboard() {
       var copyText = document.getElementById("myref");
       copyText.select();
       copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
     }
-        (() => {
-           window.addEventListener('load', e => {
-               const DOMAIN =  window.location.origin
-               const GROUP_ID = document.querySelector('.group-title').dataset.groupId
 
-               if(GROUP_ID) {
-                   const URI = `${DOMAIN}/utilities/group_assignations/`
+    function getRequest(data, callback){
+       if(GROUP_ID) {
+            $('#overlay').fadeIn();
+            data.append('group', String(GROUP_ID));
+            let request = fetch(URI, {
+               method: 'post',
+               body: data
+            })
+            .then(r => r.json())
+            .then(r => {
+                callback(r);
+                $('#overlay').fadeOut();
+            })
+       }
+    }
 
-                   let data = new FormData()
-                   data.append('group', String(GROUP_ID))
-                   let request = fetch(URI, {
-                       method: 'post',
-                       body: data
-                   })
-                    .then(r => r.json())
-                    .then(r => {
-                        document.querySelector('.assignations').textContent = r.data.count
-                        chartsArray = []
-	                    for (i = 0; i < r.factores_riesgo.length; i++) {
-                            document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                            chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
-                            chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
-                            chartsArray[i]['chart'].render();
-                            $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                        }
-                        document.querySelector('#milestones_count').textContent = r.milestones_count;
-                        chartMilestones.options.data[0].dataPoints = r.milestones;
-                        chartMilestones.options.axisX.labelFontSize = 14;
-                        $("#chartMilestonesContainer").show();
-	                    chartMilestones.render();
-	                    $('#milestonesCard').click(function () {
-                            for(i = 0; i < chartsArray.length; i++){
-                                $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                            }
-                            $("#chartMilestonesContainer").show();
-                        });
-                        $(('[id^="attribute_type_"]')).click(function () {
-                            $("#chartMilestonesContainer").hide();
-                            for(i = 0; i < chartsArray.length; i++){
-                                $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                                if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
-                                    $("#chartRiskContainer"+chartsArray[i]['id']).show();
-                                }
-                            }
-                        });
-                    })
-               }
-           })
-        })()
+    function writeRow(instance){
+        rowHTML = '<tr id="row_'+instance.id+'">' +
+            '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="https://core.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td>'+instance.months+'</td>' +
+            '<td>'+instance.birthdate+'</td>' +
+            '<td>'+instance.tel+'</td>' +
+            '<td>'+instance.dir+'</td>';
+        if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
+        else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
+        else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
 
-        window.onload = function () {
-            var bar_ctx = document.getElementById('chart').getContext('2d');
-            var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
-            background_1.addColorStop(0, 'rgb(0,89,217)');
-            background_1.addColorStop(1, 'rgb(105,176,255)');
-            chartStartData = {
-                animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisY: {
-                    includeZero: true,
-                    valueFormatString:" "
-                },
-                axisX:{
-                  labelFontFamily: "tahoma",
-                  labelFontSize: 16
-                },
-                data: [{
-                    type: "bar",
-                    click: filterInstances,
-                    color: background_1,
-                    indexLabelFontFamily: "tahoma",
-                    indexLabelFontSize: 18,
-                    indexLabelPlacement: "inside",
-                    indexLabel: "{y} {y_label}",
-                    toolTipContent: "{label}: {y}",
-                    showInLegend: false,
-                    indexLabelFontColor: "white",
-                    legendMarkerColor: "white",
-                    legendText: "Respuestas",
-                    includeZero: true,
-                    cursor: "pointer",
-                    dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
-                }]
-            }
-            chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+        rowHTML +='<td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/'+instance.id+'/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button></td></tr>';
+        $("#table_id tbody").append(rowHTML);
+    }
+
+    function filterInstances(e) {
+        let data = new FormData();
+        if('program_attribute_id' in e.dataPoint){
+            data.append('attribute_id', String(e.dataPoint.program_attribute_id));
         }
-        function filterInstances(e) {
-            // $("#form_program_attribute_id").val(e.dataPoint.program_attribute_id);
-            // $("#form_id").submit();
+        if('milestone_id' in e.dataPoint){
+            data.append('milestone_id', String(e.dataPoint.milestone_id));
+        }
+        $("#table_id tbody tr").remove();
+        getRequest(data, function(r){
             $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
-            $("#table_id > tbody > tr").hide();
-            for(i = 0; i < e.dataPoint.instances.length; i++){
-                $("#row_"+e.dataPoint.instances[i]).show();
-                console.log(e.dataPoint.instances[i]);
-            }
-            $("#table_id").focus()
+            $("#search_name").val("");
+            r.data.forEach(function(instance){ writeRow(instance); });
             $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
+        });
+    }
+
+    function searchInstances(){
+        let data = new FormData();
+        if($("#search_name").val() != '' || $("#search_username").val() != '' || $("#search_months").val()){
+            data.append('name', String($("#search_name").val()));
+            data.append('username', String($("#search_username").val()));
+            data.append('months', String($("#search_months").val()));
+            $("#table_id tbody tr").remove();
+            getRequest(data, function(r){
+                $("#filtrado_por").text("Filtrado por:");
+                r.data.forEach(function(instance){ writeRow(instance); });
+                $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
+            });
         }
+    }
+
+    (() => {
+       window.addEventListener('load', e => {
+            let data = new FormData();
+            data.append('group', String(GROUP_ID));
+            getRequest(data, function(r){
+                document.querySelector('#assignations').textContent = r.data.count
+                document.querySelector('#children').textContent = r.data.children
+                chartsArray = []
+                for (i = 0; i < r.factores_riesgo.length; i++) {
+                    document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
+                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
+                    chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+                    chartsArray[i]['chart'].render();
+                    $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                }
+                document.querySelector('#milestones_count').textContent = r.milestones_count;
+                chartMilestones.options.data[0].dataPoints = r.milestones;
+                chartMilestones.options.axisX.labelFontSize = 14;
+                $("#chartMilestonesContainer").show();
+                chartMilestones.render();
+                $('#milestonesCard').click(function () {
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    }
+                    $("#chartMilestonesContainer").show();
+                });
+                $(('[id^="attribute_type_"]')).click(function () {
+                    $("#chartMilestonesContainer").hide();
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                        if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                            $("#chartRiskContainer"+chartsArray[i]['id']).show();
+                        }
+                    }
+                });
+            });
+       })
+    })()
+
+    window.onload = function () {
+        var bar_ctx = document.getElementById('chart').getContext('2d');
+        var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
+        background_1.addColorStop(0, 'rgb(0,89,217)');
+        background_1.addColorStop(1, 'rgb(105,176,255)');
+        chartStartData = {
+            animationEnabled: true,
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            axisY: {
+                includeZero: true,
+                valueFormatString:" "
+            },
+            axisX:{
+              labelFontFamily: "tahoma",
+              labelFontSize: 16
+            },
+            data: [{
+                type: "bar",
+                click: filterInstances,
+                color: background_1,
+                indexLabelFontFamily: "tahoma",
+                indexLabelFontSize: 18,
+                indexLabelPlacement: "inside",
+                indexLabel: "{y} {y_label}",
+                toolTipContent: "{label}: {y}",
+                showInLegend: false,
+                indexLabelFontColor: "white",
+                legendMarkerColor: "white",
+                legendText: "Respuestas",
+                includeZero: true,
+                cursor: "pointer",
+                dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
+            }]
+        }
+        chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+        $("#anemia_1").hide();
+        $('[id^="anemia_"]').click(function() {
+          $( "#anemia_1" ).toggle();
+          $( "#anemia_2" ).toggle();
+        });
+
+        $("#prematuro_2").hide();
+        $('[id^="prematuro_"]').click(function() {
+          $( "#prematuro_1" ).toggle();
+          $( "#prematuro_2" ).toggle();
+        });
+
+        $("#vacunacion_2").hide();
+        $('[id^="vacunacion_"]').click(function() {
+          $( "#vacunacion_1" ).toggle();
+          $( "#vacunacion_2" ).toggle();
+        });
+
+        $("#lactancia_1").hide();
+        $("#lactancia_3").hide();
+        $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
+        $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
+        $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
+    }
     </script>
 
 {% endblock %}

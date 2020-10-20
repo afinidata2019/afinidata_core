@@ -24,10 +24,6 @@
                         <a href="{% url 'entities:edit_entity' entity_id=object.pk %}"
                            class="btn btn-success">Edit</a>
                     {% endif %}
-                    {% if perms.entities.delete_entity %}
-                        <a href="{% url 'entities:delete_entity' entity_id=object.pk %}"
-                           class="btn btn-danger">Delete</a>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

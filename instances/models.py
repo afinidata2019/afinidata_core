@@ -102,10 +102,16 @@ class Instance(models.Model):
             return None
         return attribute.last()
 
+    def get_attribute_value(self, attribute_id):
+        attribute = self.attributevalue_set.filter(attribute_id=attribute_id)
+        if not attribute.exists():
+            return None
+        return attribute.last()
+
 
 class InstanceAssociationUser(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    user_id = models.IntegerField()
+    user = models.ForeignKey('messenger_users.User', on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

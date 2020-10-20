@@ -35,9 +35,6 @@
                 {% if perms.bots.change_bot %}
                     <a href="{% url 'bots:edit_bot' bot_id=object.pk %}" class="btn btn-success">Edit</a>
                 {% endif %}
-                {% if perms.bots.delete_bot %}
-                    <a href="{% url 'bots:delete_bot' bot_id=object.pk %}" class="btn btn-danger">Delete</a>
-                {% endif %}
             </div>
         </div>
     </div>
