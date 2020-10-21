@@ -60,7 +60,7 @@ class ProgramCreateView(PermissionRequiredMixin, CreateView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Program with name: "%s" has been added.' % self.object.name)
+        messages.success(self.request, 'Programa con nombre: "%s" fue agregado.' % self.object.name)
         return reverse_lazy('programs:program_detail', kwargs=dict(program_id=self.object.pk))
 
 
@@ -77,7 +77,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Program with name: "%s" has been updated.' % self.object.name)
+        messages.success(self.request, 'Programa con nombre: "%s" fue actualizado.' % self.object.name)
         return reverse_lazy('programs:program_detail', kwargs=dict(program_id=self.object.pk))
 
 
@@ -95,7 +95,7 @@ class ProgramDeleteView(PermissionRequiredMixin, DeleteView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Program with name: "%s" has been deleted.' % self.object.name)
+        messages.success(self.request, 'Programa con nombre: "%s" fue eliminado.' % self.object.name)
         return reverse_lazy('programs:program_list')
 
 
@@ -143,7 +143,7 @@ class LevelCreateView(PermissionRequiredMixin, CreateView):
         return super(LevelCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, 'Level with name: "%s" has been added.' % self.object.name)
+        messages.success(self.request, 'Nivel con nombre: "%s" fue agregado.' % self.object.name)
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=self.object.pk,
                                                                  program_id=self.object.program_id))
 
@@ -164,7 +164,7 @@ class LevelUpdateView(PermissionRequiredMixin, UpdateView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Level with name: "%s" has been updated.' % self.object.name)
+        messages.success(self.request, 'Nivel con nombre: "%s" fue actualizado.' % self.object.name)
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=self.object.pk,
                                                                  program_id=self.object.program_id))
 
@@ -186,7 +186,7 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'Level with name: "%s" has been deleted.' % self.object.name)
+        messages.success(self.request, 'Nivel con nombre: "%s" fue eliminado.' % self.object.name)
         return reverse_lazy('programs:level_list', kwargs=dict(program_id=self.object.program_id))
 
 
@@ -215,7 +215,7 @@ class LevelMilestoneCreateView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         level = models.Level.objects.get(id=self.kwargs['level_id'])
-        messages.success(self.request, "Milestone to level added.")
+        messages.success(self.request, "Milestone se agregó a Nivel.")
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=level.pk, program_id=level.program_id))
 
 
@@ -233,7 +233,7 @@ class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         self.object.users.add(self.request.user)
         print(self.object.users.all())
-        messages.success(self.request, 'Program has been created')
+        messages.success(self.request, 'El Programa fue creado')
         return reverse_lazy('programs:program_set_areas', kwargs=dict(program_id=self.object.pk))
 
 
@@ -366,7 +366,7 @@ class ExcludeFieldToProgramView(PermissionRequiredMixin, RedirectView):
         new_exclusion = FieldProgramExclusion.objects.create(field_id=kwargs['field_id'],
                                                              program_id=kwargs['program_id'],
                                                              user=self.request.user)
-        messages.success(self.request, "Field excluded for the program.")
+        messages.success(self.request, "Se excluyó en campo para este programa.")
         return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=field.session_id,
                                                                          program_id=kwargs['program_id']))
 
@@ -384,6 +384,6 @@ class FieldProgramCommentCreateView(PermissionRequiredMixin, CreateView):
         return super(FieldProgramCommentCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, "The comment has been added.")
+        messages.success(self.request, "Se agregó el comentario.")
         return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=self.object.field.session_id,
                                                                          program_id=self.kwargs['program_id']))
