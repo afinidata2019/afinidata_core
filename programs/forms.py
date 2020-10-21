@@ -12,6 +12,11 @@ class GroupProgramForm(forms.ModelForm):
             languages=forms.CheckboxSelectMultiple(),
             levels=forms.CheckboxSelectMultiple()
         )
+        labels = {
+            "name": "Nombre",
+            "languages": "Lenguajes",
+            "levels": "Niveles"
+        }
 
 
 class GroupProgramAreasForm(forms.Form):

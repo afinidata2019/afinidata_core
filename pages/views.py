@@ -23,7 +23,7 @@ class LoginView(AuthLoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        messages.success(self.request, "Login successfully")
+        messages.success(self.request, "Se inició sesión correctamente")
         return super(LoginView, self).get_success_url()
 
 
@@ -31,7 +31,7 @@ class LogoutView(AuthLogoutView):
     next_page = reverse_lazy('pages:index')
 
     def dispatch(self, request, *args, **kwargs):
-        messages.success(self.request, "Logout successfully")
+        messages.success(self.request, "Se finalizó sesión correctamente")
         return super(LogoutView, self).dispatch(request, *args, **kwargs)
 
 
