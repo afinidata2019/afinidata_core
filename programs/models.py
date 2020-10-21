@@ -58,7 +58,7 @@ class Level(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.assign_min > 0 and self.assign_max > 0:
+        if self.assign_min >= 0 and self.assign_max >= 0:
             return "%s (%s - %s  meses)" % (self.name, self.assign_min, self.assign_max)
         else:
             return "%s" % (self.name)
