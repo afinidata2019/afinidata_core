@@ -22,7 +22,12 @@
                       <h6 class="m-0 font-weight-bold text-primary">Info</h6>
                     </div>
                     <div class="card-body">
-                        <strong class="text-gray-900">Tipo: </strong><a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name.title }}</a><br>
+                        <strong class="text-gray-900">Tipo: </strong>
+                        {% if perms.entities.view_entity %}
+                            <a href="{% url 'entities:entity_detail' entity_id=object.entity_id %}">{{ object.entity.name }}</a>
+                        {% else %}
+                            {{ object.entity.name }}
+                        {% endif %}<br>
                         <strong class="text-gray-900">Encargados: </strong>
                             <ul>
                                 {% for user in instance.get_users %}
