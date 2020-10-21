@@ -19,28 +19,31 @@
                 {% for topic in topics %}
 
                     <div class="row mb-5">
-                        <div class="col-2">
+                        <div class="col-12 col-md-5 col-lg-3">
                             <div class="text-center">
                                 <h4>{{ topic }}</h4>
                                 <h1 class="text-primary font-weight-bold">{{ topic.session_count }}</h1>
                                 <span class="text-primary font-weight-bold">Sessions</span>
                             </div>
                         </div>
-                        <div class="col-8">
-                            <table class="table table-responsive">
+                        <div class="col-12 col-md-7 col-lg-7">
+                            <table class="table">
                                 <tbody>
                                 {% for area in topic.areas %}
                                     <tr>
-                                        <td>{{area}}</td>
-                                        <td><i class="fas fa-check-circle fa-2x text-success"></i></td>
+                                        <td>
+                                            <div class="d-flex justify-content-between">
+                                                {{area}} <i class="fas fa-check-circle fa-2x text-success"></i>
+                                            </div>
+                                        </td>
                                     </tr>
                                 {% endfor %}
 
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-2"><a href="{% url 'programs:level_topic_detail' program_id=program.pk level_id=object.pk topic_id=topic.pk %}"
-                                              class="btn btn-primary">Tips and information</a></div>
+                        <div class="col-12 col-md-12 col-lg-2"><a href="{% url 'programs:level_topic_detail' program_id=program.pk level_id=object.pk topic_id=topic.pk %}"
+                                              class="btn btn-primary">Información y Tips</a></div>
                     </div>
 
                 {% endfor %}

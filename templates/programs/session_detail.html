@@ -70,7 +70,7 @@
                             </div>
                             <br>
                             {% if field.field_type == 'text' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Message</th>
@@ -88,7 +88,7 @@
                             {% endif %}
 
                             {% if field.field_type == 'image' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>URL</th>
@@ -106,7 +106,7 @@
                             {% endif %}
 
                             {% if field.field_type == 'user_input' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Message</th>
@@ -130,7 +130,7 @@
                             {% endif %}
 
                             {% if field.field_type == 'quick_replies' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Label</th>
@@ -154,7 +154,7 @@
                             {% endif %}
 
                             {% if field.field_type == 'set_attributes' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Attribute</th>
@@ -174,7 +174,7 @@
                             {% endif %}
 
                             {% if field.field_type == 'condition' %}
-                                <table class="table">
+                                <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Attribute</th>
@@ -197,7 +197,7 @@
 
                             {% if field.field_type == 'save_values_block' %}
                                 {% if field.redirectblock %}
-                                    <table class="table">
+                                    <table class="table table-responsive-md">
                                         <thead>
                                         <tr>
                                             <th>Block</th>
@@ -214,7 +214,7 @@
 
                             {% if field.field_type == 'redirect_session' %}
                                 {% if field.redirectsession %}
-                                    <table class="table">
+                                    <table class="table table-responsive-md">
                                         <thead>
                                         <tr>
                                             <th>Session</th>
