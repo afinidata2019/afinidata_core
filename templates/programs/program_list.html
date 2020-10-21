@@ -26,7 +26,6 @@
                     <thead>
                         <tr>
                           <th>Nombre</th>
-                          <th>Descripción</th>
                           <th>Etapas</th>
                           <th>Fecha de Creación</th>
                           <th>Acciones</th>
@@ -36,20 +35,15 @@
                     {% for object in object_list %}
                         <tr>
                             <td>{{ object.name }}</td>
-                            <td>{{ object.description }}
-                                {% if perms.programs.view_program %}
-                                    <a href="{% url 'programs:program_content_detail' program_id=object.pk %}" >Ver Contenido</a>
-                                    {% endif %}
-                            </td>
                             <td>
-                                Count: {{ object.levels.all.count }}
+                                Conteo: {{ object.levels.all.count }}
                                 <a href="{% url 'programs:level_list' program_id=object.pk %}">Ver</a>
                             </td>
                             <td>{{ object.created_at }}</td>
                             <td>
                                 <div class="btn-group">
                                     {% if perms.programs.view_program %}
-                                        <a href="{% url 'programs:program_detail' program_id=object.pk %}"
+                                        <a href="{% url 'programs:program_content_detail' program_id=object.pk %}"
                                            class="btn btn-primary"><i class="fas fa-eye fa-fw"></i></a>
                                     {% endif %}
                                     {% if perms.programs.change_program %}
