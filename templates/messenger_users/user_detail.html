@@ -92,7 +92,13 @@
                                     <tr>
                                         <td>{{ instance.pk }}</td>
                                         <td>{{ instance.name }}</td>
-                                        <td><a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a></td>
+                                        <td>
+                                            {% if perms.entities.view_entity %}
+                                                <a href="{% url 'entities:entity_detail' entity_id=instance.entity_id %}">{{ instance.entity.name }}</a>
+                                            {% else %}
+                                                {{ instance.entity.name }}
+                                            {% endif %}
+                                        </td>
                                         <td>{{ instance.created_at }}</td>
                                         <td>
                                             <div class="btn-group">
@@ -148,10 +154,10 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Quick replies</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Respuesta Rápidas</h6>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-responsive">
                             <thead>
                                 <tr>
                                   <th>Atributo</th>
