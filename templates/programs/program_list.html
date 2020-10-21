@@ -37,7 +37,9 @@
                             <td>{{ object.name }}</td>
                             <td>
                                 Conteo: {{ object.levels.all.count }}
-                                <a href="{% url 'programs:level_list' program_id=object.pk %}">Ver</a>
+                                {% if request.user.is_superuser %}
+                                    <a href="{% url 'programs:level_list' program_id=object.pk %}">Ver</a>
+                                {% endif %}
                             </td>
                             <td>{{ object.created_at }}</td>
                             <td>
