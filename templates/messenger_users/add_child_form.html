@@ -1,13 +1,13 @@
 {% extends 'base/private.html' %}
 
 {% block title %}
-    Add Child
+    Agregar niño
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Add child to {{ ms_user }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Agregar niño a {{ ms_user }}</h1>
         </div>
     </div>
 
@@ -17,8 +17,8 @@
                 <form action="." method="post">
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
-                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Add Child</button>
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Agregar niño</button>
                 </form>
             </div>
         </div>

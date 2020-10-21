@@ -97,7 +97,6 @@ class GroupAssignationsView(View):
                 group_instances = group_instances.filter(user_id__in=[x.id for x in usuarios])
             if 'months' in self.request.POST:
                 try:
-                    group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
                     query = Q()
                     now = datetime.datetime.now()
                     for rango in self.request.POST['months'].split(','):

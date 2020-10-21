@@ -47,7 +47,7 @@
             <div class="col-lg-4 col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Areas</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Áreas</h6>
                     </div>
                     <div class="card-body">
                         <canvas class="areas-charts" id="areasCharts" style="width: 100%" height="174"></canvas>
@@ -213,7 +213,7 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Last attributes</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Últimos Atributos</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-responsive">
@@ -260,7 +260,7 @@
                 ],
                 datasets: [
                     {
-                        label: 'Assigned',
+                        label: 'Asignadas',
                         data: [
                             {% for area in areas %}
                                 {{ area.assigned_activities }},
@@ -279,7 +279,7 @@
                         borderWidth: 1
                     },
                     {
-                        label: 'Completed',
+                        label: 'Completadas',
                         data: [
                             {% for area in areas %}
                                 {{ area.completed_activities }},

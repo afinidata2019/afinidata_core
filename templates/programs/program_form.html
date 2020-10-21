@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ action }} Programa</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ action }}</h1>
             <div>
                 {% if perms.programs.view_program %}
                     <a href="{% url 'programs:user_program_list' %}"
@@ -23,7 +23,7 @@
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-primary">{{ action }} Programa</button>
+                    <button type="submit" class="btn btn-primary">{{ action }}</button>
                 </form>
             </div>
         </div>

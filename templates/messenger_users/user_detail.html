@@ -46,12 +46,8 @@
                 <strong class="text-gray-900">Pais: </strong>{{  user|get_last_value:'Pais' }}<br>
                 <strong class="text-gray-900">Tipo de licencia: </strong>{{  user|get_last_value:'tipo_de_licencia' }}<br>
                 <strong class="text-gray-900">Tipo de Usuario: </strong>{{  user|get_last_value:'user_type' }}<br>
-                <strong class="text-gray-900">Rol de Usuario: </strong>{{  user|get_last_value:'user_rol' }}<br>
                 <strong class="text-gray-900">Registro de Usuario: </strong>{{  user|get_last_value:'user_reg' }}<br>
-                <strong class="text-gray-900">Premium: </strong>{{  user|get_last_value:'premium' }}<br>
                 <strong class="text-gray-900">Idioma: </strong>{{  user.language.name }}<br>
-                <strong class="text-gray-900">Child Type: </strong>{{  user|get_last_value:'childtype' }}<br>
-                <strong class="text-gray-900">Child Months: </strong>{{  user|get_last_value:'childMonths' }}<br>
             </div>
         </div>
     </div>
@@ -63,7 +59,7 @@
                 {% if perms.messenger_users.add_userdata %}
                     <a href="{% url 'messenger_users:add_child' user_id=user.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Instancias</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Niño</a>
                 {% endif %}
             </div>
         </div>
@@ -74,7 +70,7 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Actividades Asignadas</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Niños asociados</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-responsive-md">
@@ -82,7 +78,6 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Nombre</th>
-                                    <th>Tipo de Instancia</th>
                                     <th>Fecha de Creación</th>
                                     <th>Acciones</th>
                                 </tr>

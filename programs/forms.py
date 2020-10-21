@@ -15,15 +15,15 @@ class GroupProgramForm(forms.ModelForm):
 
 
 class GroupProgramAreasForm(forms.Form):
-    health = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=2),
+    salud = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=2),
                                             widget=forms.CheckboxSelectMultiple())
-    responsive_caregiver = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=3),
+    encargado_responsable = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=3),
                                                           widget=forms.CheckboxSelectMultiple())
-    caring_for_the_caregiver = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=4),
+    salud_del_encargado = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=4),
                                                               widget=forms.CheckboxSelectMultiple())
-    nutrition = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=5),
+    nutricion = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=5),
                                                widget=forms.CheckboxSelectMultiple())
-    safety = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=6),
+    seguridad = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=6),
                                             widget=forms.CheckboxSelectMultiple())
-    development_and_early_learning = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=1),
+    desarrollo_y_estimulacion_temprana = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=1),
                                                                     widget=forms.CheckboxSelectMultiple())
