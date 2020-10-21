@@ -40,10 +40,9 @@
                     <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Name</th>
-                          <th>Casillas</th>
-                          <th>Mínimo</th>
-                          <th>Máximo</th>
+                          <th>Nombre</th>
+                          <th>Edad Mínima en Meses</th>
+                          <th>Edad Máxima en Meses</th>
                           <th>Acciones</th>
                         </tr>
                     </thead>
@@ -52,9 +51,6 @@
                             <tr>
                                 <td>{{ session.pk }}</td>
                                 <td>{{ session.name }}</td>
-                                <td>
-                                    {{ session.field_set.count }}
-                                </td>
                                 <td>{{ session.min }}</td>
                                 <td>{{ session.max }}</td>
                                 <td>
