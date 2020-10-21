@@ -547,8 +547,8 @@ show{
     function writeRow(instance){
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-            '<td><a href="https://core.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td><a href="https://program.afinidata.com/instances/'+instance.id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
             '<td>'+instance.tel+'</td>' +
