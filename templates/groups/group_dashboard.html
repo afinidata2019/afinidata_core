@@ -226,25 +226,34 @@
                     </tbody>
                 </table>
               </div>
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination">
-                    <li class="page-item" onclick="changePag(-1)">
-                      <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Previous</span>
-                      </a>
-                    </li>
-                    <li class="page-item" onclick="changePag(0)"><a class="page-link" href="#" id="pag_1">1</a></li>
-                    <li class="page-item active"><a class="page-link" id="pag_n">1</a></li>
-                    <li class="page-item" onclick="changePag(2)"><a class="page-link" href="#" id="pag_last">1</a></li>
-                    <li class="page-item" onclick="changePag(1)">
-                      <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Next</span>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
+                <div class="container-fluid d-flex flex-column justify-content-start" id="pagination">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
+                            <h6 id="page_label">Pág. 1 / 1</h6>
+                        </div>
+                        <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
+                            <nav aria-label="Page navigation example" class="float-right">
+                              <ul class="pagination float-right">
+                                <li class="page-item" onclick="changePag(-1)">
+                                  <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                <li class="page-item" onclick="changePag(0)"><a class="page-link" href="#" id="pag_1">1</a></li>
+                                <li class="page-item active"><a class="page-link" id="pag_n">1</a></li>
+                                <li class="page-item" onclick="changePag(2)"><a class="page-link" href="#" id="pag_last">1</a></li>
+                                <li class="page-item" onclick="changePag(1)">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -526,6 +535,9 @@ show{
                 if(r.hasOwnProperty('total')){
                     total_pag = Math.ceil(r.total/20)-1;
                     $("#pag_last").html(total_pag+1);
+                    $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
+                    if(Number(total_pag) == 0){ $("#pagination").hide(); }
+                    else{ $("#pagination").show(); }
                 }
                 callback(r);
             })
@@ -616,6 +628,7 @@ show{
             requestData.set('pag', total_pag);
         }
         $("#pag_n").html(Number(requestData.get('pag')) + 1);
+        $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
         $("#table_id tbody tr").remove();
         getRequest(requestData, function(r){
             $("#filtrado_por").text("Mostrar todos:");
