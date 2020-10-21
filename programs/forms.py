@@ -22,13 +22,13 @@ class GroupProgramForm(forms.ModelForm):
 class GroupProgramAreasForm(forms.Form):
     salud = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=2),
                                             widget=forms.CheckboxSelectMultiple())
-    encargado_responsable = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=3),
+    paternidad_responsiva = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=3),
                                                           widget=forms.CheckboxSelectMultiple())
-    salud_del_encargado = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=4),
+    cuidado_del_cuidador = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=4),
                                                               widget=forms.CheckboxSelectMultiple())
     nutricion = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=5),
                                                widget=forms.CheckboxSelectMultiple())
     seguridad = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=6),
                                             widget=forms.CheckboxSelectMultiple())
-    desarrollo_y_estimulacion_temprana = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=1),
+    desarrollo_infantil_y_aprendizaje_inicial = forms.ModelMultipleChoiceField(queryset=Area.objects.filter(topic_id=1),
                                                                     widget=forms.CheckboxSelectMultiple())
