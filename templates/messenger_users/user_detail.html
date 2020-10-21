@@ -42,16 +42,12 @@
                 <strong class="text-gray-900">Joined At: </strong>{{ object.created_at }}<br>
                 <strong class="text-gray-900">Channel ID: </strong>{{ object.last_channel_id }}<br>
                 <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
-                <strong class="text-gray-900">Email: </strong>{{ user|get_last_value:'email' }}<br>
-                <strong class="text-gray-900">Country: </strong>{{  user|get_last_value:'Pais' }}<br>
-                <strong class="text-gray-900">License Type: </strong>{{  user|get_last_value:'tipo_de_licencia' }}<br>
-                <strong class="text-gray-900">User Type: </strong>{{  user|get_last_value:'user_type' }}<br>
-                <strong class="text-gray-900">User Rol: </strong>{{  user|get_last_value:'user_rol' }}<br>
-                <strong class="text-gray-900">User Reg: </strong>{{  user|get_last_value:'user_reg' }}<br>
-                <strong class="text-gray-900">Premium: </strong>{{  user|get_last_value:'premium' }}<br>
-                <strong class="text-gray-900">Language: </strong>{{  user.language.name }}<br>
-                <strong class="text-gray-900">Child Type: </strong>{{  user|get_last_value:'childtype' }}<br>
-                <strong class="text-gray-900">Child Months: </strong>{{  user|get_last_value:'childMonths' }}<br>
+                <strong class="text-gray-900">Correo Electrónico: </strong>{{ user|get_last_value:'email' }}<br>
+                <strong class="text-gray-900">Pais: </strong>{{  user|get_last_value:'Pais' }}<br>
+                <strong class="text-gray-900">Tipo de licencia: </strong>{{  user|get_last_value:'tipo_de_licencia' }}<br>
+                <strong class="text-gray-900">Tipo de Usuario: </strong>{{  user|get_last_value:'user_type' }}<br>
+                <strong class="text-gray-900">Registro de Usuario: </strong>{{  user|get_last_value:'user_reg' }}<br>
+                <strong class="text-gray-900">Idioma: </strong>{{  user.language.name }}<br>
             </div>
         </div>
     </div>
@@ -63,7 +59,7 @@
                 {% if perms.messenger_users.add_userdata %}
                     <a href="{% url 'messenger_users:add_child' user_id=user.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Instance</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Niño</a>
                 {% endif %}
             </div>
         </div>
@@ -74,17 +70,17 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Assigned Instances</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Niños asociados</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-responsive-md">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Instance Type</th>
-                                    <th>Created At</th>
-                                    <th>Actions</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo de instancia</th>
+                                    <th>Fecha de Creación</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>

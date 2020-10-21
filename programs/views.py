@@ -56,7 +56,7 @@ class ProgramCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramCreateView, self).get_context_data()
-        c['action'] = 'Crear'
+        c['action'] = 'Crear Programa'
         return c
 
     def get_success_url(self):
@@ -73,7 +73,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramUpdateView, self).get_context_data()
-        c['action'] = 'Editar'
+        c['action'] = 'Editar Programa'
         return c
 
     def get_success_url(self):
@@ -90,7 +90,7 @@ class ProgramDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         c = super(ProgramDeleteView, self).get_context_data()
-        c['action'] = 'Delete'
+        c['action'] = 'Eliminar Programa'
         c['delete_message'] = 'Are you sure to delete program with name: "%s"?' % self.object.name
         return c
 
@@ -227,7 +227,7 @@ class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(CreateGroupProgramView, self).get_context_data(**kwargs)
-        c['action'] = 'Create Group'
+        c['action'] = 'Crear Programa de Grupo'
         return c
 
     def get_success_url(self):

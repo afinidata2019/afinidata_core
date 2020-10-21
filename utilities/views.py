@@ -38,6 +38,12 @@ class GroupAssignationsView(View):
             program = group.programs.last()
             assigns = group.assignationmessengeruser_set.all()
             group_users = set([a.messenger_user_id for a in assigns])
+            if 'pag' in self.request.POST:
+                pag = int(self.request.POST['pag'])
+            else:
+                pag = 0
+            if 'all' in self.request.POST:
+                group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
             if 'attribute_id' in self.request.POST:
                 program_attribute = ProgramAttribute.objects.get(id=self.request.POST['attribute_id'])
                 group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
@@ -89,15 +95,13 @@ class GroupAssignationsView(View):
                 if self.request.POST['name'] != '':
                     instances = Instance.objects.filter(id__in=[x.instance.id for x in group_instances],
                                                         name__icontains=str(self.request.POST['name']))
-                    group_instances = InstanceAssociationUser.objects.filter(instance_id__in=instances)
-            if 'username' in self.request.POST and self.request.POST['username'] != '':
-                usuarios = User.objects.filter(id__in=group_users).\
-                    filter(Q(first_name__icontains=str(self.request.POST['username'])) |
-                           Q(last_name__icontains=str(self.request.POST['username'])))
-                group_instances = group_instances.filter(user_id__in=[x.id for x in usuarios])
+                    usuarios = User.objects.filter(id__in=group_users).\
+                        filter(Q(first_name__icontains=str(self.request.POST['name'])) |
+                               Q(last_name__icontains=str(self.request.POST['name'])))
+                    group_instances = InstanceAssociationUser.objects.\
+                        filter(Q(instance_id__in=instances) | Q(user_id__in=[x.id for x in usuarios]))
             if 'months' in self.request.POST:
                 try:
-                    group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
                     query = Q()
                     now = datetime.datetime.now()
                     for rango in self.request.POST['months'].split(','):
@@ -112,9 +116,10 @@ class GroupAssignationsView(View):
                 except:
                     group_instances = group_instances
             if 'attribute_id' in self.request.POST or 'milestone_id' in self.request.POST\
-                    or 'name' in self.request.POST or 'username' in self.request.POST or 'months' in self.request.POST:
+                    or 'name' in self.request.POST or 'months' in self.request.POST\
+                    or 'all' in self.request.POST:
                 instances_data = []
-                for assoc in group_instances:
+                for assoc in group_instances[20*pag:20*(pag + 1)]:
                     if assoc.instance.get_attribute_value(191):  # birthday
                         try:
                             birthday = parse(assoc.instance.get_attribute_value(191).value).strftime('%d/%m/%Y')
@@ -176,7 +181,8 @@ class GroupAssignationsView(View):
                                          dir=direccion,
                                          risk=risk)
                     instances_data.append(instance_data)
-                return JsonResponse(dict(data=sorted(instances_data, key=lambda k: k['risk'], reverse=True)))
+                return JsonResponse(dict(data=sorted(instances_data, key=lambda k: k['risk'], reverse=True),
+                                         total=group_instances.count()))
             else:
                 lang = program.languages.last()
                 if lang.name == 'en':

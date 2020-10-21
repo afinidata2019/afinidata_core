@@ -129,7 +129,7 @@
 
 </div>
     <br/>
-    <div class="container-fluid">
+    <div class="container-fluid" id="tableContainer">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex"><div class="container-fluid d-flex flex-column justify-content-start">
                 <div class="row">
@@ -138,9 +138,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
                         <div class="dropdown">
-                          <button class="btn btn-light dropdown-toggle" type="button" id="search_age" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="search_age" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Buscar por edad
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -193,24 +193,16 @@
                           </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text" >Nombre:</span>
-                          </div>
-                          <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar por nombre" aria-label="Search">
-                        </div>
+                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
+                        <button class="btn btn-primary my-2 my-sm-0" onclick="searchAllInstances()">Ver todos</button>
                     </div>
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Encargado:</span>
-                          </div>
-                          <input class="form-control mr-sm-2" type="search" id="search_username" placeholder="Buscar por encargado" aria-label="Search">
+                    <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
+                        <div class="input-group mb-3 float-right">
+                          <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar..." aria-label="Search">
+                            <div class="input-group-append" onclick="searchInstances()">
+                                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                              </div>
                         </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                        <button class="btn btn-primary my-2 my-sm-0" onclick="searchInstances()">Buscar <i class="fas fa-search"></i></button>
                     </div>
                 </div></div>
             </div>
@@ -258,6 +250,34 @@
                     </tbody>
                 </table>
               </div>
+                <div class="container-fluid d-flex flex-column justify-content-start">
+                    <div class="row" id="pagination">
+                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
+                            <h6 id="page_label">Pág. 1 / 1</h6>
+                        </div>
+                        <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
+                            <nav aria-label="Page navigation example" class="float-right">
+                              <ul class="pagination float-right">
+                                <li class="page-item" onclick="changePag(-1)">
+                                  <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                <li class="page-item" onclick="changePag(0)"><a class="page-link" href="#" id="pag_1">1</a></li>
+                                <li class="page-item active"><a class="page-link" id="pag_n">1</a></li>
+                                <li class="page-item" onclick="changePag(2)"><a class="page-link" href="#" id="pag_last">1</a></li>
+                                <li class="page-item" onclick="changePag(1)">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -431,6 +451,9 @@ show{
     const DOMAIN =  window.location.origin
     const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
     const URI = `${DOMAIN}/utilities/group_assignations/`
+    var requestData = new FormData();
+    requestData.append('pag', 0);
+    var total_pag = 0;
 
     function copyToClipboard() {
       var copyText = document.getElementById("myref");
@@ -441,16 +464,23 @@ show{
 
     function getRequest(data, callback){
        if(GROUP_ID) {
+            requestData = data;
             $('#overlay').fadeIn();
-            data.append('group', String(GROUP_ID));
+            data.set('group', String(GROUP_ID));
             let request = fetch(URI, {
                method: 'post',
                body: data
             })
             .then(r => r.json())
             .then(r => {
+                if(r.hasOwnProperty('total')){
+                    total_pag = Math.ceil(r.total/20)-1;
+                    $("#pag_last").html(total_pag+1);
+                    $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
+                    if(Number(total_pag) == 0){ $("#pagination").hide(); }
+                    else{ $("#pagination").show(); }
+                }
                 callback(r);
-                $('#overlay').fadeOut();
             })
        }
     }
@@ -480,12 +510,14 @@ show{
         if('milestone_id' in e.dataPoint){
             data.append('milestone_id', String(e.dataPoint.milestone_id));
         }
+        $("#pag_n").html(1);
         $("#table_id tbody tr").remove();
         getRequest(data, function(r){
             $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
             $("#search_name").val("");
             r.data.forEach(function(instance){ writeRow(instance); });
-            $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
+            $('#overlay').fadeOut();
+            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
         });
     }
 
@@ -496,23 +528,60 @@ show{
             edades.push($(this).val());
         });
         var search_edad = edades.join(",");
-        if($("#search_name").val() != '' || $("#search_username").val() != '' || search_edad != ''){
+        if($("#search_name").val() != '' || search_edad != ''){
             data.append('name', String($("#search_name").val()));
-            data.append('username', String($("#search_username").val()));
             data.append('months', String(search_edad));
+            $("#pag_n").html(1);
             $("#table_id tbody tr").remove();
             getRequest(data, function(r){
                 $("#filtrado_por").text("Filtrado por:");
                 r.data.forEach(function(instance){ writeRow(instance); });
-                $("body,html").animate({scrollTop: $("#table_id").offset().top}, 800);
+                $('#overlay').fadeOut();
+                $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
             });
         }
+    }
+
+    function searchAllInstances(){
+        let data = new FormData();
+        data.append('all', String("true"));
+        $("#pag_n").html(1);
+        $("#table_id tbody tr").remove();
+        getRequest(data, function(r){
+            $("#filtrado_por").text("Mostrar todos:");
+            r.data.forEach(function(instance){ writeRow(instance); });
+            $('#overlay').fadeOut();
+            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
+        });
+    }
+
+    function changePag(n){
+        if(n == -1){
+            requestData.set('pag', Math.max(0, Number(requestData.get('pag')) - 1));
+        }
+        else if(n == 0){
+            requestData.set('pag', 0);
+        }
+        else if(n == 1){
+            requestData.set('pag', Math.min(total_pag, Number(requestData.get('pag')) + 1));
+        }
+        else if(n == 2){
+            requestData.set('pag', total_pag);
+        }
+        $("#pag_n").html(Number(requestData.get('pag')) + 1);
+        $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
+        $("#table_id tbody tr").remove();
+        getRequest(requestData, function(r){
+            $("#filtrado_por").text("Mostrar todos:");
+            r.data.forEach(function(instance){ writeRow(instance); });
+            $('#overlay').fadeOut();
+            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
+        });
     }
 
     (() => {
        window.addEventListener('load', e => {
             let data = new FormData();
-            data.append('group', String(GROUP_ID));
             getRequest(data, function(r){
                 document.querySelector('#assignations').textContent = r.data.count
                 document.querySelector('#children').textContent = r.data.children
@@ -543,6 +612,14 @@ show{
                             $("#chartRiskContainer"+chartsArray[i]['id']).show();
                         }
                     }
+                });
+                $("#pagination").hide();
+                let data1 = new FormData();
+                data1.append('all', String("true"));
+                getRequest(data1, function(r){
+                    $("#filtrado_por").text("Mostrar todos:");
+                    r.data.forEach(function(instance){ writeRow(instance); });
+                    $('#overlay').fadeOut();
                 });
             });
        })
