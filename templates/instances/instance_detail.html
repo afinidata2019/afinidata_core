@@ -141,15 +141,14 @@
                       <h6 class="m-0 font-weight-bold text-primary">Assigned Activities (Month)</h6>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered table-responsive">
+                        <table class="table table-bordered table-responsive-md">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Assign Date</th>
-                                    <th>Finished At</th>
-                                    <th>Actions</th>
+                                    <th>Nombre</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de Asignación</th>
+                                    <th>Completada en</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -173,11 +172,6 @@
                                             {% if post.last_session %}
                                                 {{ post.last_session.created_at }}
                                             {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="#" class="btn btn-primary"><i class="fa fa-eye"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 {% endfor %}
