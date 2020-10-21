@@ -87,7 +87,7 @@
     <br/>
 <div class="container-fluid bg-white">
     <div class="container-fluid d-flex flex-column">
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
                     <div class="row">
                         <div class="col-xs-12">
@@ -117,7 +117,6 @@
                     </div>
             </div>
             <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
-                <br/><br/><br/>
                 <canvas id="chart" width="0" height="0" style=""></canvas>
                 {% for attribute_type in attribute_types %}
                     <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container"></div>
