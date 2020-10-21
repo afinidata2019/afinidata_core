@@ -1,16 +1,16 @@
 {% extends 'base/private.html' %}
 
-{% block title %}{{action}} Level{% endblock %}
+{% block title %}{{action}} Etapa{% endblock %}
 
 {% block content %}
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ action }} Level</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Etapa</h1>
             <div>
                 <a href="{% url 'programs:program_detail' program_id=program.pk %}"
                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-eye fa-sm text-white-50"></i> View Program</a>
+                <i class="fas fa-eye fa-sm text-white-50"></i> Ver Programa</a>
             </div>
         </div>
     </div>
@@ -25,8 +25,8 @@
                     </div>
                     {% csrf_token %}
                     {% include 'base/default_form.html' %}
-                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">{{ action }} Level</button>
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">{{ action }} Etapa</button>
                 </form>
             </div>
         </div>

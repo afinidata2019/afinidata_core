@@ -134,18 +134,16 @@ class LevelCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(LevelCreateView, self).get_context_data()
-        c['action'] = 'Create'
+        c['action'] = 'Crear'
         c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
-    def form_valid(self, form):
-        form.instance.program = get_object_or_404(models.Program, id=self.kwargs['program_id'])
-        return super(LevelCreateView, self).form_valid(form)
-
     def get_success_url(self):
+        program = models.Program.objects.get(id=self.kwargs['program_id'])
+        program.levels.add(self.object)
         messages.success(self.request, 'Nivel con nombre: "%s" fue agregado.' % self.object.name)
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=self.object.pk,
-                                                                 program_id=self.object.program_id))
+                                                                 program_id=self.kwargs['program_id']))
 
 
 class LevelUpdateView(PermissionRequiredMixin, UpdateView):
@@ -157,16 +155,14 @@ class LevelUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         c = super(LevelUpdateView, self).get_context_data()
-        c['action'] = 'Edit'
-        if self.object.program_id != self.kwargs['program_id']:
-            raise Http404
+        c['action'] = 'Editar'
         c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
     def get_success_url(self):
         messages.success(self.request, 'Nivel con nombre: "%s" fue actualizado.' % self.object.name)
         return reverse_lazy('programs:level_detail', kwargs=dict(level_id=self.object.pk,
-                                                                 program_id=self.object.program_id))
+                                                                 program_id=self.kwargs['program_id']))
 
 
 class LevelDeleteView(PermissionRequiredMixin, DeleteView):
@@ -178,16 +174,14 @@ class LevelDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         c = super(LevelDeleteView, self).get_context_data()
-        c['action'] = 'Delete'
+        c['action'] = 'Eliminar'
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
         c['delete_message'] = 'Are you sure to delete: "%s" ?' % self.object.name
-        if self.object.program_id != self.kwargs['program_id']:
-            raise Http404
-        c['program'] = get_object_or_404(models.Program, id=self.kwargs['program_id'])
         return c
 
     def get_success_url(self):
         messages.success(self.request, 'Nivel con nombre: "%s" fue eliminado.' % self.object.name)
-        return reverse_lazy('programs:level_list', kwargs=dict(program_id=self.object.program_id))
+        return reverse_lazy('programs:level_list', kwargs=dict(program_id=self.kwargs['program_id']))
 
 
 class LevelMilestoneCreateView(PermissionRequiredMixin, CreateView):
