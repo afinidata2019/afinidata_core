@@ -78,7 +78,7 @@ class ProgramUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Programa con nombre: "%s" fue actualizado.' % self.object.name)
-        return reverse_lazy('programs:program_detail', kwargs=dict(program_id=self.object.pk))
+        return reverse_lazy('programs:program_content_detail', kwargs=dict(program_id=self.object.pk))
 
 
 class ProgramDeleteView(PermissionRequiredMixin, DeleteView):
