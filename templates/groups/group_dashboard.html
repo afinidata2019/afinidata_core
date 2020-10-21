@@ -116,11 +116,11 @@
                         {% endfor %}
                     </div>
             </div>
-            <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0" style="min-height: 500px">
+            <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
                 <br/><br/><br/>
                 <canvas id="chart" width="0" height="0" style=""></canvas>
                 {% for attribute_type in attribute_types %}
-                    <div id="chartRiskContainer{{ attribute_type.id }}" style="height: 500px;"></div>
+                    <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container"></div>
                 {% endfor %}
                 <div id="chartMilestonesContainer" style="height: 75%;"></div>
             </div>
@@ -349,6 +349,18 @@
 
 canvas {
     width: 100% !important;
+}
+
+.theme-canvas-container,
+.theme-risk-container {
+    height: 500px;
+}
+
+@media (max-width: 768px) {
+    .theme-canvas-container,
+    .theme-risk-container {
+        height: 300px;
+    }
 }
 
 h{
