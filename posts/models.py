@@ -69,7 +69,7 @@ class Post(models.Model):
                                            created_at__gte=first_limit,
                                            created_at__lte=last_limit,
                                            type='session',
-                                           value__gte=-1)
+                                           value__gte=0)
 
     def get_user_last_session_interaction(self, instance, first_limit, last_limit):
         interactions = self.get_user_session_interactions(instance, first_limit, last_limit)
