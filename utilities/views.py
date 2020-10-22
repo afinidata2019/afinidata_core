@@ -350,18 +350,24 @@ class GroupInstanceCardView(View):
                                                      value=interaction.value).order_by('-id')
                         if reply.exists():
                             value = reply.first().label
-                            if reply.first().value <= program_attribute.threshold:
+                            if reply.first().value.isnumeric() and float(reply.first().value) <= program_attribute.threshold:
                                 risk = 1
                             else:
                                 risk = 0
                         else:
                             value = attribute.value
-                            risk = 0
+                            if value.isnumeric() and float(value) <= program_attribute.threshold:
+                                risk = 1
+                            else:
+                                risk = 0
                     else:
                         value = attribute.value
-                        risk = 0
+                        if value.isnumeric() and float(value) <= program_attribute.threshold:
+                            risk = 1
+                        else:
+                            risk = 0
                 else:
-                    value = 'Todavía no contesta'
+                    value = 'Sin responder'
                     risk = -1
                 factores_riesgo.append(dict(name=program_attribute.label,
                                             value=value,
@@ -378,6 +384,7 @@ class GroupInstanceCardView(View):
         else:
             seguimiento = ''
         return JsonResponse(dict(attributes_types=factores,
+                                 name=instance.name,
                                  image="child_user_" + str((instance.id % 10) + 1) + ".jpg",
                                  observaciones=observaciones,
                                  seguimiento=seguimiento))

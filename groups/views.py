@@ -157,6 +157,12 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
         c['action'] = 'Crear'
         return c
 
+    def get_form(self, form_class=None):
+        form = super(CreateGroupView, self).get_form(form_class=forms.CreateGroup)
+        form.fields['program'].queryset = self.request.user.program_set.all()
+        return form
+
+
     def get_success_url(self):
         self.object.rolegroupuser_set.create(user=self.request.user, role='administrator')
         program = Program.objects.get(id=self.request.POST['program'])
