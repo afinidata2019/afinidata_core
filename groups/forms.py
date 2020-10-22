@@ -11,3 +11,11 @@ class ExchangeCodeForm(forms.Form):
 
 class AddProgramForm(forms.Form):
     program = forms.ModelChoiceField(queryset=Program.objects.all())
+
+
+class CreateGroup(forms.ModelForm):
+    program = forms.ModelChoiceField(queryset=Program.objects.all())
+
+    class Meta:
+        model = models.Group
+        fields = ('name', 'parent')
