@@ -12,6 +12,7 @@ from posts.models import Interaction
 from entities.models import Entity
 from groups.models import Group, MilestoneRisk
 from programs.models import Attributes as ProgramAttribute
+from user_sessions.models import Reply, Interaction as SessionInteraction
 from django.http import Http404
 from bots.models import Bot
 from utilities import forms
@@ -197,27 +198,189 @@ class GroupAssignationsView(View):
                     elif risk_count < 4:
                         risk = 1
                     else:
-                        risk_count_user = UserData.objects.filter(user__id__in=group_users,
-                                                                  data_key=program_attribute.attribute.name,
-                                                                  data_value__lte=program_attribute.threshold).\
-                            values('user__id').distinct()
-                        factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
-                                                                                 for x in risk_count_user]))
-                        risk_count = risk_count_user.count()
-                        associations = InstanceAssociationUser.objects.\
-                            filter(user_id__in=[x['user__id'] for x in risk_count_user])
-                        instance_list = [association.instance.id for association in associations]
-                    y_label = "Cases"
-                    if risk_count == 1:
-                        y_label = "Case"
-                    factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=program_attribute.label,
-                                                     program_attribute_id=program_attribute.id,
-                                                     instances=instance_list))
-                factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
-                                            factores_riesgo=factores_riesgo_data, total=len(factores_riesgo_count)))
-            return JsonResponse(dict(data=dict(count=count), milestones=milestones_data,
-                                     milestones_count=milestones_count, factores_riesgo=factores_riesgo))
+                        risk = 2
+                    try:
+                        username = assoc.user.first_name + assoc.user.last_name
+                    except:
+                        username = ''
+                    instance_data = dict(id=assoc.instance.id,
+                                         name=assoc.instance.name,
+                                         username=username,
+                                         user_id=assoc.user.id,
+                                         image="child_user_" + str((assoc.instance.id % 10) + 1) + ".jpg",
+                                         months=months,
+                                         birthdate=birthday,
+                                         tel=telefono,
+                                         dir=direccion,
+                                         risk=risk)
+                    instances_data.append(instance_data)
+                return JsonResponse(dict(data=sorted(instances_data, key=lambda k: k['risk'], reverse=True),
+                                         total=group_instances.count()))
+            else:
+                lang = program.languages.last()
+                if lang.name == 'en':
+                    label_caso = 'Case'
+                    label_casos = 'Cases'
+                    label_nohay = 'No children with development risks'
+                else:
+                    label_caso = 'Caso'
+                    label_casos = 'Casos'
+                    label_nohay = 'No hay niños con riesgos de desarrollo'
+                # Count Sent activities
+                count = Interaction.objects.filter(user_id__in=group_users,
+                                                   type='dispatched').count()
+
+                # Count Cases of risk in Development through risk milestones
+                group_instances = set([])
+                milestones = dict()
+                milestones_count = 0
+                for assignation in assigns:
+                    assignation.instances = assignation.get_messenger_user().get_instances()
+                    for instance in assignation.instances:
+                        group_instances = group_instances.union(set([instance.id]))
+                        try:
+                            age = relativedelta(datetime.datetime.now(),
+                                                parse(instance.get_attribute_value(191).value))# birthday
+                            months = 0
+                            if age.months:
+                                months = age.months
+                            if age.years:
+                                months = months + (age.years * 12)
+                        except:
+                            months = 0
+                        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+                        last_responses = instance.response_set.filter(milestone_id__in=risks).values('milestone_id').\
+                            annotate(max_id=Max('id'))
+                        responses = instance.response_set.filter(response='failed', id__in=[x['max_id']
+                                                                                            for x in last_responses])
+                        if responses.exists():
+                            milestones_count = milestones_count + 1
+                        for response in responses:
+                            if response.milestone_id in milestones:
+                                milestones[response.milestone_id].append(instance.id)
+                            else:
+                                milestones[response.milestone_id] = [instance.id]
+                milestones_data = []
+                for milestone in milestones:
+                    y_label = label_casos
+                    if len(milestones[milestone]) == 1:
+                        y_label = label_caso
+                    milestones_data.append(dict(y=len(milestones[milestone]), y_label=y_label,
+                                                label=MilestoneTranslation.objects.get(language_id=lang.id,
+                                                                                       milestone_id=milestone).name,
+                                                instances=milestones[milestone], milestone_id=milestone))
+                if len(milestones_data) == 0:
+                    milestones_data = [dict(y=0, label=label_nohay)]
+
+                # Count cases of risk attributes
+                factores_riesgo = []
+                for attributes_type in program.attributetype_set.all():
+                    factores_riesgo_data = []
+                    factores_riesgo_count = set([])
+                    for program_attribute in attributes_type.attributes_set.all():
+                        risk_count = 0
+                        last_attributes = AttributeValue.objects.filter(instance__id__in=group_instances,
+                                                                        attribute=program_attribute.attribute). \
+                            values('instance__id', 'attribute__id').annotate(max_id=Max('id'))
+                        risk_count_instance = AttributeValue.objects.filter(id__in=[x['max_id'] for x in last_attributes],
+                                                                            value__lte=program_attribute.threshold). \
+                            values('instance__id').distinct()
+                        if risk_count_instance.count() > 0:
+                            factores_riesgo_count = factores_riesgo_count.union(set([x['instance__id']
+                                                                                     for x in risk_count_instance]))
+                            risk_count = risk_count_instance.count()
+                            instance_list = [x['instance__id'] for x in risk_count_instance]
+                        else:
+                            last_attributes = UserData.objects.filter(user__id__in=group_users,
+                                                                      attribute_id=program_attribute.attribute.id). \
+                                values('user__id', 'attribute_id').annotate(max_id=Max('id'))
+                            risk_count_user = UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
+                                                                      data_value__lte=program_attribute.threshold). \
+                                values('user__id').distinct()
+                            factores_riesgo_count = factores_riesgo_count.union(set([x['user__id']*1000000
+                                                                                     for x in risk_count_user]))
+                            risk_count = risk_count_user.count()
+                            associations = InstanceAssociationUser.objects.\
+                                filter(user_id__in=[x['user__id'] for x in risk_count_user])
+                            instance_list = [association.instance.id for association in associations]
+                        y_label = label_casos
+                        if risk_count == 1:
+                            y_label = label_caso
+                        factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=program_attribute.label,
+                                                         program_attribute_id=program_attribute.id,
+                                                         instances=instance_list))
+                    factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
+                                                factores_riesgo=factores_riesgo_data, total=len(factores_riesgo_count)))
+                children = InstanceAssociationUser.objects.filter(
+                    user_id__in=[u.messenger_user_id for u in group.assignationmessengeruser_set.all()]).count()
+                '''for assign in self.object.assignationmessengeruser_set.all():
+                            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
+                            children = children + data.count()
+                            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
+                                                                                     type='dispatched').count()'''
+                return JsonResponse(dict(data=dict(count=count, children=children), milestones=milestones_data,
+                                         milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GroupInstanceCardView(View):
+    def get(self, request, *args, **kwargs):
+        return Http404()
+
+    def post(self, request):
+        group = Group.objects.get(id=int(self.request.POST['group_id']))
+        program = group.programs.last()
+        instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
+        factores = []
+        for attributes_type in program.attributetype_set.all():
+            factores_riesgo = []
+            for program_attribute in attributes_type.attributes_set.all():
+                attributevalue = AttributeValue.objects.\
+                    filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
+                if attributevalue.exists():
+                    attribute = attributevalue.first()
+                    fields = [x.field_id for x in Reply.objects.filter(attribute=attribute.attribute.name)]
+                    interactions = SessionInteraction.objects.filter(instance_id=instance.id,
+                                                                     field_id__in=fields,
+                                                                     type='quick_reply').order_by('-id')
+                    if interactions.exists():
+                        interaction = interactions.first()
+                        reply = Reply.objects.filter(attribute=attribute.attribute.name, field_id=interaction.field_id,
+                                                     value=interaction.value).order_by('-id')
+                        if reply.exists():
+                            value = reply.first().label
+                            if reply.first().value <= program_attribute.threshold:
+                                risk = 1
+                            else:
+                                risk = 0
+                        else:
+                            value = attribute.value
+                            risk = 0
+                    else:
+                        value = attribute.value
+                        risk = 0
+                else:
+                    value = 'Todavía no contesta'
+                    risk = -1
+                factores_riesgo.append(dict(name=program_attribute.label,
+                                            value=value,
+                                            risk=risk))
+            factores.append(dict(name=attributes_type.name, program_attributes=factores_riesgo))
+        observaciones = AttributeValue.objects.filter(instance=instance, attribute_id=252).order_by('-id')
+        if observaciones.exists():
+            observaciones = observaciones[0].value
+        else:
+            observaciones = ''
+        seguimiento = AttributeValue.objects.filter(instance=instance, attribute_id=253).order_by('-id')
+        if seguimiento.exists():
+            seguimiento = seguimiento[0].value
+        else:
+            seguimiento = ''
+        return JsonResponse(dict(attributes_types=factores,
+                                 image="child_user_" + str((instance.id % 10) + 1) + ".jpg",
+                                 observaciones=observaciones,
+                                 seguimiento=seguimiento))
 
 
 class TranslateView(View):
