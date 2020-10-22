@@ -12,6 +12,7 @@ from posts.models import Interaction
 from entities.models import Entity
 from groups.models import Group, MilestoneRisk
 from programs.models import Attributes as ProgramAttribute
+from user_sessions.models import Reply, Interaction as SessionInteraction
 from django.http import Http404
 from bots.models import Bot
 from utilities import forms
@@ -170,9 +171,13 @@ class GroupAssignationsView(View):
                         risk = 1
                     else:
                         risk = 2
+                    try:
+                        username = assoc.user.first_name + assoc.user.last_name
+                    except:
+                        username = ''
                     instance_data = dict(id=assoc.instance.id,
                                          name=assoc.instance.name,
-                                         username=assoc.user.first_name + assoc.user.last_name,
+                                         username=username,
                                          user_id=assoc.user.id,
                                          image="child_user_" + str((assoc.instance.id % 10) + 1) + ".jpg",
                                          months=months,
@@ -288,6 +293,66 @@ class GroupAssignationsView(View):
                 return JsonResponse(dict(data=dict(count=count, children=children), milestones=milestones_data,
                                          milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GroupInstanceCardView(View):
+    def get(self, request, *args, **kwargs):
+        return Http404()
+
+    def post(self, request):
+        group = Group.objects.get(id=int(self.request.POST['group_id']))
+        program = group.programs.last()
+        instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
+        factores = []
+        for attributes_type in program.attributetype_set.all():
+            factores_riesgo = []
+            for program_attribute in attributes_type.attributes_set.all():
+                attributevalue = AttributeValue.objects.\
+                    filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
+                if attributevalue.exists():
+                    attribute = attributevalue.first()
+                    fields = [x.field_id for x in Reply.objects.filter(attribute=attribute.attribute.name)]
+                    interactions = SessionInteraction.objects.filter(instance_id=instance.id,
+                                                                     field_id__in=fields,
+                                                                     type='quick_reply').order_by('-id')
+                    if interactions.exists():
+                        interaction = interactions.first()
+                        reply = Reply.objects.filter(attribute=attribute.attribute.name, field_id=interaction.field_id,
+                                                     value=interaction.value).order_by('-id')
+                        if reply.exists():
+                            value = reply.first().label
+                            if reply.first().value <= program_attribute.threshold:
+                                risk = 1
+                            else:
+                                risk = 0
+                        else:
+                            value = attribute.value
+                            risk = 0
+                    else:
+                        value = attribute.value
+                        risk = 0
+                else:
+                    value = 'Todavía no contesta'
+                    risk = -1
+                factores_riesgo.append(dict(name=program_attribute.label,
+                                            value=value,
+                                            risk=risk))
+            factores.append(dict(name=attributes_type.name, program_attributes=factores_riesgo))
+        observaciones = AttributeValue.objects.filter(instance=instance, attribute_id=252).order_by('-id')
+        if observaciones.exists():
+            observaciones = observaciones[0].value
+        else:
+            observaciones = ''
+        seguimiento = AttributeValue.objects.filter(instance=instance, attribute_id=253).order_by('-id')
+        if seguimiento.exists():
+            seguimiento = seguimiento[0].value
+        else:
+            seguimiento = ''
+        return JsonResponse(dict(attributes_types=factores,
+                                 image="child_user_" + str((instance.id % 10) + 1) + ".jpg",
+                                 observaciones=observaciones,
+                                 seguimiento=seguimiento))
 
 
 class TranslateView(View):

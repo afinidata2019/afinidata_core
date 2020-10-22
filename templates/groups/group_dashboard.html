@@ -216,7 +216,7 @@
                             <th scope="col">Edad</th>
                             <th scope="col">Fecha de nacimiento</th>
                             <th scope="col">Teléfono</th>
-                            <th scope="col">Direción</th>
+                            <th scope="col">Dirección</th>
                             <th scope="col">Nivel de riesgo</th>
                             <th scope="col">Reporte</th>
                         </tr>
@@ -559,10 +559,24 @@ show{
        }
     }
 
+    function fichaInstancia(instance_id){
+        let data = new FormData();
+        data.set('group_id', String(GROUP_ID));
+        data.set('instance_id', String(instance_id));
+        let request = fetch(`${DOMAIN}/utilities/ficha_instancia/`, {
+           method: 'post',
+           body: data
+        })
+        .then(r => r.json())
+        .then(r => {
+            console.log(r);
+        })
+    }
+
     function writeRow(instance){
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="https://program.afinidata.com/instances/'+instance.id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(instance.id)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
             '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
@@ -734,29 +748,13 @@ show{
             }]
         }
         chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
-        $("#anemia_1").hide();
-        $('[id^="anemia_"]').click(function() {
-          $( "#anemia_1" ).toggle();
-          $( "#anemia_2" ).toggle();
-        });
 
-        $("#prematuro_2").hide();
-        $('[id^="prematuro_"]').click(function() {
-          $( "#prematuro_1" ).toggle();
-          $( "#prematuro_2" ).toggle();
+        $('#search_name').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                searchInstances();
+            }
         });
-
-        $("#vacunacion_2").hide();
-        $('[id^="vacunacion_"]').click(function() {
-          $( "#vacunacion_1" ).toggle();
-          $( "#vacunacion_2" ).toggle();
-        });
-
-        $("#lactancia_1").hide();
-        $("#lactancia_3").hide();
-        $('#lactancia_1').click(function() {$( "#lactancia_1" ).toggle(); $( "#lactancia_2" ).toggle();});
-        $('#lactancia_2').click(function() {$( "#lactancia_2" ).toggle(); $( "#lactancia_3" ).toggle();});
-        $('#lactancia_3').click(function() {$( "#lactancia_3" ).toggle(); $( "#lactancia_1" ).toggle();});
     }
     </script>
 
