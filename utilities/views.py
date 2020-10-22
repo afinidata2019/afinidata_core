@@ -333,13 +333,13 @@ class GroupInstanceCardView(View):
                             if value.isnumeric() and float(value) <= program_attribute.threshold:
                                 risk = 1
                             else:
-                                risk = 0
+                                risk = -1
                     else:
                         value = attribute.value
                         if value.isnumeric() and float(value) <= program_attribute.threshold:
                             risk = 1
                         else:
-                            risk = 0
+                            risk = -1
                 else:
                     value = 'Sin responder'
                     risk = -1
