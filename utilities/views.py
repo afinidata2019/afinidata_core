@@ -305,9 +305,11 @@ class GroupInstanceCardView(View):
         program = group.programs.last()
         instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
         factores = []
-        for attributes_type in program.attributetype_set.all():
+        entities_attributes = [x.id for x in Entity.objects.get(id=1).attributes.all()]\
+                              + [x.id for x in Entity.objects.get(id=2).attributes.all()]# child or pregnant
+        for attributes_type in program.attributetype_set.filter(entity_id__in=[1, 2]):# child or pregnant
             factores_riesgo = []
-            for program_attribute in attributes_type.attributes_set.all():
+            for program_attribute in attributes_type.attributes_set.filter(attribute__in=entities_attributes):
                 attributevalue = AttributeValue.objects.\
                     filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
                 if attributevalue.exists():
