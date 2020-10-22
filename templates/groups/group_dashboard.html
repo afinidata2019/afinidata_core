@@ -188,6 +188,8 @@
                                   <input class="form-check-input" type="checkbox" value="-9_0" id="search_age11" name="search_age_option">
                                   <label class="form-check-label" for="search_age11">Embarazo</label>
                                 </div>
+                                  <button class="btn btn-primary my-2 my-sm-0" onclick="searchInstances()">Buscar <i class="fas fa-search"></i></button>
+                                </div>
                               </div>
                           </div>
                         </div>
@@ -576,7 +578,7 @@ show{
     function writeRow(instance){
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(instance.id)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
             '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
