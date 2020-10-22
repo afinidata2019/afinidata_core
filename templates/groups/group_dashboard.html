@@ -297,21 +297,6 @@
       <div class="modal-body">
         <div class="container" id="ficha_instancia">
         </div>
-          <div class="container">
-            <h4 class="modal-title" style="padding: 10px;">Seguimiento:</h4>
-            <div class="row" style="width:100%; padding-left:40px;">
-                <select class="form-control" id="ficha_seguimiento">
-                  <option value="">Sin seguimiento</option>
-                  <option value="1">Por llamar</option>
-                  <option value="2">Se intentó contactar</option>
-                  <option value="3">Ya se contactó</option>
-                </select>
-            </div>
-            <h4 class="modal-title" style="padding: 10px;">Observaciones:</h4>
-            <div class="row" style="width:100%; padding-left:40px;">
-                    <textarea class="form-control" id="ficha_observaciones" rows="2"></textarea>
-            </div>
-        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
@@ -574,8 +559,8 @@ show{
                 html += '</ul>';
             });
             $("#ficha_instancia").html(html);
-            $("#ficha_observaciones").val(r.observaciones);
-            $("#ficha_seguimiento").val(r.observaciones);
+            //$("#ficha_observaciones").val(r.observaciones);
+            //$("#ficha_seguimiento").val(r.observaciones);
             $('#overlay').fadeOut();
         })
     }
