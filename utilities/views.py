@@ -339,7 +339,7 @@ class GroupInstanceCardView(View):
                         else:
                             risk = 0
                 else:
-                    value = ''
+                    value = 'Sin responder'
                     risk = -1
                 factores_riesgo.append(dict(name=program_attribute.label,
                                             value=value,
