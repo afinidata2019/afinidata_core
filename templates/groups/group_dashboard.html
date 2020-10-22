@@ -537,13 +537,13 @@ show{
                 html += '<h4 style="padding: 10px;">' + attributes_type.name + '</h4><ul class="row">';
                 attributes_type.program_attributes.forEach(function(program_attribute){
                     if(program_attribute.risk == 0){
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-success btn-sm">' + program_attribute.value + ' <i class="fas fa-angle-down"></i></button></li>';
+                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-success btn-sm">' + program_attribute.value + ' </button></li>';
                     }
                     else if(program_attribute.risk == 1){
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-danger btn-sm">' + program_attribute.value + ' <i class="fas fa-angle-down"></i></button></li>';
+                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-danger btn-sm">' + program_attribute.value + ' </button></li>';
                     }
                     else{
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-primary btn-sm">' + program_attribute.value + ' <i class="fas fa-angle-down"></i></button></li>';
+                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-primary btn-sm">' + program_attribute.value + ' </button></li>';
                     }
 
                 });
