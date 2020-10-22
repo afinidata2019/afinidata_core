@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from groups import models, forms
 from instances.models import AttributeValue
+from programs.models import Program
 import datetime
 from dateutil.parser import parse
 from django.db.models import Max
@@ -148,7 +149,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
 class CreateGroupView(PermissionRequiredMixin, CreateView):
     model = models.Group
     permission_required = 'groups.add_group'
-    fields = ('name', 'parent')
+    form_class = forms.CreateGroup
     login_url = reverse_lazy('pages:login')
 
     def get_context_data(self, **kwargs):
@@ -158,6 +159,8 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         self.object.rolegroupuser_set.create(user=self.request.user, role='administrator')
+        program = Program.objects.get(id=self.request.POST['program'])
+        self.object.programs.add(program)
         messages.success(self.request, 'Grupo con nombre: "%s" ha sido creado.' % self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
