@@ -63,7 +63,7 @@ class Instance(models.Model):
             .only('id', 'name')
         for post in posts:
             post.assign = Interaction.objects.filter(post_id=post.id, type='dispatched', instance_id=self.pk).last()
-            sessions = Interaction.objects.filter(post_id=post.id, type='opened', instance_id=self.pk)
+            sessions = Interaction.objects.filter(post_id=post.id, type='session', instance_id=self.pk, value__gte=0)
             if sessions.count() > 0:
                 post.completed = sessions.last()
             else:
@@ -74,18 +74,21 @@ class Instance(models.Model):
         if area > 0:
             posts = Post.objects.\
                 filter(id__in=set([x.post_id for x in self.postinteraction_set \
-                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit, type='opened')])) \
+                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit, type='session',
+                                          value__gte=0)])) \
                 .filter(area_id=area).only('id', 'name')
         else:
             posts = Post.objects. \
                 filter(id__in=set([x.post_id for x in self.postinteraction_set \
-                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit, type='opened')])) \
+                                  .filter(created_at__gte=first_limit, created_at__lte=last_limit, type='session', 
+                                          value__gte=0)])) \
                 .only('id', 'name')
         return posts
 
-    def get_completed_activities(self, tipo='opened'):
+    def get_completed_activities(self, tipo='session'):
         posts = Post.objects\
-            .filter(id__in=set([x.post_id for x in Interaction.objects.filter(instance_id=self.pk, type=tipo)]))\
+            .filter(id__in=set([x.post_id for x in Interaction.objects.filter(instance_id=self.pk, type=tipo,
+                                                                              value__gte=0)]))\
             .only('id')
         return posts
 
