@@ -119,9 +119,9 @@
             <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
                 <canvas id="chart" width="0" height="0" style=""></canvas>
                 {% for attribute_type in attribute_types %}
-                    <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container"></div>
+                    <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
                 {% endfor %}
-                <div id="chartMilestonesContainer" style="height: 75%;"></div>
+                <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div>
             </div>
         </div>
     </div>
@@ -668,7 +668,7 @@ show{
                 chartsArray = []
                 for (i = 0; i < r.factores_riesgo.length; i++) {
                     document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, chartStartData)};
+                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
                     chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
                     chartsArray[i]['chart'].render();
                     $("#chartRiskContainer"+chartsArray[i]['id']).hide();
@@ -688,6 +688,8 @@ show{
                     $("#chartMilestonesContainer").hide();
                     for(i = 0; i < chartsArray.length; i++){
                         $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    }
+                    for(i = 0; i < chartsArray.length; i++){
                         if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
                             $("#chartRiskContainer"+chartsArray[i]['id']).show();
                         }
