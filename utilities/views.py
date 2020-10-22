@@ -322,19 +322,19 @@ class GroupInstanceCardView(View):
                                                      value=interaction.value).order_by('-id')
                         if reply.exists():
                             value = reply.first().label
-                            if reply.first().value.isnumeric() and reply.first().value <= program_attribute.threshold:
+                            if reply.first().value.isnumeric() and float(reply.first().value) <= program_attribute.threshold:
                                 risk = 1
                             else:
                                 risk = 0
                         else:
                             value = attribute.value
-                            if value.isnumeric() and value <= program_attribute.threshold:
+                            if value.isnumeric() and float(value) <= program_attribute.threshold:
                                 risk = 1
                             else:
                                 risk = 0
                     else:
                         value = attribute.value
-                        if value.isnumeric() and value <= program_attribute.threshold:
+                        if value.isnumeric() and float(value) <= program_attribute.threshold:
                             risk = 1
                         else:
                             risk = 0

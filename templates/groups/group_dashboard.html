@@ -531,7 +531,7 @@ show{
         .then(r => {
             $("#ficha_header").html('<div class="row justify-content-start">'+
                                     '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
-                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/instances/'+instance_id+'/"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
+                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/instances/'+instance_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
             let html = '';
             r.attributes_types.forEach(function(attributes_type){
                 html += '<h4 style="padding: 10px;">' + attributes_type.name + '</h4><ul class="row">';
@@ -560,7 +560,7 @@ show{
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
             '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-            '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/" target="_blank"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
             '<td>'+instance.tel+'</td>' +
