@@ -333,6 +333,7 @@ class GroupInstanceCardView(View):
                             else:
                                 risk = 0
                     else:
+                        value = attribute.value
                         if attribute.value <= program_attribute.threshold:
                             risk = 1
                         else:
