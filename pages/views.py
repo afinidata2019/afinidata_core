@@ -46,3 +46,21 @@ class DashboardView(LoginRequiredMixin, RedirectView):
         if roles.count() == 1:
             return reverse_lazy('groups:group_dashboard', kwargs=dict(group_id=roles.first().group_id))
         return reverse_lazy('groups:my_groups')
+
+
+class PasswordResetView(TemplateView):
+    template_name = 'pages/password_reset.html'
+
+class PasswordResetDoneView(TemplateView):
+    template_name = 'pages/password_reset_done.html'
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        print(context)
+        return super(TemplateView, self).render_to_response(context)
+
+class PasswordResetConfirmView(TemplateView):
+    template_name = 'pages/password_reset_confirm.html'
+
+class PasswordResetCompleteView(TemplateView):
+    template_name = 'pages/password_reset_complete.html'
