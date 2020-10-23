@@ -172,7 +172,7 @@ class GroupAssignationsView(View):
                     else:
                         risk = 2
                     try:
-                        username = assoc.user.first_name + assoc.user.last_name
+                        username = assoc.user.first_name + ' ' + assoc.user.last_name
                     except:
                         username = ''
                     instance_data = dict(id=assoc.instance.id,
@@ -304,16 +304,27 @@ class GroupInstanceCardView(View):
         group = Group.objects.get(id=int(self.request.POST['group_id']))
         program = group.programs.last()
         instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
+        user = User.objects.get(id=int(self.request.POST['user_id']))
         factores = []
-        entities_attributes = [x.id for x in Entity.objects.get(id=1).attributes.all()]\
-                              + [x.id for x in Entity.objects.get(id=2).attributes.all()]# child or pregnant
-        for attributes_type in program.attributetype_set.filter(entity_id__in=[1, 2]):# child or pregnant
+        if self.request.POST['type'] == 'user':
+            entities_attributes = [x.id for x in Entity.objects.get(id=4).attributes.all()]\
+                                  + [x.id for x in Entity.objects.get(id=5).attributes.all()]# child or pregnant
+        else:
+            entities_attributes = [x.id for x in Entity.objects.get(id=1).attributes.all()] \
+                                  + [x.id for x in Entity.objects.get(id=2).attributes.all()]  # caregiver or professional
+        for attributes_type in program.attributetype_set.all():
             factores_riesgo = []
             for program_attribute in attributes_type.attributes_set.filter(attribute__in=entities_attributes):
-                attributevalue = AttributeValue.objects.\
-                    filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
+                if self.request.POST['type'] == 'user':
+                    attributevalue = UserData.objects.\
+                        filter(user=user, attribute_id=program_attribute.attribute_id).order_by('-id')
+                else:
+                    attributevalue = AttributeValue.objects. \
+                        filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
                 if attributevalue.exists():
                     attribute = attributevalue.first()
+                    if self.request.POST['type'] == 'user':
+                        attribute.value = attribute.data_value
                     fields = [x.field_id for x in Reply.objects.filter(attribute=attribute.attribute.name)]
                     interactions = SessionInteraction.objects.filter(instance_id=instance.id,
                                                                      field_id__in=fields,
@@ -344,21 +355,41 @@ class GroupInstanceCardView(View):
                     value = 'Sin responder'
                     risk = -1
                 factores_riesgo.append(dict(name=program_attribute.label,
+                                            program_attribute_id=program_attribute.id,
                                             value=value,
                                             risk=risk))
-            factores.append(dict(name=attributes_type.name, program_attributes=factores_riesgo))
-        observaciones = AttributeValue.objects.filter(instance=instance, attribute_id=252).order_by('-id')
-        if observaciones.exists():
-            observaciones = observaciones[0].value
+            if len(factores_riesgo) > 0:
+                factores.append(dict(attributes_type_id=attributes_type.id, name=attributes_type.name,
+                                     program_attributes=factores_riesgo))
+        if self.request.POST['type'] == 'user':
+            observaciones = UserData.objects.filter(user=user, attribute_id=252).order_by('-id')
+            if observaciones.exists():
+                observaciones = observaciones[0].data_value
+            else:
+                observaciones = ''
+            seguimiento = UserData.objects.filter(user=user, attribute_id=253).order_by('-id')
+            if seguimiento.exists():
+                seguimiento = seguimiento[0].data_value
+            else:
+                seguimiento = ''
+            try:
+                name = user.first_name + ' ' + user.last_name
+            except:
+                name = ''
         else:
-            observaciones = ''
-        seguimiento = AttributeValue.objects.filter(instance=instance, attribute_id=253).order_by('-id')
-        if seguimiento.exists():
-            seguimiento = seguimiento[0].value
-        else:
-            seguimiento = ''
+            observaciones = AttributeValue.objects.filter(instance=instance, attribute_id=252).order_by('-id')
+            if observaciones.exists():
+                observaciones = observaciones[0].value
+            else:
+                observaciones = ''
+            seguimiento = AttributeValue.objects.filter(instance=instance, attribute_id=253).order_by('-id')
+            if seguimiento.exists():
+                seguimiento = seguimiento[0].value
+            else:
+                seguimiento = ''
+            name = instance.name
         return JsonResponse(dict(attributes_types=factores,
-                                 name=instance.name,
+                                 name=name,
                                  image="child_user_" + str((instance.id % 10) + 1) + ".jpg",
                                  observaciones=observaciones,
                                  seguimiento=seguimiento))
