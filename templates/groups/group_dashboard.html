@@ -285,6 +285,7 @@
     </div>
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div id="snoAlertBox" class="alert alert-success" data-alert="alert">Se actualizaron los datos correctamente.</div>
   <div class="modal-dialog modal-dialog-centered modal-xl" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -299,7 +300,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
+        <button type="button" class="btn btn-info" onclick="saveAttributes()">Guardar cambios <i class="far fa-save"></i></button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i class="fas fa-reply"></i></button>
       </div>
     </div>
   </div>
@@ -406,23 +408,6 @@ show{
   border: 2px solid rgb(103, 192, 103, 0.75);
 }
 
-.btn-info {
-  font-size: 17px;
-  color: rgba(91, 192, 222, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(91, 192, 222, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
-
-.btn-info:hover {
-  color: #FFF;
-  background: rgba(91, 192, 222, 0.75);
-  border: 2px solid rgba(91, 192, 222, 0.75);
-}
-
 .btn-warning {
   font-size: 17px;
   color: rgba(240, 173, 78, 0.75);
@@ -487,6 +472,17 @@ show{
         transform: rotate(360deg);
     }
 }
+#snoAlertBox{
+    position: -webkit-sticky;
+    position: sticky;
+    z-index:1400;
+   top:2%;
+    right:4%;
+    margin:0px auto;
+	text-align:center;
+    display:none;
+    width: 400px;
+}
 </style>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script>
@@ -496,6 +492,8 @@ show{
     var requestData = new FormData();
     requestData.append('pag', 0);
     var total_pag = 0;
+    var instanceCardData = new FormData();
+    var instanceCardAttributes = {};
 
     function copyToClipboard() {
       var copyText = document.getElementById("myref");
@@ -527,49 +525,88 @@ show{
        }
     }
 
-    function fichaInstancia(instance_id){
+    function fichaInstancia(instance_id, user_id, tipo){
         $('#overlay').fadeIn();
         let data = new FormData();
         data.set('group_id', String(GROUP_ID));
         data.set('instance_id', String(instance_id));
+        data.set('user_id', String(user_id));
+        instanceCardData = new FormData();
+        instanceCardData.set('group_id', String(GROUP_ID));
+        instanceCardData.set('instance_id', instance_id);
+        instanceCardData.set('user_id', user_id);
+        if(tipo){
+            data.set('type', String('instance'));
+            instanceCardData.set('type', String('instance'));
+        }
+        else{
+            data.set('type', String('user'));
+            instanceCardData.set('type', String('user'));
+        }
         let request = fetch(`${DOMAIN}/utilities/ficha_instancia/`, {
            method: 'post',
            body: data
         })
         .then(r => r.json())
         .then(r => {
-            $("#ficha_header").html('<div class="row justify-content-start">'+
+            if(tipo){
+                $("#ficha_header").html('<div class="row justify-content-start">'+
                                     '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
                                     '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/instances/'+instance_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
+            }
+            else{
+                $("#ficha_header").html('<div class="row justify-content-start">'+
+                                    '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
+                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/users/'+user_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
+            }
             let html = '';
             r.attributes_types.forEach(function(attributes_type){
                 html += '<h4 style="padding: 10px;">' + attributes_type.name + '</h4><ul class="row">';
                 attributes_type.program_attributes.forEach(function(program_attribute){
                     if(program_attribute.risk == 0){
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-success btn-sm">' + program_attribute.value + ' </button></li>';
+                        var button_class = 'btn-success';
                     }
                     else if(program_attribute.risk == 1){
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-danger btn-sm">' + program_attribute.value + ' </button></li>';
+                        var button_class = 'btn-danger';
                     }
                     else{
-                        html += '<li class="col-6 py-2">' + program_attribute.name + ': <button type="button" class="btn btn-primary btn-sm">' + program_attribute.value + ' </button></li>';
+                        var button_class = 'btn-primary';
                     }
-
+                    html += '<li class="col-6 py-2"><span>' + program_attribute.name + ': </span><div class="dropdown">'+
+                            '<button class="btn '+button_class+' dropdown-toggle" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                            program_attribute.value+
+                            '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_'+program_attribute.program_attribute_id+'">';
+                    program_attribute.options.forEach(function(option){
+                        html += '<a class="dropdown-item" href="#row_'+instance_id+'" data-programattribute="'+program_attribute.program_attribute_id+'" data-threshold="'+program_attribute.threshold+'" data-value="'+option.value+'">'+option.label+'</a>';
+                    });
+                    html += '</div></div></li>';
                 });
                 html += '</ul>';
             });
             $("#ficha_instancia").html(html);
             //$("#ficha_observaciones").val(r.observaciones);
-            //$("#ficha_seguimiento").val(r.observaciones);
+            //$("#ficha_seguimiento").val(r.seguimiento);
             $('#overlay').fadeOut();
+            $(".dropdown-menu a").click(function(){
+              $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+              $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+              if($(this).data('value') <= $(this).data('threshold')){
+                $(this).parents(".dropdown").find('.btn').removeClass( "btn-success btn-danger btn-primary").addClass( "btn-danger");
+              }
+              else{
+                $(this).parents(".dropdown").find('.btn').removeClass( "btn-success btn-danger btn-primary").addClass( "btn-success");
+              }
+              instanceCardAttributes[$(this).data('programattribute')] = $(this).data('value');
+              instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
+            });
         })
     }
 
     function writeRow(instance){
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-            '<td><a href="https://program.afinidata.com/users/'+instance.user_id+'/" target="_blank"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', true)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', false)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
             '<td>'+instance.tel+'</td>' +
@@ -659,6 +696,25 @@ show{
         });
     }
 
+    function saveAttributes(){
+        $('#overlay').fadeIn();
+        let request = fetch(`${DOMAIN}/utilities/save_program_attributes/`, {
+           method: 'post',
+           body: instanceCardData
+        })
+        .then(r => r.json())
+        .then(r => {
+            $('#overlay').fadeOut();
+            SnoAlertBox();
+        })
+    }
+
+    function SnoAlertBox(){
+        $("#snoAlertBox").fadeIn();
+        window.setTimeout(function () {
+          $("#snoAlertBox").fadeOut(300)
+        }, 3000);
+    }
     (() => {
        window.addEventListener('load', e => {
             let data = new FormData();
@@ -675,7 +731,6 @@ show{
                 }
                 document.querySelector('#milestones_count').textContent = r.milestones_count;
                 chartMilestones.options.data[0].dataPoints = r.milestones;
-                chartMilestones.options.axisX.labelFontSize = 14;
                 $("#chartMilestonesContainer").show();
                 chartMilestones.render();
                 $('#milestonesCard').click(function () {
@@ -721,7 +776,7 @@ show{
             },
             axisX:{
               labelFontFamily: "tahoma",
-              labelFontSize: 16
+              labelFontSize: 14
             },
             data: [{
                 type: "bar",
