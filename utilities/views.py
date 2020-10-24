@@ -23,7 +23,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 from django.db.models import Max
 from django.db.models import Q
-from django.db.models import Count
+import json
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -321,6 +321,22 @@ class GroupInstanceCardView(View):
                 else:
                     attributevalue = AttributeValue.objects. \
                         filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
+                # Obtener solo los fields que tiene ese atribto
+                fields = [x.field_id for x in Reply.objects.filter(attribute=program_attribute.attribute.name)]
+                # Filtrar las interacciones de la instancia con dichos fields
+                interactions = SessionInteraction.objects.filter(instance_id=instance.id,
+                                                                 field_id__in=fields,
+                                                                 type='quick_reply').order_by('-id')
+                # Conjunto de posibles respuestas
+                if interactions.exists():
+                    interaction = interactions.first()  # Obtener la ultima sesion
+                    possible_replies = [dict(value=r.value, label=r.label)
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                                                      field_id=interaction.field_id).order_by('-id')]
+                else:
+                    possible_replies = [dict(value=r['value'], label=r['label'])
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name). \
+                                            values('value', 'label').distinct()]
                 if attributevalue.exists():
                     attribute = attributevalue.first()
                     if self.request.POST['type'] == 'user':
@@ -335,20 +351,33 @@ class GroupInstanceCardView(View):
                                                      value=interaction.value).order_by('-id')
                         if reply.exists():
                             value = reply.first().label
-                            if reply.first().value.isnumeric() and float(reply.first().value) <= program_attribute.threshold:
-                                risk = 1
+                            if reply.first().value.isnumeric():
+                                if float(reply.first().value) <= program_attribute.threshold:
+                                    risk = 1
+                                else:
+                                    risk = 0
                             else:
-                                risk = 0
+                                -1
                         else:
                             value = attribute.value
-                            if value.isnumeric() and float(value) <= program_attribute.threshold:
-                                risk = 1
+                            if value.isnumeric():
+                                if float(value) <= program_attribute.threshold:
+                                    risk = 1
+                                else:
+                                    risk = 0
                             else:
                                 risk = -1
                     else:
-                        value = attribute.value
-                        if value.isnumeric() and float(value) <= program_attribute.threshold:
-                            risk = 1
+                        reply_value = Reply.objects.filter(attribute=attribute.attribute.name, value=attribute.value)
+                        if reply_value.exists():
+                            value = reply_value.first().label
+                        else:
+                            value = attribute.value
+                        if attribute.value.isnumeric():
+                            if float(attribute.value) <= program_attribute.threshold:
+                                risk = 1
+                            else:
+                                risk = 0
                         else:
                             risk = -1
                 else:
@@ -356,7 +385,9 @@ class GroupInstanceCardView(View):
                     risk = -1
                 factores_riesgo.append(dict(name=program_attribute.label,
                                             program_attribute_id=program_attribute.id,
+                                            options=possible_replies,
                                             value=value,
+                                            threshold=program_attribute.threshold,
                                             risk=risk))
             if len(factores_riesgo) > 0:
                 factores.append(dict(attributes_type_id=attributes_type.id, name=attributes_type.name,
@@ -393,6 +424,34 @@ class GroupInstanceCardView(View):
                                  image="child_user_" + str((instance.id % 10) + 1) + ".jpg",
                                  observaciones=observaciones,
                                  seguimiento=seguimiento))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GroupInstanceCardSaveView(View):
+    def get(self, request, *args, **kwargs):
+        return Http404()
+
+    def post(self, request):
+        group = Group.objects.get(id=int(self.request.POST['group_id']))
+        program = group.programs.last()
+        instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
+        user = User.objects.get(id=int(self.request.POST['user_id']))
+        data = json.loads(self.request.POST['attributes'])
+        try:
+            if self.request.POST['type'] == 'user':
+                for key in data:
+                    program_attribute = ProgramAttribute.objects.get(id=key)
+                    UserData.objects.create(user=user, data_key=program_attribute.attribute.name,
+                                            attribute=program_attribute.attribute,
+                                            data_value=data[key])
+            else:
+                for key in data:
+                    program_attribute = ProgramAttribute.objects.get(id=key)
+                    AttributeValue.objects.create(instance=instance, attribute=program_attribute.attribute,
+                                                  value=data[key])
+            return JsonResponse(dict(status="done"))
+        except:
+            return JsonResponse(dict(status="failed"))
 
 
 class TranslateView(View):
