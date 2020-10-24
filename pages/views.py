@@ -66,6 +66,10 @@ class PasswordResetConfirmView(TemplateView):
     # TODO: validar nueva contraseña y actualizar en base de datos.
     template_name = 'pages/password_reset_confirm.html'
 
+
 class PasswordResetCompleteView(TemplateView):
     # TODO: mensaje de confirmacion de contraseña actualizada.
     template_name = 'pages/password_reset_complete.html'
+
+    def post(self, request, *args, **kwargs):
+        return super(TemplateView, self).render_to_response(self.get_context_data())
