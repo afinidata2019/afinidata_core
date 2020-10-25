@@ -120,7 +120,7 @@ class GroupAssignationsView(View):
                     or 'name' in self.request.POST or 'months' in self.request.POST\
                     or 'all' in self.request.POST:
                 instances_data = []
-                for assoc in group_instances[20*pag:20*(pag + 1)]:
+                for assoc in group_instances.order_by('-id')[20*pag:20*(pag + 1)]:
                     if assoc.instance.get_attribute_value(191):  # birthday
                         try:
                             birthday = parse(assoc.instance.get_attribute_value(191).value).strftime('%d/%m/%Y')
@@ -336,10 +336,10 @@ class GroupInstanceCardView(View):
         factores = []
         if self.request.POST['type'] == 'user':
             entities_attributes = [x.id for x in Entity.objects.get(id=4).attributes.all()]\
-                                  + [x.id for x in Entity.objects.get(id=5).attributes.all()]# child or pregnant
+                                  + [x.id for x in Entity.objects.get(id=5).attributes.all()]# caregiver or professional
         else:
             entities_attributes = [x.id for x in Entity.objects.get(id=1).attributes.all()] \
-                                  + [x.id for x in Entity.objects.get(id=2).attributes.all()]  # caregiver or professional
+                                  + [x.id for x in Entity.objects.get(id=2).attributes.all()] # child or pregnant
         for attributes_type in program.attributetype_set.all():
             factores_riesgo = []
             for program_attribute in attributes_type.attributes_set.filter(attribute__in=entities_attributes):
