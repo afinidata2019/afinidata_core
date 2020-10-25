@@ -15,6 +15,7 @@ from areas.models import Area
 from posts.models import Post
 from instances import forms
 from programs.models import Program
+from django.db.models import Max
 import datetime
 import calendar
 
@@ -290,11 +291,24 @@ class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'The value "%s" for attribute "%s" for instance: "%s" has been updated' % (
+        messages.success(self.request, 'El valor "%s" para el atributo "%s" de la instancia: "%s" fue actualizado' % (
             self.object.value, self.object.attribute.name, self.object.instance
         ))
-        return reverse_lazy('instances:instance', kwargs={'id': self.object.instance.pk})
+        return reverse_lazy('instances:instance_attribute_list', kwargs={'instance_id': self.object.instance.pk})
 
+
+class AttributeValueListView(PermissionRequiredMixin, ListView):
+    model = AttributeValue
+    permission_required = 'instances.change_attributevalue'
+    template_name = 'instances/attributevalue_list.html'
+    paginate_by = 20
+    login_url = reverse_lazy('pages:login')
+
+    def get_queryset(self):
+        qs = super(AttributeValueListView, self).get_queryset().filter(instance__id=self.kwargs['instance_id'])
+        last_attributes = qs.values('attribute__id').annotate(max_id=Max('id'))
+        qs = qs.filter(id__in=[x['max_id'] for x in last_attributes])
+        return qs
 
 class InstanceMilestonesListView(DetailView):
     model = Instance
