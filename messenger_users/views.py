@@ -12,6 +12,7 @@ from messenger_users import forms
 from dateutil.parser import parse
 from user_sessions.models import Session, Field, Message, Reply, Interaction as SessionInteraction
 from bots.models import UserInteraction
+from django.db.models import Max
 
 
 class HomeView(PermissionRequiredMixin, ListView):
@@ -174,6 +175,24 @@ class UserDataListView(PermissionRequiredMixin, ListView):
         return ctx
 
 
+class UserLastDataListView(PermissionRequiredMixin, ListView):
+    permission_required = 'messenger_users.add_userdata'
+    template_name = 'messenger_users/userlastdata_list.html'
+    model = UserData
+    paginate_by = 30
+
+    def get_queryset(self):
+        qs = super(UserLastDataListView, self).get_queryset().filter(user_id=self.kwargs['user_id'])
+        last_attributes = qs.values('attribute__id').annotate(max_id=Max('id'))
+        qs = qs.filter(id__in=[x['max_id'] for x in last_attributes]).order_by('-created')
+        return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super(UserLastDataListView, self).get_context_data()
+        ctx['user'] = User.objects.get(id=self.kwargs['user_id'])
+        return ctx
+
+
 class UserDataCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'messenger_users.add_userdata'
     model = UserData
@@ -190,7 +209,7 @@ class UserDataCreateView(PermissionRequiredMixin, CreateView):
         return super(UserDataCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, 'User data with key: "%s" with data "%s" for user: "%s" has been created.' % (
+        messages.success(self.request, 'El atributo: "%s" con valor "%s" del usuario: "%s" se ha creado.' % (
             self.object.data_key, self.object.data_value, self.object.user
         ))
         return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
@@ -209,10 +228,10 @@ class UserDataUpdateView(PermissionRequiredMixin, UpdateView):
         return c
 
     def get_success_url(self):
-        messages.success(self.request, 'User data with key: "%s" with data "%s" for user: "%s" has been updated.' % (
+        messages.success(self.request, 'El atributo: "%s" con valor "%s" del usuario: "%s" se ha actualizado.' % (
             self.object.data_key, self.object.data_value, self.object.user
         ))
-        return reverse_lazy('messenger_users:user', kwargs=dict(id=self.object.user_id))
+        return reverse_lazy('messenger_users:user_last_data_list', kwargs=dict(user_id=self.object.user_id))
 
 
 class UserDataDeleteView(PermissionRequiredMixin, DeleteView):
