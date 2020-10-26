@@ -22,6 +22,22 @@ class SessionListView(PermissionRequiredMixin, ListView):
         return c
 
 
+class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
+    permission_required = 'user_sessions.view_session'
+    model = models.Interaction
+    paginate_by = 30
+    template_name = 'user_sessions/reply_correction_list.html'
+
+    def get_queryset(self):
+        qs = super(ReplyCorrectionListView, self).get_queryset().exclude(text__isnull=True)
+        return qs
+
+class ReplyCorrectionView(PermissionRequiredMixin, DetailView):
+    permission_required = 'user_sessions.view_session'
+    model = models.Interaction
+    template_name = 'user_sessions/reply_correction.html'
+
+
 class SessionDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'user_sessions.view_session'
     model = models.Session

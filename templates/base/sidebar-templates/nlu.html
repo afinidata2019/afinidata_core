@@ -1,0 +1,16 @@
+{% if perms.attributes.view_all_attributes %}
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTopics" aria-expanded="true" aria-controls="collapseTopics">
+      <i class="fas fa-book-open"></i>
+      <span>NLU</span>
+    </a>
+    <div id="collapseTopics" class="collapse" aria-labelledby="collapseTopics" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">NLU:</h6>
+        <a class="collapse-item" href="{% url 'user_sessions:nlu_correction_list' %}">Corregir entradas</a>
+      </div>
+    </div>
+</li>
+
+{% endif %}
