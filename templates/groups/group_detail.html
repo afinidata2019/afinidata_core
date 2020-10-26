@@ -85,6 +85,18 @@
                       <h6 class="m-0 font-weight-bold text-primary">Asignaciones</h6>
                     </div>
                     <div class="card-body">
+                        <strong class="text-gray-900">Bots:
+                            {% if not object.bots.exists %}
+                                <a href="{% url 'groups:add_bot' group_id=object.pk %}">Agregar</a>
+                            {% endif %}
+                        </strong>
+                        <ul>
+                            {% for bot in object.bots.all %}
+                                <li>
+                                    <strong class="text-gray-900">{{ bot.name }}</strong>
+                                </li>
+                            {% endfor %}
+                        </ul>
                         <strong class="text-gray-900">Programas:
                             {% if not object.programs.exists %}
                                  <a href="{% url 'groups:add_program' group_id=object.pk %}">Agregar</a>

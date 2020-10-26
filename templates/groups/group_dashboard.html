@@ -298,9 +298,24 @@
       <div class="modal-body">
         <div class="container" id="ficha_instancia">
         </div>
+          <div class="container" id="ficha_observaciones_grupo">
+            <h4 class="modal-title" style="padding: 10px;">Seguimiento:</h4>
+            <div class="row" style="width:100%; padding-left:40px;">
+                <select class="form-control" id="ficha_seguimiento">
+                  <option value="">Sin seguimiento</option>
+                  <option value="1">Pendiente</option>
+                  <option value="2">En progreso</option>
+                  <option value="3">Atendido</option>
+                </select>
+            </div>
+            <h4 class="modal-title" style="padding: 10px;">Observaciones:</h4>
+            <div class="row" style="width:100%; padding-left:40px;">
+                    <textarea class="form-control" id="ficha_observaciones" rows="2"></textarea>
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes" disabled>Guardar cambios <i class="far fa-save"></i></button>
+        <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes">Guardar cambios <i class="far fa-save"></i></button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i class="fas fa-reply"></i></button>
       </div>
     </div>
@@ -537,7 +552,6 @@ show{
         instanceCardData.set('instance_id', instance_id);
         instanceCardData.set('user_id', user_id);
         instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
-        $('#button_guardar_attributes').prop('disabled', true);
         if(tipo){
             data.set('type', String('instance'));
             instanceCardData.set('type', String('instance'));
@@ -575,20 +589,26 @@ show{
                     else{
                         var button_class = 'btn-primary';
                     }
-                    html += '<li class="col-6 py-2"><span>' + program_attribute.name + ': </span><div class="dropdown">'+
+                    html += '<li class="col-6 py-2"><div class="d-flex flex-wrap p-2"><span class="pr-2">' + program_attribute.name + ': </span><div class="dropdown">'+
                             '<button class="btn '+button_class+' dropdown-toggle" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
                             program_attribute.value+
                             '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_'+program_attribute.program_attribute_id+'">';
                     program_attribute.options.forEach(function(option){
                         html += '<a class="dropdown-item" href="#row_'+instance_id+'" data-programattribute="'+program_attribute.program_attribute_id+'" data-threshold="'+program_attribute.threshold+'" data-value="'+option.value+'">'+option.label+'</a>';
                     });
-                    html += '</div></div></li>';
+                    html += '</div></div></div></li>';
                 });
                 html += '</ul>';
             });
             $("#ficha_instancia").html(html);
-            //$("#ficha_observaciones").val(r.observaciones);
-            //$("#ficha_seguimiento").val(r.seguimiento);
+            if(tipo){
+                $("#ficha_observaciones_grupo").show();
+                $("#ficha_seguimiento").val(r.seguimiento);
+                $("#ficha_observaciones").val(r.observaciones);
+            }
+            else{
+                $("#ficha_observaciones_grupo").hide();
+            }
             $('#overlay').fadeOut();
             $(".dropdown-menu a").click(function(){
               $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
@@ -601,7 +621,7 @@ show{
               }
               instanceCardAttributes[$(this).data('programattribute')] = $(this).data('value');
               instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
-              $('#button_guardar_attributes').prop('disabled', false);
+              //$('#button_guardar_attributes').prop('disabled', false);
             });
         })
     }
@@ -702,12 +722,15 @@ show{
 
     function saveAttributes(){
         $('#overlay').fadeIn();
+        instanceCardData.set('seguimiento', String($("#ficha_seguimiento").val()));
+        instanceCardData.set('observaciones', String($("#ficha_observaciones").val()));
         let request = fetch(`${DOMAIN}/utilities/save_program_attributes/`, {
            method: 'post',
            body: instanceCardData
         })
         .then(r => r.json())
         .then(r => {
+            console.log(r);
             $('#overlay').fadeOut();
             SnoAlertBox();
         })
