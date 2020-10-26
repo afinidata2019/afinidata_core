@@ -12,19 +12,19 @@ class PasswordResetDoneView(TemplateView):
         # TODO: generar token para cambio de constraseña
         # TODO: guardar en base de datos
         # TODO: enviar email
-        return super(TemplateView, self).render_to_response(self.get_context_data())
+        return render(request, self.template_name, {'data': "test"})
 
 class PasswordResetConfirmView(TemplateView):
-    # TODO: comprobar token
-    # TODO: mostrar formulario de cambio constraseña
-    # TODO: validar nueva contraseña y actualizar en base de datos.
     template_name = 'user_passwd_reset/password_reset_confirm.html'
 
 
 class PasswordResetCompleteView(TemplateView):
+    # TODO: comprobar token
+    # TODO: mostrar formulario de cambio constraseña
+    # TODO: validar nueva contraseña y actualizar en base de datos.
     # TODO: mensaje de confirmacion de contraseña actualizada.
     template_name = 'user_passwd_reset/password_reset_complete.html'
 
     def post(self, request, *args, **kwargs):
-        return super(TemplateView, self).render_to_response(self.get_context_data())
+        return render(request, self.template_name, {'data': "test"})
 
