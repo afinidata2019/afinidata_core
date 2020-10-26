@@ -230,3 +230,24 @@ class AddProgramView(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         messages.success(self.request, 'Program added to group')
         return reverse_lazy('groups:group', kwargs={'group_id': self.kwargs['group_id']})
+
+
+class AddBotView(PermissionRequiredMixin, CreateView):
+    template_name = 'groups/add_bot.html'
+    permission_required = 'groups.change_group'
+    model = models.BotAssignation
+    fields = ('bot',)
+
+    def form_valid(self, form):
+        form.instance.group_id = self.kwargs['group_id']
+        form.instance.user = self.request.user
+        return super(AddBotView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, 'Bot added to group')
+        return reverse_lazy('groups:group', kwargs={'group_id': self.kwargs['group_id']})
+
+    def get_context_data(self, **kwargs):
+        c = super(AddBotView, self).get_context_data(**kwargs)
+        c['group'] = models.Group.objects.get(id=self.kwargs['group_id'])
+        return c
