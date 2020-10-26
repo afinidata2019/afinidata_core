@@ -5,6 +5,8 @@ app_name = 'sessions'
 
 urlpatterns = [
     path('', views.SessionListView.as_view(), name='session_list'),
+    path('interactions/', views.ReplyCorrectionListView.as_view(), name='nlu_correction_list'),
+    path('interactions/<int:interaction_id>/', views.ReplyCorrectionView.as_view(), name='nlu_correction'),
     path('create/', views.SessionCreateView.as_view(), name='session_create'),
     path('<int:session_id>/', views.SessionDetailView.as_view(), name='session_detail'),
     path('<int:session_id>/edit/', views.SessionUpdateView.as_view(), name='session_update'),
