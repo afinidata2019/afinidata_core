@@ -447,6 +447,12 @@ class GroupInstanceCardSaveView(View):
                     program_attribute = ProgramAttribute.objects.get(id=key)
                     AttributeValue.objects.create(instance=instance, attribute=program_attribute.attribute,
                                                   value=data[key])
+            if 'observaciones' in self.request.POST:
+                AttributeValue.objects.create(instance=instance, attribute_id=252,
+                                              value=self.request.POST['observaciones'])#observaciones
+            if 'seguimiento' in self.request.POST:
+                AttributeValue.objects.create(instance=instance, attribute_id=253,
+                                              value=self.request.POST['seguimiento'])#seguimiento
             return JsonResponse(dict(status="done"))
         except:
             return JsonResponse(dict(status="failed"))
