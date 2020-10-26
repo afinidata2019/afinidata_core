@@ -22,7 +22,7 @@ class BotView(LoginRequiredMixin, DetailView):
 
 class CreateBotView(LoginRequiredMixin, CreateView):
     model = models.Bot
-    fields = ('name', 'description')
+    fields = ('name', 'url', 'description')
     login_url = reverse_lazy('pages:login')
 
     def get_context_data(self, **kwargs):
@@ -37,7 +37,7 @@ class CreateBotView(LoginRequiredMixin, CreateView):
 
 class UpdateBotView(LoginRequiredMixin, UpdateView):
     model = models.Bot
-    fields = ('name', 'description')
+    fields = ('name', 'url', 'description')
     pk_url_kwarg = 'bot_id'
     login_url = reverse_lazy('pages:login')
 
