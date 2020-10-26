@@ -133,10 +133,15 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                     months = '---'
                 instance.months = months
                 instance.image = "images/child_user_" + str((instance.id % 10) + 1) + ".jpg"
-        try:
-            c['ref'] = "m.me/afinidatatutor?ref=" + self.object.code_set.all().last().code
-        except:
-            c['ref'] = "m.me/afinidatatutor?ref="
+        if self.object.bots.exists():
+            if self.object.bots.first().url:
+                c['ref'] = self.object.bots.first().url
+            else:
+                c['ref'] = "m.me/afinidata"
+
+        if self.object.code_set.exists():
+            c['ref'] = "%s?ref=%s" % (c['ref'], self.object.code_set.all().last().code)
+
         return c
 
 
