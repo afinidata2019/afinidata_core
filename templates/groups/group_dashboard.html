@@ -276,7 +276,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" onclick="saveAttributes()">Guardar cambios <i class="far fa-save"></i></button>
+        <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes" disabled>Guardar cambios <i class="far fa-save"></i></button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i class="fas fa-reply"></i></button>
       </div>
     </div>
@@ -493,7 +493,7 @@ show{
                     total_pag = Math.ceil(r.total/20)-1;
                     $("#pag_last").html(total_pag+1);
                     $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
-                    if(Number(total_pag) == 0){ $("#pagination").hide(); }
+                    if(Number(total_pag) <= 0){ $("#pagination").hide(); }
                     else{ $("#pagination").show(); }
                 }
                 callback(r);
@@ -507,10 +507,13 @@ show{
         data.set('group_id', String(GROUP_ID));
         data.set('instance_id', String(instance_id));
         data.set('user_id', String(user_id));
+        instanceCardAttributes = {};
         instanceCardData = new FormData();
         instanceCardData.set('group_id', String(GROUP_ID));
         instanceCardData.set('instance_id', instance_id);
         instanceCardData.set('user_id', user_id);
+        instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
+        $('#button_guardar_attributes').prop('disabled', true);
         if(tipo){
             data.set('type', String('instance'));
             instanceCardData.set('type', String('instance'));
@@ -574,6 +577,7 @@ show{
               }
               instanceCardAttributes[$(this).data('programattribute')] = $(this).data('value');
               instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
+              $('#button_guardar_attributes').prop('disabled', false);
             });
         })
     }

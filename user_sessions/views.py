@@ -28,6 +28,10 @@ class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
     paginate_by = 30
     template_name = 'user_sessions/reply_correction_list.html'
 
+    def get_queryset(self):
+        qs = super(ReplyCorrectionListView, self).get_queryset().exclude(text__isnull=True)
+        return qs
+
 
 class ReplyCorrectionView(PermissionRequiredMixin, DetailView):
     permission_required = 'user_sessions.view_session'
