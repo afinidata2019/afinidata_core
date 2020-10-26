@@ -32,8 +32,8 @@
                                 <td>{{ object.text }}</td>
                                 <td>{{ object.created_at }}</td>
                                 <td>
-                                <a href="{% url 'user_sessions:nlu_correction' session_id=object.pk %}"
-                                       class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                                <a href="{% url 'sessions:nlu_correction' interaction_id=object.pk %}"
+                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
