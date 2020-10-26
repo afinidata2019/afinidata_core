@@ -168,6 +168,7 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         self.object.rolegroupuser_set.create(user=self.request.user, role='administrator')
+        self.object.botassignation_set.create(user=self.request.user, bot_id=self.request.POST['bot'])
         program = Program.objects.get(id=self.request.POST['program'])
         self.object.programs.add(program)
         messages.success(self.request, 'Grupo con nombre: "%s" ha sido creado.' % self.object.name)
