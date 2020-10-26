@@ -460,12 +460,10 @@ class GroupInstanceCardSaveView(View):
         return Http404()
 
     def post(self, request):
-        group = Group.objects.get(id=int(self.request.POST['group_id']))
-        program = group.programs.last()
-        instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
-        user = User.objects.get(id=int(self.request.POST['user_id']))
-        data = json.loads(self.request.POST['attributes'])
         try:
+            instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
+            user = User.objects.get(id=int(self.request.POST['user_id']))
+            data = json.loads(self.request.POST['attributes'])
             if self.request.POST['type'] == 'user':
                 for key in data:
                     program_attribute = ProgramAttribute.objects.get(id=key)
