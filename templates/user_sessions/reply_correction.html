@@ -1,47 +1,27 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Corregir respuestas{% endblock %}
+{% block title %}{{action}} Corregir respuesta{% endblock %}
 
 {% block content %}
+
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Corregir respuestas</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} Respuesta</h1>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Respuestas</h6>
-            </div>
             <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                          <th>Pregunta</th>
-                          <th>Respuesta</th>
-                          <th>Creado</th>
-                          <th>Editar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for object in object_list %}
-                            <tr>
-                                <td>{{ object.id }}</td>
-                                <td>{{ object.id }}</td>
-                                <td>{{ object.id }}</td>
-                                <td>
-                                <a href="{% url 'user_sessions:session_detail' session_id=object.pk %}"
-                                       class="btn btn-primary"><i class="fas fa-eye"></i></a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-              {% include 'base/pagination.html' %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {% include 'base/default_form.html' %}
+                    <br/><br/>
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button role="submit" class="btn btn-primary">{{ action }} Respuesta</button>
+                </form>
             </div>
         </div>
-    </div>
+     </div>
+
 {% endblock %}

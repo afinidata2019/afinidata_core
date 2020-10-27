@@ -1,5 +1,6 @@
 from messenger_users.models import User
 from programs.models import Program
+from bots.models import Bot
 from django import forms
 from groups import models
 
@@ -15,6 +16,7 @@ class AddProgramForm(forms.Form):
 
 class CreateGroup(forms.ModelForm):
     program = forms.ModelChoiceField(queryset=Program.objects.all())
+    bot = forms.ModelChoiceField(queryset=Bot.objects.all())
 
     class Meta:
         model = models.Group
