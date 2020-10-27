@@ -42,7 +42,6 @@ class PasswordResetDoneView(TemplateView):
 
             enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=email)
 
-
         return render(request, self.template_name)
 
 class PasswordResetConfirmView(TemplateView):
