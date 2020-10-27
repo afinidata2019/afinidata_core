@@ -3,6 +3,10 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from user_sessions import models, forms
+from attributes.models import Attribute
+from entities.models import Entity
+from instances.models import AttributeValue
+from messenger_users.models import UserData
 
 
 class SessionListView(PermissionRequiredMixin, ListView):
@@ -29,14 +33,65 @@ class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
     template_name = 'user_sessions/reply_correction_list.html'
 
     def get_queryset(self):
-        qs = super(ReplyCorrectionListView, self).get_queryset().exclude(text__isnull=True)
+        qs = super(ReplyCorrectionListView, self).get_queryset().\
+            exclude(text__isnull=True).filter(value=0).order_by('-id')
+        for interaction in qs:
+            interaction.attribute = ''
+            interaction.question = ''
+            reply = models.Reply.objects.filter(field_id=interaction.field_id)
+            if reply.exists():
+                interaction.attribute = reply.last().attribute
+            field = models.Field.objects.get(id=interaction.field_id)
+            question_field = models.Field.objects.filter(session_id=interaction.session_id, position=field.position-1)
+            if question_field.exists():
+                message = models.Message.objects.filter(field_id=question_field.last().id)
+                if message.exists():
+                    interaction.question = message.last().text
         return qs
 
 
-class ReplyCorrectionView(PermissionRequiredMixin, DetailView):
+class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.view_session'
+    login_url = reverse_lazy('pages:login')
     model = models.Interaction
+    pk_url_kwarg = 'interaction_id'
+    form_class = forms.InteractionForm
     template_name = 'user_sessions/reply_correction.html'
+
+    def get_success_url(self):
+        messages.success(self.request, 'El atributo fue actualizado.')
+        return reverse_lazy('sessions:nlu_correction_list')
+
+    def get_context_data(self, **kwargs):
+        c = super(ReplyCorrectionView, self).get_context_data()
+        reply = models.Reply.objects.filter(field_id=self.object.field_id)
+        if reply.exists():
+            c['replies'] = models.Reply.objects.exclude(attribute__isnull=True).\
+                filter(attribute=reply.last().attribute).values('value', 'label').distinct()
+        else:
+            c['replies'] = []
+        c['action'] = 'Editar'
+        return c
+
+    def form_valid(self, form):
+        self.object.value = form.cleaned_data.get('options')
+        self.object.save()
+        user_attributes = [x.id for x in Entity.objects.get(id=4).attributes.all()] \
+                              + [x.id for x in Entity.objects.get(id=5).attributes.all()]# caregiver or professional
+        instance_attributes = [x.id for x in Entity.objects.get(id=1).attributes.all()] \
+                              + [x.id for x in Entity.objects.get(id=2).attributes.all()]  # child or pregnant
+        attribute = Attribute.objects.filter(name=form.cleaned_data.get('attribute'))
+        if attribute.exists():
+            if attribute.filter(id__in=user_attributes).exists():
+                UserData.objects.create(user_id=self.object.user_id,
+                                        attribute_id=attribute.last().id,
+                                        data_key=attribute.last().name,
+                                        data_value=self.object.value)
+            if attribute.filter(id__in=instance_attributes).exists():
+                AttributeValue.objects.create(instance_id=self.object.instance_id,
+                                              attribute_id=attribute.last().id,
+                                              value=self.object.value)
+        return super(ReplyCorrectionView, self).form_valid(form)
 
 
 class SessionDetailView(PermissionRequiredMixin, DetailView):
