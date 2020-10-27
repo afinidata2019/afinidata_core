@@ -40,3 +40,40 @@ class UserInputForm(forms.ModelForm):
     class Meta:
         model = models.UserInput
         fields = ('text', 'validation', 'attribute', 'session')
+
+
+class InteractionForm(forms.ModelForm):
+    session_name = forms.CharField()
+    question = forms.CharField()
+    attribute = forms.CharField()
+    options = forms.ChoiceField(choices=[])
+
+    def __init__(self, *args, **kwargs):
+        super(InteractionForm, self).__init__(*args, **kwargs)
+        choices = []
+        for rep in models.Reply.objects.exclude(attribute__isnull=True). \
+                filter(field_id=self.instance.field_id).values('value', 'label', 'attribute').distinct():
+            choices.append((rep['value'], rep['label']))
+            self.fields['attribute'].initial = rep['attribute']
+        self.fields['options'].choices = choices
+        self.fields['session_name'].initial = models.Session.objects.get(id=self.instance.session_id).name
+        self.fields['question'].initial = ''
+        field = models.Field.objects.get(id=self.instance.field_id)
+        question_field = models.Field.objects.filter(session_id=self.instance.session_id, position=field.position - 1)
+        if question_field.exists():
+            message = models.Message.objects.filter(field_id=question_field.last().id)
+            if message.exists():
+                self.fields['question'].initial = message.last().text
+        self.fields['session_name'].widget.attrs['readonly'] = True
+        self.fields['question'].widget.attrs['readonly'] = True
+        self.fields['attribute'].widget.attrs['readonly'] = True
+        self.fields['text'].widget.attrs['readonly'] = True
+        self.fields['session_name'].label = 'Sesion'
+        self.fields['question'].label = 'Pregunta'
+        self.fields['attribute'].label = 'Atributo'
+        self.fields['text'].label = 'Respuesta del usuario'
+        self.fields['options'].label = 'Opciones válidas'
+
+    class Meta:
+        fields = ('session_name', 'question', 'attribute', 'text', 'options')
+        model = models.Interaction
