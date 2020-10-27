@@ -19,18 +19,18 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                          <th>Atributo</th>
                           <th>Pregunta</th>
                           <th>Respuesta</th>
-                          <th>Creado</th>
                           <th>Editar</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for object in object_list %}
                             <tr>
-                                <td>{{ object.id }}</td>
+                                <td>{{ object.attribute }}</td>
+                                <td>{{ object.question }}</td>
                                 <td>{{ object.text }}</td>
-                                <td>{{ object.created_at }}</td>
                                 <td>
                                 <a href="{% url 'sessions:nlu_correction' interaction_id=object.pk %}"
                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
