@@ -1,20 +1,48 @@
-from django.shortcuts import render, HttpResponse
-from django.views.generic import TemplateView
-from user_passwd_reset.forms import PasswordResetForm
 from .models import PasswdReset
 from django.contrib.auth.models import User
+from django.views.generic import TemplateView
+from django.shortcuts import render, HttpResponse
+from django.utils.crypto import get_random_string
+from user_passwd_reset.forms import PasswordResetForm, EmailSendForm
+from django.template.loader import render_to_string
+
+from django.core.mail import send_mail
 
 # Create your views here.
+def enviar_correo(template, **kwargs):
+    send_mail(
+        kwargs['asunto'],
+        '',
+        'from@example.com',
+        [kwargs['para']],
+        fail_silently=False,
+        html_message=render_to_string(template)
+    )
+
 class PasswordResetView(TemplateView):
     template_name = 'user_passwd_reset/password_reset.html'
+    form = EmailSendForm()
+
+    def get_context_data(self, **kwargs):
+        context = super(PasswordResetView, self).get_context_data(**kwargs)
+        context.update({'form': self.form})
+        return context
 
 class PasswordResetDoneView(TemplateView):
     template_name = 'user_passwd_reset/password_reset_done.html'
 
     def post(self, request, *args, **kwargs):
-        # TODO: generar token para cambio de constraseña
-        # TODO: guardar en base de datos
-        # TODO: enviar email
+        token = get_random_string(60)
+        email = request.POST['email']
+
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            passw_reset = PasswdReset(token=token, status=0, user_id=user.id)
+            passw_reset.save()
+
+            enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=email)
+
+
         return render(request, self.template_name)
 
 class PasswordResetConfirmView(TemplateView):
@@ -48,7 +76,8 @@ class PasswordResetConfirmView(TemplateView):
             user.set_password(form.cleaned_data.get('password'))
             user.save()
 
-            # TODO: enviar email de "cambiaste tu contraseña"
+            enviar_correo('user_passwd_reset/email_password_change.html',asunto="Contraseña actualizada", para=user.email)
+
             return render(request, 'user_passwd_reset/password_reset_complete.html')
         else:
             return render(request, self.template_name, {'form':form, 'token': kwargs['token'], 'valid_token': self.check_token(token)})

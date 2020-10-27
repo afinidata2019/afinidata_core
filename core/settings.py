@@ -232,3 +232,10 @@ MESSAGE_TAGS = {
     30: 'alert-warning',
     40: 'alert-danger'
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'test.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'jotta@jotta.com'
+EMAILS_HOST_PASSWORD = '12345'
+EMAIL_HOST_TLS= True
