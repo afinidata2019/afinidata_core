@@ -86,7 +86,7 @@ class GroupAssignationsView(View):
                         if len(risks) > 0:
                             last_responses = instance.response_set.filter(milestone_id__in=risks).\
                                 values('milestone_id').annotate(max_id=Max('id'))
-                            responses = instance.response_set.filter(response='failed',
+                            responses = instance.response_set.filter(response__in=['failed', 'dont-know'],
                                                                      id__in=[x['max_id'] for x in last_responses])
                             if responses.exists():
                                 group_instances = group_instances.union(set([instance.id]))
@@ -223,8 +223,8 @@ class GroupAssignationsView(View):
                         risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
                         last_responses = instance.response_set.filter(milestone_id__in=risks).values('milestone_id').\
                             annotate(max_id=Max('id'))
-                        responses = instance.response_set.filter(response='failed', id__in=[x['max_id']
-                                                                                            for x in last_responses])
+                        responses = instance.response_set.filter(response__in=['failed', 'dont-know'],
+                                                                 id__in=[x['max_id'] for x in last_responses])
                         if responses.exists():
                             milestones_count = milestones_count + 1
                         for response in responses:
