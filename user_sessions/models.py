@@ -96,8 +96,8 @@ class Interaction(models.Model):
     """
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, null=True)
-    user = models.IntegerField(null=True)
-    instance = models.IntegerField(null=True)
+    user_id = models.IntegerField(null=True)
+    instance_id = models.IntegerField(null=True)
     bot_id = models.IntegerField(default=1)
     type = models.CharField(max_length=255, default='open')
     value = models.IntegerField(default=0, null=True)
