@@ -1,25 +1,21 @@
 from .models import PasswdReset
+from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.shortcuts import render, HttpResponse
 from django.utils.crypto import get_random_string
-from user_passwd_reset.forms import PasswordResetForm, EmailSendForm
 from django.template.loader import render_to_string
-
-from django.core.mail import send_mail
+from user_passwd_reset.forms import PasswordResetForm, EmailSendForm
 
 # Create your views here.
-def test_view(request):
-    return render(request, 'user_passwd_reset/email_password_reset.html')
-
-def enviar_correo(template, **kwargs):
+def enviar_correo(template, asunto, para, user, token='', request=None):
     send_mail(
-        kwargs['asunto'],
+        asunto,
         '',
         'from@example.com',
-        [kwargs['para']],
+        para,
         fail_silently=False,
-        html_message=render_to_string(template,{'token':kwargs['token'], 'user':kwargs['user']}, kwargs['request'])
+        html_message=render_to_string(template,{'token':token, 'user':user}, request)
     )
 
 class PasswordResetView(TemplateView):
@@ -43,7 +39,7 @@ class PasswordResetDoneView(TemplateView):
             passw_reset = PasswdReset(token=token, status=0, user_id=user.id)
             passw_reset.save()
 
-            enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=email, user=user, token=token, request=request)
+            enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=[email], user=user, token=token, request=request)
 
         return render(request, self.template_name)
 
@@ -78,7 +74,7 @@ class PasswordResetConfirmView(TemplateView):
             user.set_password(form.cleaned_data.get('password'))
             user.save()
 
-            enviar_correo('user_passwd_reset/email_password_change.html',asunto="Contraseña actualizada", para=user.email)
+            enviar_correo('user_passwd_reset/email_password_change.html',asunto="Contraseña actualizada", para=[user.email], user=user, request=request)
 
             return render(request, 'user_passwd_reset/password_reset_complete.html')
         else:
