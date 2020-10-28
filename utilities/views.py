@@ -140,12 +140,20 @@ class GroupAssignationsView(View):
                         age = relativedelta(datetime.datetime.now(), parse(assoc.instance.get_attribute_value(191).value))
                         months = ''
                         if age.months:
-                            months = str(age.months) + ' meses'
+                            if age.months == 1:
+                                months = str(age.months) + ' mes'
+                            else:
+                                months = str(age.months) + ' meses'
                         if age.years:
                             if age.years == 1:
                                 months = str(age.years) + ' año ' + months
                             else:
                                 months = str(age.years) + ' años ' + months
+                        elif age.months == 0:
+                            if age.weeks == 1:
+                                months = str(age.weeks) + ' semana'
+                            else:
+                                months = str(age.weeks) + ' semanas'
                     except:
                         months = 0
                     risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
@@ -334,6 +342,15 @@ class GroupInstanceCardView(View):
         instance = Instance.objects.get(id=int(self.request.POST['instance_id']))
         user = User.objects.get(id=int(self.request.POST['user_id']))
         factores = []
+        try:
+            age = relativedelta(datetime.datetime.now(), parse(instance.get_attribute_value(191).value))  # birthday
+            months = 0
+            if age.months:
+                months = age.months
+            if age.years:
+                months = months + (age.years * 12)
+        except:
+            months = None
         if self.request.POST['type'] == 'user':
             entities_attributes = [x.id for x in Entity.objects.get(id=4).attributes.all()]\
                                   + [x.id for x in Entity.objects.get(id=5).attributes.all()]# caregiver or professional
@@ -361,9 +378,17 @@ class GroupInstanceCardView(View):
                     possible_replies = [dict(value=r.value, label=r.label)
                                         for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
                                                                       field_id=interaction.field_id).order_by('-id')]
+                elif months:
+                    possible_replies = [dict(value=r['value'], label=r['label'])
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                                                      field__session__programs=program,
+                                                                      field__session__min__lte=months,
+                                                                      field__session__max__gte=months).\
+                                            values('value', 'label').distinct()]
                 else:
                     possible_replies = [dict(value=r['value'], label=r['label'])
-                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name). \
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                                                      field__session__programs=program). \
                                             values('value', 'label').distinct()]
                 if attributevalue.exists():
                     attribute = attributevalue.first()
