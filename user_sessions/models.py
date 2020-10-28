@@ -6,6 +6,8 @@ from programs.models import Program
 from entities.models import Entity
 from areas.models import Area
 from django.db import models
+from messenger_users.models import User as MessengerUser
+from instances.models import Instance
 
 
 class SessionType(models.Model):
@@ -96,8 +98,8 @@ class Interaction(models.Model):
     """
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, null=True)
-    user_id = models.IntegerField(default=0)
-    instance_id = models.IntegerField(default=0)
+    user_id = models.ForeignKey(MessengerUser, on_delete=models.CASCADE, null=True)
+    instance_id = models.ForeignKey(Instance, on_delete=models.CASCADE, null=True)
     bot_id = models.IntegerField(default=1)
     type = models.CharField(max_length=255, default='open')
     value = models.IntegerField(default=0, null=True)
