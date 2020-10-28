@@ -1,3 +1,4 @@
+from messenger_users.models import User as MessengerUser
 from django.contrib.auth.models import User
 from articles.models import Demographic
 from attributes.models import Attribute
@@ -98,7 +99,7 @@ class Interaction(models.Model):
     """
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, null=True)
-    user = models.IntegerField(null=True)
+    user = models.ForeignKey(MessengerUser, on_delete=models.CASCADE, null=True)
     instance = models.ForeignKey(Instance, on_delete=models.SET_NULL, null=True)
     bot_id = models.IntegerField(default=1)
     type = models.CharField(max_length=255, default='open')
