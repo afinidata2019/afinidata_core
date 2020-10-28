@@ -220,8 +220,9 @@
                             <th scope="col">Fecha de nacimiento</th>
                             <th scope="col">Teléfono</th>
                             <th scope="col">Dirección</th>
-                            <th scope="col">Nivel de riesgo</th>
-                            <th scope="col">Reporte</th>
+                            <th scope="col">Nivel de riesgo
+                                <a href="" data-toggle="modal" data-target="#infoModal"><i class="far fa-question-circle"></i></a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -293,6 +294,40 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes">Guardar cambios <i class="far fa-save"></i></button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i class="fas fa-reply"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="infoModalLabel">Niveles de riesgo</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Existen tres niveles de riesgo:
+          <ul>
+              <li><div class="d-flex flex-wrap p-2">
+                  <button type="button" class="btn btn-success">Bajo</button>
+                  <span class="px-3">No se encontró ningún riesgo en el desarrollo del niño ni tiene antecedentes de riesgo.</span>
+              </div></li>
+              <li><div class="d-flex flex-wrap p-2">
+                  <button type="button" class="btn btn-warning">Medio</button>
+                  <span class="px-3">Tiene entre 1 y 3 riesgos en el desarrollo o antecedentes de riesgo.</span>
+              </div></li>
+              <li><div class="d-flex flex-wrap p-2">
+                  <button type="button" class="btn btn-danger">Alto</button>
+                  <span class="px-3">Se encontraron 4 o más riesgos en el desarrollo del niño o antecedentes de riesgo.</span>
+              </div></li>
+            </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
       </div>
     </div>
   </div>
@@ -614,8 +649,7 @@ show{
         if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
         else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
         else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
-
-        rowHTML +='<td><button class="btn reportButton"><a href="https://contentmanager.afinidata.com/instances/'+instance.id+'/milestones/" class="btn btn-primary" role="button" target="_blank" aria-pressed="true"><i class="far fa-chart-bar"></i></a></button></td></tr>';
+        rowHTML +='</tr>';
         $("#table_id tbody").append(rowHTML);
     }
 
