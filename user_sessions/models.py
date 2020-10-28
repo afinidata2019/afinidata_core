@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from articles.models import Demographic
 from attributes.models import Attribute
+from instances.models import Instance
 from licences.models import License
 from programs.models import Program
 from entities.models import Entity
@@ -80,6 +81,7 @@ class Field(models.Model):
                 return field_type[1]
         return self.field_type
 
+
 class Interaction(models.Model):
     """
     Tracking the user interaction with the sessions
@@ -96,8 +98,8 @@ class Interaction(models.Model):
     """
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, null=True)
-    user_id = models.IntegerField(null=True)
-    instance_id = models.IntegerField(null=True)
+    user = models.IntegerField(null=True)
+    instance = models.ForeignKey(Instance, on_delete=models.SET_NULL, null=True)
     bot_id = models.IntegerField(default=1)
     type = models.CharField(max_length=255, default='open')
     value = models.IntegerField(default=0, null=True)
