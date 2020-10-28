@@ -33,8 +33,8 @@ class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
     template_name = 'user_sessions/reply_correction_list.html'
 
     def get_queryset(self):
-        qs = super(ReplyCorrectionListView, self).get_queryset().\
-            exclude(text__isnull=True).filter(value=0).order_by('-id')
+        qs = super(ReplyCorrectionListView, self).get_queryset().filter(type='quick_reply').\
+            exclude(text__isnull=True).filter(value__isnull=True).order_by('-id')
         for interaction in qs:
             interaction.attribute = ''
             interaction.question = ''
