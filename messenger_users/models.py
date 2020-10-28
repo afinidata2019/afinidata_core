@@ -1,4 +1,3 @@
-from user_sessions.models import Interaction as SessionInteraction
 from articles.models import Interaction as ArticleInteraction
 from posts.models import Interaction as PostInteraction
 from posts.models import Post
@@ -137,11 +136,7 @@ class User(models.Model):
         return ai
 
     def get_session_interactions(self):
-        si = SessionInteraction.objects.filter(user_id=self.pk).order_by('-id')
-        for s in si:
-            if s.instance_id:
-                s.instance = InstanceModels.Instance.objects.filter(id=s.instance_id).first()
-        return si
+        return None
 
     def get_attributes(self):
         entities = Entity.objects.filter(id__in=[4, 5])  # Cargiver and Educator

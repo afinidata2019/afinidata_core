@@ -91,7 +91,7 @@ class UserInteractionsView(PermissionRequiredMixin, DetailView):
         c['bot_interactions'] = UserInteraction.objects.filter(user=self.object)[:20]
         c['post_interactions'] = self.object.get_post_interactions()[:20]
         c['article_interactions'] = self.object.get_article_interactions()[:20]
-        c['session_interactions'] = self.object.get_session_interactions()[:20]
+        c['session_interactions'] = SessionInteraction.objects.filter(user=self.object).order_by('-id')[:20]
         return c
 
 
@@ -156,7 +156,7 @@ class UserSessionInteractionListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         user = User.objects.get(id=self.kwargs['id'])
-        return user.get_session_interactions()
+        return SessionInteraction.objects.filter(user=user).order_by('-id')
 
 
 class UserDataListView(PermissionRequiredMixin, ListView):
