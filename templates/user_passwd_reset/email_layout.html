@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Afinidata</title>
+    <style>
+        p {
+            line-height: 1.5em;
+        }
+    </style>
+    {%load static %}
 </head>
 <body>
-    <table width="100%" style="margin: 0 auto;">
-        <tr>
-            <td>
-                Encabezado
-            </td>
-        </tr>
+    <div id="wrap">
+        <table width="100%" style="margin: 0 auto;max-width:960px;">
+            <tr>
+                <td>
+                    <img src="{% static 'images/afini_logo.png' %}"
+                    style="width: 300px; height: auto; margin: 10px auto;display: block"/>
+                </td>
+            </tr>
 
-        <tr>
-            <td>
-                {% block content %} {% endblock %}
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                footer
-            </td>
-        </tr>
-    </table>
+            <tr>
+                <td>
+                    {% block content %} {% endblock %}
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>
