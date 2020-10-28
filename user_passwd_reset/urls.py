@@ -9,5 +9,5 @@ urlpatterns = [
     path('password-reset/confirm/<str:token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
     # test view email
-    # path('pass-test/', views.test_view, name="test-email")
+    path('pass-test/', views.test_view, name="test-email")
 ]

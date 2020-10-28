@@ -9,6 +9,9 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 
 # Create your views here.
+def test_view(request):
+    return render(request, 'user_passwd_reset/email_password_reset.html')
+
 def enviar_correo(template, **kwargs):
     send_mail(
         kwargs['asunto'],
@@ -16,7 +19,7 @@ def enviar_correo(template, **kwargs):
         'from@example.com',
         [kwargs['para']],
         fail_silently=False,
-        html_message=render_to_string(template)
+        html_message=render_to_string(template,{'token':kwargs['token'], 'user':kwargs['user']}, kwargs['request'])
     )
 
 class PasswordResetView(TemplateView):
@@ -40,7 +43,7 @@ class PasswordResetDoneView(TemplateView):
             passw_reset = PasswdReset(token=token, status=0, user_id=user.id)
             passw_reset.save()
 
-            enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=email)
+            enviar_correo('user_passwd_reset/email_password_reset.html',asunto="Solicitud de cambio de correo", para=email, user=user, token=token, request=request)
 
         return render(request, self.template_name)
 
