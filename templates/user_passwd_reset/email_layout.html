@@ -16,7 +16,7 @@
         <table width="100%" style="margin: 0 auto;max-width:960px;">
             <tr>
                 <td>
-                    <img src="{% static 'images/afini_logo.png' %}"
+                    <img src="{{request.scheme}}://{{request.get_host }}{% static 'images/afini_logo.png' %}"
                     style="width: 300px; height: auto; margin: 10px auto;display: block"/>
                 </td>
             </tr>
