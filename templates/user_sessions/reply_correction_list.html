@@ -18,20 +18,29 @@
               <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
-                        <tr>
-                          <th>Atributo</th>
-                          <th>Pregunta</th>
-                          <th>Respuesta</th>
-                          <th>Editar</th>
+                        <tr class="d-flex">
+                          <th class="col-2">Atributo</th>
+                          <th class="col-4">Pregunta</th>
+                          <th class="col-3">Respuesta</th>
+                          <th class="col-2">Usuario</th>
+                          <th class="col-1">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for object in object_list %}
-                            <tr>
-                                <td>{{ object.attribute }}</td>
-                                <td>{{ object.question }}</td>
-                                <td>{{ object.text }}</td>
-                                <td>
+                            <tr class="d-flex">
+                                <td class="col-2">{{ object.attribute }}</td>
+                                <td class="col-4">{{ object.question }}</td>
+                                <td class="col-3">{{ object.text }}</td>
+                                <td class="col-2">
+                                    {% if object.user %}
+                                        <a href="{% url 'messenger_users:user' id=object.user.pk %}">{{ object.user.first_name }} {{ object.user.last_name }}</a>
+                                    {% endif %}
+                                    {% if object.instance %}
+                                        <br/>
+                                        (Niño: <a href="{% url 'instances:instance' id=object.instance.pk %}">{{ object.instance.name }}</a>)</td>
+                                    {% endif %}
+                                <td class="col-1">
                                 <a href="{% url 'sessions:nlu_correction' interaction_id=object.pk %}"
                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
                                 </td>
