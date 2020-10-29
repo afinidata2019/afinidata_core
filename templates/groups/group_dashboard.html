@@ -260,9 +260,8 @@
             </div>
         </div>
     </div>
-
+<div id="snoAlertBox" class="alert alert-success" data-alert="alert">Se actualizaron los datos correctamente.</div>
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div id="snoAlertBox" class="alert alert-success" data-alert="alert">Se actualizaron los datos correctamente.</div>
   <div class="modal-dialog modal-dialog-centered modal-xl" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -361,6 +360,10 @@ h{
 p{
     font-size: 13px;
     font-size: max(0.9vw, 13px);
+}
+h3 a{
+    font-size: 15px;
+    font-size: max(1.1vw, 15px);
 }
 h4{
     font-size: 15px;
@@ -551,7 +554,7 @@ show{
        }
     }
 
-    function fichaInstancia(instance_id, user_id, tipo){
+    function fichaInstancia(instance_id, user_id, tipo, edad, telefono, direccion){
         $('#overlay').fadeIn();
         let data = new FormData();
         data.set('group_id', String(GROUP_ID));
@@ -580,12 +583,12 @@ show{
             if(tipo){
                 $("#ficha_header").html('<div class="row justify-content-start">'+
                                     '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
-                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/instances/'+instance_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
+                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +'<a class="px-2" href="https://program.afinidata.com/instances/'+instance_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Edad: '+edad+' </span></div></div>');
             }
             else{
                 $("#ficha_header").html('<div class="row justify-content-start">'+
                                     '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
-                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' </h3><a href="https://program.afinidata.com/users/'+user_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></div></div>');
+                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' <a class="px-2" href="https://program.afinidata.com/users/'+user_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Tel: '+telefono+'. Dir: '+direccion+'</span></div></div>');
             }
             let html = '';
             r.attributes_types.forEach(function(attributes_type){
@@ -600,14 +603,27 @@ show{
                     else{
                         var button_class = 'btn-primary';
                     }
-                    html += '<li class="col-6 py-2"><div class="d-flex flex-wrap p-2"><span class="pr-2">' + program_attribute.name + ': </span><div class="dropdown">'+
-                            '<button class="btn '+button_class+' dropdown-toggle" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
-                            program_attribute.value+
-                            '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_'+program_attribute.program_attribute_id+'">';
-                    program_attribute.options.forEach(function(option){
-                        html += '<a class="dropdown-item" href="#row_'+instance_id+'" data-programattribute="'+program_attribute.program_attribute_id+'" data-threshold="'+program_attribute.threshold+'" data-value="'+option.value+'">'+option.label+'</a>';
-                    });
-                    html += '</div></div></div></li>';
+                    if(attributes_type.attributes_type_id == 0){
+                        var columns = "col-12";
+                    }
+                    else{
+                        var columns = "col-12 col-lg-6";
+                    }
+                    html += '<li class="'+columns+' py-2"><div class="d-flex flex-wrap p-2"><span class="pr-2">' + program_attribute.name + ': </span>';
+                    if(program_attribute.options.length > 0){
+                        html += '<div class="dropdown">'+
+                                '<button class="btn '+button_class+' dropdown-toggle" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                                program_attribute.value+
+                                '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_'+program_attribute.program_attribute_id+'">';
+                        program_attribute.options.forEach(function(option){
+                            html += '<a class="dropdown-item" href="#row_'+instance_id+'" data-programattribute="'+program_attribute.program_attribute_id+'" data-threshold="'+program_attribute.threshold+'" data-value="'+option.value+'">'+option.label+'</a>';
+                        });
+                        html += '</div></div>';
+                    }
+                    else{
+                        html += '<button class="btn '+button_class+'" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'">'+program_attribute.value+'</button>';
+                    }
+                    html += '</div></li>';
                 });
                 html += '</ul>';
             });
@@ -640,8 +656,8 @@ show{
     function writeRow(instance){
         rowHTML = '<tr id="row_'+instance.id+'">' +
             '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', true)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', false)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', true, \''+instance.months+'\', null, null)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', false, null, \''+instance.tel+'\', \''+instance.dir+'\')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
             '<td>'+instance.months+'</td>' +
             '<td>'+instance.birthdate+'</td>' +
             '<td>'+instance.tel+'</td>' +
@@ -741,6 +757,7 @@ show{
         .then(r => r.json())
         .then(r => {
             console.log(r);
+            $('#exampleModalCenter').modal('toggle');
             $('#overlay').fadeOut();
             SnoAlertBox();
         })

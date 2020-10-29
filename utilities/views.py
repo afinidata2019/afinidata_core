@@ -323,6 +323,25 @@ class GroupInstanceCardView(View):
                 months = months + (age.years * 12)
         except:
             months = None
+        # Milestones
+        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+        if self.request.POST['type'] == 'instance' and len(risks) > 0:
+            last_responses = instance.response_set.filter(milestone_id__in=risks). \
+                values('milestone_id').annotate(max_id=Max('id'))
+            responses = instance.response_set.filter(response__in=['failed', 'dont-know'],
+                                                     id__in=[x['max_id'] for x in last_responses])
+            if responses.exists():
+                incompleted_milestones = []
+                for r in responses:
+                    incompleted_milestones.append(dict(name=r.milestone.name,
+                                                       program_attribute_id='milestone_' + str(r.milestone_id),
+                                                       options=[],
+                                                       value='No completado',
+                                                       threshold=0,
+                                                       risk=1))
+                factores.append(dict(attributes_type_id=0, name='Riesgos en el desarrollo',
+                                     program_attributes=incompleted_milestones))
+        # Factores de riesgo
         if self.request.POST['type'] == 'user':
             entities_attributes = [x.id for x in Entity.objects.get(id=4).attributes.all()]\
                                   + [x.id for x in Entity.objects.get(id=5).attributes.all()]# caregiver or professional
@@ -408,12 +427,16 @@ class GroupInstanceCardView(View):
                 else:
                     value = 'Sin responder'
                     risk = -1
-                factores_riesgo.append(dict(name=program_attribute.label,
-                                            program_attribute_id=program_attribute.id,
-                                            options=possible_replies,
-                                            value=value,
-                                            threshold=program_attribute.threshold,
-                                            risk=risk))
+                if value != 'Sin responder' or len(possible_replies) > 0:
+                    if value == '0':
+                        value = 'Pendiente'
+                        risk = -1
+                    factores_riesgo.append(dict(name=program_attribute.label,
+                                                program_attribute_id=program_attribute.id,
+                                                options=possible_replies,
+                                                value=value,
+                                                threshold=program_attribute.threshold,
+                                                risk=risk))
             if len(factores_riesgo) > 0:
                 factores.append(dict(attributes_type_id=attributes_type.id, name=attributes_type.name,
                                      program_attributes=factores_riesgo))
