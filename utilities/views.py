@@ -164,7 +164,7 @@ class GroupAssignationsView(View):
                                 values('attribute__id').annotate(max_id=Max('id'))
                             risk_count = risk_count + AttributeValue.objects.filter(
                                 id__in=[x['max_id'] for x in last_attributes],
-                                value__lte=program_attribute.threshold). \
+                                value__lte=program_attribute.threshold).exclude(value='0'). \
                                 values('instance__id').distinct().count()
                             last_attributes = UserData.objects.filter(user=assoc.user,
                                                                       attribute=program_attribute.attribute). \
@@ -333,7 +333,8 @@ class GroupInstanceCardView(View):
             if responses.exists():
                 incompleted_milestones = []
                 for r in responses:
-                    incompleted_milestones.append(dict(name=r.milestone.name,
+                    incompleted_milestones.append(dict(name=r.milestone.name+' (normalmente completado a los ' +
+                                                            str(r.milestone.value) + ' meses)',
                                                        program_attribute_id='milestone_' + str(r.milestone_id),
                                                        options=[],
                                                        value='No completado',
