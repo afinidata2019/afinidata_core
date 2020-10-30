@@ -39,5 +39,5 @@ urlpatterns = [
     path('app_services/', include('app.service_urls', namespace='app_services')),
     path('sessions/', include('user_sessions.urls', namespace='sessions')),
     path('topics/', include('topics.urls', namespace='topics')),
-    path('', include('user_passwd_reset.urls', namespace='user_passwd_reset'))
+    path('password-reset/', include('user_passwd_reset.urls', namespace='user_passwd_reset'))
 ]
