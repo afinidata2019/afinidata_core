@@ -1,25 +1,25 @@
 <hr class="sidebar-divider">
 
-<div class="sidebar-heading">Users</div>
+<div class="sidebar-heading">Usuarios</div>
 
 {% if perms.groups.view_all_groups or perms.groups.view_user_groups %}
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
       <i class="fas fa-fw fa-layer-group"></i>
-      <span>Groups</span>
+      <span>Grupos</span>
     </a>
     <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Groups:</h6>
+        <h6 class="collapse-header">Grupos:</h6>
           {% if perms.groups.view_all_groups %}
-            <a class="collapse-item" href="{% url 'groups:groups' %}">All Groups</a>
+            <a class="collapse-item" href="{% url 'groups:groups' %}">Todos los Grupos</a>
           {% endif %}
           {% if perms.groups.view_user_groups %}
-            <a class="collapse-item" href="{% url 'groups:my_groups' %}">My Groups</a>
+            <a class="collapse-item" href="{% url 'groups:my_groups' %}">Mis Grupos</a>
           {% endif %}
           {% if perms.groups.add_group %}
-            <a class="collapse-item" href="{% url 'groups:group_create' %}">Create Group</a>
+            <a class="collapse-item" href="{% url 'groups:group_create' %}">Crear Grupo</a>
           {% endif %}
       </div>
     </div>
