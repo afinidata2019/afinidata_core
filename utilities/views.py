@@ -50,7 +50,8 @@ class GroupAssignationsView(View):
                 group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
                 last_attributes = AttributeValue.objects.\
                     filter(instance__id__in=[x.instance.id for x in group_instances],
-                           attribute=program_attribute.attribute). \
+                           attribute=program_attribute.attribute,
+                           attribute__entity__in=[1, 2]). \
                     values('instance__id').annotate(max_id=Max('id'))
                 risk_count_instance = AttributeValue.objects.filter(id__in=[x['max_id'] for x in last_attributes],
                                                                     value__lte=program_attribute.threshold). \
@@ -60,7 +61,8 @@ class GroupAssignationsView(View):
                         filter(instance_id__in=[x['instance__id'] for x in risk_count_instance]).all()
                 else:
                     last_attributes = UserData.objects.filter(user__id__in=group_users,
-                                                              attribute_id=program_attribute.attribute.id). \
+                                                              attribute_id=program_attribute.attribute.id,
+                                                              attribute__entity__in=[4, 5]). \
                         values('user__id').annotate(max_id=Max('id'))
                     risk_count_user = UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
                                                               data_value__lte=program_attribute.threshold). \
@@ -160,14 +162,16 @@ class GroupAssignationsView(View):
                     for attributes_type in program.attributetype_set.all():
                         for program_attribute in attributes_type.attributes_set.all():
                             last_attributes = AttributeValue.objects.filter(instance=assoc.instance,
-                                                                            attribute=program_attribute.attribute). \
+                                                                            attribute=program_attribute.attribute,
+                                                                            attribute__entity__in=[1, 2]). \
                                 values('attribute__id').annotate(max_id=Max('id'))
                             risk_count = risk_count + AttributeValue.objects.filter(
                                 id__in=[x['max_id'] for x in last_attributes],
                                 value__lte=program_attribute.threshold).exclude(value='0'). \
                                 values('instance__id').distinct().count()
                             last_attributes = UserData.objects.filter(user=assoc.user,
-                                                                      attribute=program_attribute.attribute). \
+                                                                      attribute=program_attribute.attribute,
+                                                                      attribute__entity__in=[4, 5]). \
                                 values('user__id', 'attribute_id').annotate(max_id=Max('id'))
                             risk_count = risk_count + \
                                          UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
@@ -260,7 +264,8 @@ class GroupAssignationsView(View):
                     for program_attribute in attributes_type.attributes_set.all():
                         risk_count = 0
                         last_attributes = AttributeValue.objects.filter(instance__id__in=group_instances,
-                                                                        attribute=program_attribute.attribute). \
+                                                                        attribute=program_attribute.attribute,
+                                                                        attribute__entity__in=[1, 2]). \
                             values('instance__id', 'attribute__id').annotate(max_id=Max('id'))
                         risk_count_instance = AttributeValue.objects.filter(id__in=[x['max_id'] for x in last_attributes],
                                                                             value__lte=program_attribute.threshold). \
@@ -272,7 +277,8 @@ class GroupAssignationsView(View):
                             instance_list = [x['instance__id'] for x in risk_count_instance]
                         else:
                             last_attributes = UserData.objects.filter(user__id__in=group_users,
-                                                                      attribute_id=program_attribute.attribute.id). \
+                                                                      attribute_id=program_attribute.attribute.id,
+                                                                      attribute__entity__in=[4, 5]). \
                                 values('user__id', 'attribute_id').annotate(max_id=Max('id'))
                             risk_count_user = UserData.objects.filter(id__in=[x['max_id'] for x in last_attributes],
                                                                       data_value__lte=program_attribute.threshold). \
@@ -322,7 +328,7 @@ class GroupInstanceCardView(View):
             if age.years:
                 months = months + (age.years * 12)
         except:
-            months = None
+            months = 0
         # Milestones
         risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
         if self.request.POST['type'] == 'instance' and len(risks) > 0:
