@@ -1,31 +1,31 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Session: {{ object.name }}{% endblock %}
+{% block title %}Sesión: {{ object.name }}{% endblock %}
 
 {% block content %}
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Sesión: {{ object.name }}</h1>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Información</h6>
             </div>
             <div class="card-body">
-                <strong class="text-gray-900">Program: </strong>
+                <strong class="text-gray-900">Programa: </strong>
                 <a href="{% url 'programs:program_content_detail' program_id=program.pk %}">{{ program }}</a><br>
                 {% if object.areas.exists %}
-                <strong class="text-gray-900">Areas: </strong>
+                <strong class="text-gray-900">Áreas: </strong>
                 <ul>
                     {% for area in object.areas.all %}
                         <li>{{ area }}</li>
                     {% endfor %}
                 </ul>
-                <strong class="text-gray-900">Topics: </strong>
+                <strong class="text-gray-900">Temas: </strong>
                 <ul>
                     {% for topic in topics %}
                         <li>{{ topic }}</li>
@@ -33,14 +33,14 @@
                 </ul>
                 <br>
                 {% endif %}
-                <strong class="text-gray-900">Fields: </strong><span>{{ object.field_set.count }}</span><br>
+                <strong class="text-gray-900">Casillas: </strong><span>{{ object.field_set.count }}</span><br>
             </div>
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Fields: </h1>
+            <h1 class="h3 mb-0 text-gray-800">Casillas: </h1>
         </div>
     </div>
 
@@ -56,12 +56,12 @@
                                     <button class="btn btn-primary btn-icon-split" data-toggle="modal"
                                             data-target="#comment-modal-{{ field.pk }}">
                                         <span class="icon text-white-50"><i class="fas fa-eye"></i></span>
-                                        <span class="text">View comments</span>
+                                        <span class="text">Ver Comentarios</span>
                                     </button>
                                     <button class="btn btn-success btn-icon-split" data-toggle="modal"
                                             data-target="#modal-{{ field.pk }}">
                                         <span class="icon text-white-50"><i class="fas fa-comment"></i></span>
-                                        <span class="text">Comment</span>
+                                        <span class="text">Comentar</span>
                                     </button>
                                     <!-- <a href="{% url 'programs:exclude_field' program_id=program.pk field_id=field.pk %}"
                                        class="btn btn-danger btn-icon-split">
@@ -74,7 +74,7 @@
                                 <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
-                                            <th>Message</th>
+                                            <th>Mensaje</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -110,10 +110,10 @@
                                 <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
-                                            <th>Message</th>
-                                            <th>Validation</th>
-                                            <th>Attribute</th>
-                                            <th>If fail</th>
+                                            <th>Mensaje</th>
+                                            <th>Validación</th>
+                                            <th>Atributo</th>
+                                            <th>Si falla</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -134,10 +134,10 @@
                                 <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
-                                            <th>Label</th>
-                                            <th>Attribute</th>
-                                            <th>Value</th>
-                                            <th>Redirect Block</th>
+                                            <th>Etiqueta</th>
+                                            <th>Atributo</th>
+                                            <th>Valor</th>
+                                            <th>Redirección a Bloque</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -158,8 +158,8 @@
                                 <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
-                                            <th>Attribute</th>
-                                            <th>Value</th>
+                                            <th>Atributo</th>
+                                            <th>Valor</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -178,9 +178,9 @@
                                 <table class="table table-responsive-md">
                                     <thead>
                                         <tr>
-                                            <th>Attribute</th>
-                                            <th>Condition</th>
-                                            <th>Value</th>
+                                            <th>Atributo</th>
+                                            <th>Condición</th>
+                                            <th>Valor</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -195,13 +195,13 @@
                                 </table>
 
                             {% endif %}
-
+                        
                             {% if field.field_type == 'save_values_block' %}
                                 {% if field.redirectblock %}
                                     <table class="table table-responsive-md">
                                         <thead>
                                         <tr>
-                                            <th>Block</th>
+                                            <th>Bloque</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -218,7 +218,7 @@
                                     <table class="table table-responsive-md">
                                         <thead>
                                         <tr>
-                                            <th>Session</th>
+                                            <th>Sesión</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -241,24 +241,24 @@
                               class="form" method="post">
                             {% csrf_token %}
                           <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Comment for field #{{field.pk}}</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Comentar Casilla #{{field.pk}}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
                           <div class="modal-body">
                                   <div class="form-group">
-                                      <label for="">Field: </label>
+                                      <label for="">Casilla: </label>
                                       <input type="text" class="form-control" disabled value="{{ field.pk }}">
                                   </div>
                                   <div class="form-group">
-                                      <label for="message">Field: </label>
+                                      <label for="message">Comentario: </label>
                                       <textarea name="comment" id="" cols="20" rows="10" class="form-control"></textarea>
                                   </div>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-success">Add comment</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-success">Añadir Comentario</button>
                           </div>
                         </form>
                     </div>
@@ -269,7 +269,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Comment for field #{{field.pk}}</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Comentarios de casilla #{{field.pk}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -282,11 +282,11 @@
                                 {% endfor %}
                             </ul>
                           {% else %}
-                              No comments for this field
+                              Sin comentarios
                           {% endif %}
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                       </div>
                     </div>
                   </div>
