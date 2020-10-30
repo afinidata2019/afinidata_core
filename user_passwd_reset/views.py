@@ -12,7 +12,7 @@ def enviar_correo(template, asunto, para, user, token='', request=None):
     send_mail(
         asunto,
         '',
-        'from@example.com',
+        'no-reply@afinidata.com',
         para,
         fail_silently=False,
         html_message=render_to_string(template,{'token':token, 'user':user}, request)
