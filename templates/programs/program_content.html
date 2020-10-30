@@ -1,6 +1,6 @@
 {% extends 'base/private.html' %}
 
-{% block title %}New program: {{ object.name }}{% endblock %}
+{% block title %}{{ object.name }}{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
@@ -13,18 +13,18 @@
         <div class="card shadow mb-4">
             <div class="card-body">
                 <div style="text-align: center; margin-bottom: 2em;">
-                    <p>There are: </p>
+                    <p>Este programa tiene: </p>
                     <h1 class="text-warning font-weight-bold">{{ total }}</h1>
-                    <h2 class="font-weight-bold">Content Materials</h2>
-                    <span>Available for your program</span>
+                    <h2 class="font-weight-bold">Actividades y Sesiones</h2>
+                    <span>Disponibles para tu programa</span>
                 </div>
 
                 <table class="table table-responsive-md">
                     <thead>
                     <tr>
-                        <th>Group</th>
-                        <th>Content</th>
-                        <th>Actions</th>
+                        <th>Grupo</th>
+                        <th>Contenido</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
