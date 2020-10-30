@@ -16,12 +16,12 @@
                 {% if perms.messenger_users.add_userdata %}
                     <a href="{% url 'messenger_users:user_initial_data' user_id=user.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Datos Iniciales</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Initial Data</a>
                 {% endif %}
                 {% if perms.messenger_users.add_userdata %}
                     <a href="{% url 'messenger_users:user_create_data' user_id=user.pk %}"
                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Añadir Datos</a>
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Add Data</a>
                 {% endif %}
                 {% if perms.messenger_users.add_userdata %}
                 <a href="{% url 'messenger_users:user_last_data_list' user_id=user.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
@@ -38,11 +38,11 @@
             </div>
             <div class="card-body">
                 <strong class="text-gray-900">ID: </strong>{{ object.pk }}<br>
-                <strong class="text-gray-900">Nombre: </strong>{{ object.first_name }}<br>
-                <strong class="text-gray-900">Apellido: </strong>{{ object.last_name }}<br>
-                <strong class="text-gray-900">Nombre de Usuario: </strong>{{ object.username }}<br>
-                <strong class="text-gray-900">Fecha de Ingreso: </strong>{{ object.created_at }}<br>
-                <strong class="text-gray-900">ID de Canal: </strong>{{ object.last_channel_id }}<br>
+                <strong class="text-gray-900">Name: </strong>{{ object.first_name }}<br>
+                <strong class="text-gray-900">Last Name: </strong>{{ object.last_name }}<br>
+                <strong class="text-gray-900">Username: </strong>{{ object.username }}<br>
+                <strong class="text-gray-900">Joined At: </strong>{{ object.created_at }}<br>
+                <strong class="text-gray-900">Channel ID: </strong>{{ object.last_channel_id }}<br>
                 <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>
                 <strong class="text-gray-900">Correo Electrónico: </strong>{{ user|get_last_value:'email' }}<br>
                 <strong class="text-gray-900">Pais: </strong>{{  user|get_last_value:'Pais' }}<br>
@@ -121,15 +121,15 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Últimos Atributos</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">last Attributes</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered  table-responsive-md">
                             <thead>
                                 <tr>
-                                  <th>Atributo</th>
-                                  <th>Último Valor</th>
-                                  <th>Última Respuesta</th>
+                                  <th>Attributes</th>
+                                  <th>Last Value</th>
+                                  <th>Last Response</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,12 +158,12 @@
                         <table class="table table-bordered table-responsive">
                             <thead>
                                 <tr>
-                                  <th>Atributo</th>
-                                  <th>Sesión</th>
-                                  <th>Pregunta</th>
-                                  <th>Respuesta</th>
-                                  <th>Valor</th>
-                                  <th>Última Respuesta</th>
+                                  <th>Attribute</th>
+                                  <th>Session</th>
+                                  <th>Question</th>
+                                  <th>Response</th>
+                                  <th>Value</th>
+                                  <th>Last Response</th>
                                 </tr>
                             </thead>
                             <tbody>

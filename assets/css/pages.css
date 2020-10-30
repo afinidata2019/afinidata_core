@@ -1,0 +1,17 @@
+
+.logo-img{
+    width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.btn-custom {
+    border-radius: 10rem;
+}
+
+.errorlist {
+    list-style-type: none;
+    margin: 10px 0;
+    padding: 0
+}

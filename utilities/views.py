@@ -155,7 +155,35 @@ class GroupAssignationsView(View):
                             else:
                                 months = str(age.weeks) + ' semanas'
                     except:
-                        months = '---'
+                        months = 0
+                    risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+                    responses = instance.response_set.filter(response='failed', milestone_id__in=risks)
+                    if responses.exists():
+                        milestones_count = milestones_count + 1
+                    for response in responses:
+                        if response.milestone_id in milestones:
+                            milestones[response.milestone_id].append(response.instance.id)
+                        else:
+                            milestones[response.milestone_id] = [response.instance.id]
+            milestones_data = []
+            for milestone in milestones:
+                y_label = "Cases"
+                if len(milestones[milestone]) == 1:
+                    y_label = "Case"
+                milestones_data.append(dict(y=len(milestones[milestone]), y_label=y_label,
+                                            label=MilestoneTranslation.objects.get(language_id=2,
+                                                                                   milestone_id=milestone).name,
+                                            instances=milestones[milestone]))
+            if len(milestones_data) == 0:
+                milestones_data = [dict(y=0, label='No children with development risk')]
+
+            # Count cases of risk attributes
+            program = group.programs.last()
+            factores_riesgo = []
+            for attributes_type in program.attributetype_set.all():
+                factores_riesgo_data = []
+                factores_riesgo_count = set([])
+                for program_attribute in attributes_type.attributes_set.all():
                     risk_count = 0
                     for attributes_type in program.attributetype_set.all():
                         for program_attribute in attributes_type.attributes_set.all():

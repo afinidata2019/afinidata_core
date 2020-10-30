@@ -66,7 +66,8 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'corsheaders',
     'user_sessions.apps.UserSessionsConfig',
-    'topics.apps.TopicsConfig'
+    'topics.apps.TopicsConfig',
+    'user_passwd_reset'
 ]
 
 MIDDLEWARE = [
@@ -190,7 +191,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Guatemala'
 
@@ -231,3 +232,11 @@ MESSAGE_TAGS = {
     30: 'alert-warning',
     40: 'alert-danger'
 }
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False

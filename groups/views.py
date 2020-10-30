@@ -123,12 +123,14 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                     age = relativedelta(datetime.datetime.now(), parse(instance.get_attribute_value(191).value))
                     months = ''
                     if age.months:
-                        months = str(age.months) + ' meses'
+                        months = str(age.months) + ' months'
                     if age.years:
                         if age.years == 1:
-                            months = str(age.years) + ' año ' + months
+                            months = str(age.years) + ' year ' + months
                         else:
-                            months = str(age.years) + ' años ' + months
+                            months = str(age.years) + ' years ' + months
+                    if age.months == 0 and age.years == 0:
+                        months = str(age.weeks) + ' weeks'
                 except:
                     months = '---'
                 instance.months = months

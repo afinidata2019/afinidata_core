@@ -1,6 +1,6 @@
 <hr class="sidebar-divider">
 
-<div class="sidebar-heading">Plataforma</div>
+<div class="sidebar-heading">Platform</div>
 
 {% if perms.bots.view_bot %}
     <li class="nav-item">
@@ -96,19 +96,19 @@
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLevels" aria-expanded="true" aria-controls="collapseLevels">
       <i class="fas fa-university"></i>
-      <span>Programas</span>
+      <span>Programs</span>
     </a>
     <div id="collapseLevels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header"><i class="fas fa-university"></i> Programas:</h6>
+        <h6 class="collapse-header"><i class="fas fa-university"></i> Programs:</h6>
           {% if perms.programs.view_all_programs %}
-            <a class="collapse-item" href="{% url 'programs:program_list' %}">Todos los Programas</a>
+            <a class="collapse-item" href="{% url 'programs:program_list' %}">All Programs</a>
           {% endif %}
           {% if perms.programs.view_user_programs %}
-            <a class="collapse-item" href="{% url 'programs:user_program_list' %}">Mis Programas</a>
+            <a class="collapse-item" href="{% url 'programs:user_program_list' %}">My Programs</a>
           {% endif %}
           {% if perms.programs.add_program %}
-            <a class="collapse-item" href="{% url 'programs:program_create' %}">Crear Programa</a>
+            <a class="collapse-item" href="{% url 'programs:program_create' %}">Create Program</a>
           {% endif %}
       </div>
     </div>
