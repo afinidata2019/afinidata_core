@@ -6,17 +6,36 @@ from django.shortcuts import render, HttpResponse
 from django.utils.crypto import get_random_string
 from django.template.loader import render_to_string
 from user_passwd_reset.forms import PasswordResetForm, EmailSendForm
+import os
+from email.mime.image import MIMEImage
+from django.core.mail import EmailMultiAlternatives
+from core import settings
 
 # Create your views here.
 def enviar_correo(template, asunto, para, user, token='', request=None):
-    send_mail(
-        asunto,
-        '',
-        'no-reply@afinidata.com',
-        para,
-        fail_silently=False,
-        html_message=render_to_string(template,{'token':token, 'user':user}, request)
-    )
+    image_path = os.path.join(settings.BASE_DIR, 'assets/images/afini_logo.png')
+    image_name = 'afini_logo.png'
+
+    context = {'token':token, 'user':user, 'image_name':image_name}
+    html_content = render_to_string(template, context, request)
+    reply_to = ['no-reply@afinidata.com']
+
+    message = EmailMultiAlternatives(asunto,
+    html_content,
+    os.getenv('MAIL_USER'),
+    to=para,
+    reply_to=reply_to)
+
+    message.attach_alternatives = (html_content, "text/html")
+    message.content_subtype = "html"
+    message.mixed_subtype = 'related'
+
+    with open(image_path, mode='rb') as f:
+        image = MIMEImage(f.read())
+        message.attach(image)
+        image.add_header('Content-ID',f"<{image_name}>")
+
+    message.send()
 
 class PasswordResetView(TemplateView):
     template_name = 'user_passwd_reset/password_reset.html'
