@@ -27,6 +27,7 @@
                         <tr>
                           <th>Nombre</th>
                           <th>Etapas</th>
+                          <th>Hitos</th>
                           <th>Fecha de Creación</th>
                           <th>Acciones</th>
                         </tr>
@@ -41,6 +42,8 @@
                                     <a href="{% url 'programs:level_list' program_id=object.pk %}">Ver</a>
                                 {% endif %}
                             </td>
+                            <td>{{ object.milestones.count }}
+                                <a href="{% url 'programs:program_milestones_list' program_id=object.pk %}">Ver</a></td>
                             <td>{{ object.created_at }}</td>
                             <td>
                                 <div class="btn-group">
