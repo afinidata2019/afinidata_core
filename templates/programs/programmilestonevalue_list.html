@@ -1,0 +1,58 @@
+{% extends 'base/private.html' %}
+
+{% block title %}Hitos de Programa{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Hitos de Programa</h1>
+            {% if perms.programs.add_program %}
+                <a href="#"
+                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Asociación</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Listado de Programas</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>Código de Hito</th>
+                          <th>Valor</th>
+                          <th>Mínimo</th>
+                          <th>Máximo</th>
+                          <th>Fecha de Creación</th>
+                          <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for object in object_list %}
+                        <tr>
+                            <td>{{ object.milestone }}</td>
+                            <td>{{ object.value }}</td>
+                            <td>{{ object.min }}</td>
+                            <td>{{ object.max }}</td>
+                            <td>{{ object.created_at }}</td>
+                            <td>
+                                <a href="{% url 'programs:edit_program_milestone' program_id=program.pk association_id=object.pk %}"
+                                   class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                <a href="{% url 'programs:delete_program_milestone' program_id=program.pk association_id=object.pk %}"
+                                   class="btn btn-danger"><i class="fas fa-times"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
