@@ -1,0 +1,27 @@
+{% extends 'user_passwd_reset/email_layout.html' %}
+
+{%block content %}
+
+    <table width="100%">
+        <tr>
+            <td>
+                <!-- TODO: Reemplazar los datos por los campos dinámicos -->
+                <h3>Hola,  {{data.user.username}}</h3>
+                <br><br>
+                <p> XX niños se han registrado en tu grupo</p>
+                <br><br>
+                <p>Sigue invitando a más niños a unirse a través del siguiente link. Ref del grupo XX</p>
+                <br><br>
+                <p>Recuerda que puedes monitorear a  familias en <strong>Afinidata</strong> en el siguiente link: </p>
+                <br><br>
+                <p>
+                    <!-- TODO: Colocar enlace de afiliado -->
+                    <a href="">Click aquí</a>
+                </p>
+                <br><br>
+                <p>Apoya y prioriza a los niños que <strong>Afinidata</strong> ha identificado con riesgos Altos.</p>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}
