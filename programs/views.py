@@ -385,3 +385,78 @@ class FieldProgramCommentCreateView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, "Se agregó el comentario.")
         return reverse_lazy('programs:level_session_detail', kwargs=dict(session_id=self.object.field.session_id,
                                                                          program_id=self.kwargs['program_id']))
+
+
+class ProgramMilestoneListView(PermissionRequiredMixin, ListView):
+    model = models.ProgramMilestoneValue
+    permission_required = 'programs.change_program'
+    paginate_by = 20
+    login_url = reverse_lazy('pages:login')
+
+    def get_queryset(self):
+        return models.ProgramMilestoneValue.objects.filter(program_id=self.kwargs['program_id'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        c = super(ProgramMilestoneListView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        return c
+
+
+class ProgramMilestoneCreateView(PermissionRequiredMixin, CreateView):
+    model = models.ProgramMilestoneValue
+    permission_required = 'programs.change_program'
+    login_url = reverse_lazy('pages:login')
+    fields = ('milestone', 'value', 'min', 'max')
+    template_name = 'programs/milestone_form.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramMilestoneCreateView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['action'] = 'Crear'
+        return c
+
+    def form_valid(self, form):
+        form.instance.program_id = self.kwargs['program_id']
+        return super(ProgramMilestoneCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "La asociación ha sido creada")
+        return reverse_lazy('programs:program_milestones_list', kwargs=dict(program_id=self.kwargs['program_id']))
+
+
+class ProgramMilestoneEditView(PermissionRequiredMixin, UpdateView):
+    model = models.ProgramMilestoneValue
+    permission_required = 'programs.change_program'
+    login_url = reverse_lazy('pages:login')
+    fields = ('milestone', 'value', 'min', 'max')
+    template_name = 'programs/milestone_form.html'
+    pk_url_kwarg = 'association_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramMilestoneEditView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['action'] = 'Editar'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "La asociación ha sido modificada")
+        return reverse_lazy('programs:program_milestones_list', kwargs=dict(program_id=self.kwargs['program_id']))
+
+
+class ProgramMilestoneDeleteView(PermissionRequiredMixin, DeleteView):
+    model = models.ProgramMilestoneValue
+    permission_required = 'programs.change_program'
+    login_url = reverse_lazy('pages:login')
+    template_name = 'programs/milestone_form.html'
+    pk_url_kwarg = 'association_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProgramMilestoneDeleteView, self).get_context_data(**kwargs)
+        c['program'] = models.Program.objects.get(id=self.kwargs['program_id'])
+        c['action'] = 'Eliminar'
+        c['delete_message'] = '¿Estás seguro de eliminar esta asociación de hito?'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "La asociación ha sido elimicada")
+        return reverse_lazy('programs:program_milestones_list', kwargs=dict(program_id=self.kwargs['program_id']))

@@ -29,5 +29,13 @@ urlpatterns = [
     path('<int:program_id>/exclude_field/<int:field_id>/', views.ExcludeFieldToProgramView.as_view(),
          name='exclude_field'),
     path('<int:program_id>/comment_field/<int:field_id>/', views.FieldProgramCommentCreateView.as_view(),
-         name='comment_field')
+         name='comment_field'),
+    path('<int:program_id>/program_milestones/', views.ProgramMilestoneListView.as_view(),
+         name='program_milestones_list'),
+    path('<int:program_id>/create_milestone_association/', views.ProgramMilestoneCreateView.as_view(),
+         name='create_program_milestone'),
+    path('<int:program_id>/milestone_associations/<int:association_id>/edit/',
+         views.ProgramMilestoneEditView.as_view(), name='edit_program_milestone'),
+    path('<int:program_id>/milestone_associations/<int:association_id>/delete/',
+         views.ProgramMilestoneDeleteView.as_view(), name='delete_program_milestone'),
 ]

@@ -14,6 +14,7 @@ class Program(models.Model):
     levels = models.ManyToManyField('Level')
     areas = models.ManyToManyField(Area)
     users = models.ManyToManyField(User)
+    milestones = models.ManyToManyField(Milestone, through='ProgramMilestoneValue')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -61,7 +62,7 @@ class Level(models.Model):
         if self.assign_min >= 0 and self.assign_max >= 0:
             return "%s (%s - %s  meses)" % (self.name, self.assign_min, self.assign_max)
         else:
-            return "%s" % (self.name)
+            return "%s" % self.name
 
 
 class LevelLanguage(models.Model):
@@ -79,3 +80,12 @@ class LevelMilestoneAssociation(models.Model):
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class ProgramMilestoneValue(models.Model):
+    milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    value = models.IntegerField(default=0)
+    min = models.IntegerField(default=0)
+    max = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
