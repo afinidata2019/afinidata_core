@@ -20,6 +20,7 @@ class AddMessengerUserView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.group = get_object_or_404(models.Group, id=self.kwargs['group_id'])
+        form.instance.user_id = form.instance.messenger_user_id
         return super(AddMessengerUserView, self).form_valid(form)
 
     def get_success_url(self):
