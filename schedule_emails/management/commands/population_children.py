@@ -86,6 +86,7 @@ class Command(BaseCommand):
         cursor.execute(query)
         result = cursor.fetchall()
 
+        # TODO: calcular ingresaron, pendientes y porcentaje
         if len(result) > 0:
             totales = [
                 ('',),
@@ -112,6 +113,7 @@ class Command(BaseCommand):
 
                 ws.cell(row=ws.max_row+1, column=1, value="REGIÓN {0}".format(row[0]))
 
+                # TODO: calcular ingresaron, pendientes y porcentaje
                 data_total = [
                     ('',),
                     ('SOBRE USO DE FAMILIAS','',''),
