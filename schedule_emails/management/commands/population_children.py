@@ -92,13 +92,13 @@ class Command(BaseCommand):
                 ('',),
                 ('TOTALES GENERALES',),
                 ('',),
-                ('SOBRE USO DE FAMILIAS','',''),
+                ('SOBRE USO DE FAMILIAS',),
                 ('Total familias',sum(row[2] for row in result)),
                 ('Actividades totales', sum(row[3] for row in result)),
                 ('Total de sesiones', sum(row[4] for row in result)),
                 ('Total niños con riesgos identificados', 0),
                 ('',),
-                ('SOBRE USO DE PROFESIONALES','',''),
+                ('SOBRE USO DE PROFESIONALES',),
                 ('','Ingresaron','Pendientes','% Ingreso'),
                 ('Profesionales que han ingresado',21,9,70.00),
                 ('Grupos que han ingresado familias',21,7,33.33),
@@ -116,14 +116,14 @@ class Command(BaseCommand):
                 # TODO: calcular ingresaron, pendientes y porcentaje
                 data_total = [
                     ('',),
-                    ('SOBRE USO DE FAMILIAS','',''),
+                    ('SOBRE USO DE FAMILIAS',),
                     ('Total familias',row[2]),
                     ('Actividades totales', row[3]),
                     ('Total de sesiones', row[4]),
                     ('Total niños con riesgos identificados', 0),
                     ('',),
                     ('',),
-                    ('SOBRE USO DE PROFESIONALES','',''),
+                    ('SOBRE USO DE PROFESIONALES',),
                     ('','Ingresaron','Pendientes','% Ingreso'),
                     ('Profesionales que han ingresado',21,9,70.00),
                     ('Grupos que han ingresado familias',21,7,33.33),
@@ -142,5 +142,5 @@ class Command(BaseCommand):
             wb.save(archivo)
 
             #TODO: consultar usuarios, enviar por correo con archivo adjunto.
-            enviar_correo(asunto='Poblacio de niños',template='schedule_emails/population_children.html',data=None, recipients=['correo@prueba.com'], attachment_file=archivo)
+            enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=['correo@prueba.com'], attachment_file=archivo)
 
