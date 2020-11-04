@@ -114,6 +114,7 @@ class Command(BaseCommand):
                 ws.cell(row=ws.max_row+1, column=1, value="REGIÓN {0}".format(row[0]))
 
                 # TODO: calcular ingresaron, pendientes y porcentaje
+                # TODO: ejecutar segundo query pasandole el filtro de id del grupo padre.
                 data_total = [
                     ('',),
                     ('SOBRE USO DE FAMILIAS',),
