@@ -27,7 +27,6 @@ class Command(BaseCommand):
         cursor = connection.cursor()
 
         # TODO: carmbiar por el query real
-
         query = """
             select * from auth_user
         """
@@ -45,19 +44,43 @@ class Command(BaseCommand):
             for i, col in enumerate(ws.columns):
                 ws.column_dimensions[get_column_letter(i+1)].width = 25
 
-
-    def handle(self, *args, **kwargs):
-
-        archivo = os.path.join(settings.BASE_DIR, 'schedule_emails/reporte.xlsx')
-        wb = Workbook()
-        std=wb.get_sheet_by_name('Sheet')
-        wb.remove_sheet(std)
-        ws = wb.create_sheet('Consolidado')
-
-        cursor = connection.cursor()
+    def query_detalle(self, tipo = 'ingreso'):
         query = """
+            select
+            count(distinct groups_assignationmessengeruser.user_id) as 'familias'
+            from groups_group
+                left join groups_group as grupo_padre
+                    on groups_group.parent_id = grupo_padre.id
+                left join groups_assignationmessengeruser
+                    on groups_assignationmessengeruser.group_id = groups_group.id
+                left join user_sessions_interaction
+                    on user_sessions_interaction.user_id = groups_assignationmessengeruser.user_id
+                    and user_sessions_interaction.`type` = 'session_init'
+                left join posts_interaction
+                    on posts_interaction.user_id = groups_assignationmessengeruser.user_id
+                    and posts_interaction.`type` = 'dispatched'
+                left join groups_rolegroupuser
+                    on groups_rolegroupuser.group_id = groups_group.id
+                left join auth_user
+                    on groups_rolegroupuser.user_id = auth_user.id
+            where grupo_padre.id in( select id from groups_group where parent_id = 38)
+            and grupo_padre.id = %s
+            group by groups_group.id
+        """
+        if tipo == 'ingreso':
+            query += """ having familias > 0"""
+        else:
+            query += """ having familias = 0"""
+
+        query += """ order by grupo_padre.name asc, groups_group.name asc"""
+
+        return query
+
+    def query_general(self):
+        return """
         select grupo_padre.name as 'Región',
             groups_group.name as 'Grupo',
+            grupo_padre.id,
             count(distinct groups_assignationmessengeruser.user_id) as 'familias',
             count(distinct posts_interaction.id) as 'actividades',
             count(distinct user_sessions_interaction.id) as 'sesiones',
@@ -80,13 +103,27 @@ class Command(BaseCommand):
                 on groups_rolegroupuser.group_id = groups_group.id
             left join auth_user
                 on groups_rolegroupuser.user_id = auth_user.id
+        where grupo_padre.id in( select id from groups_group where parent_id = 38)
         group by grupo_padre.id
         order by grupo_padre.name asc, groups_group.name asc
         """
-        cursor.execute(query)
+
+    def handle(self, *args, **kwargs):
+        archivo = os.path.join(settings.BASE_DIR, 'schedule_emails/reporte.xlsx')
+        wb = Workbook()
+        std=wb.get_sheet_by_name('Sheet')
+        wb.remove_sheet(std)
+        ws = wb.create_sheet('Consolidado')
+
+        cursor = connection.cursor()
+        cursor.execute(self.query_general())
         result = cursor.fetchall()
 
-        # TODO: calcular ingresaron, pendientes y porcentaje
+        ingreso = sum(row[6] for row in result)
+        pendiente = sum(row[7] for row in result)
+        total_general_1 = ingreso + pendiente
+        porcentaje_general_1 = (ingreso * 100) / total_general_1
+
         if len(result) > 0:
             totales = [
                 ('',),
@@ -100,21 +137,35 @@ class Command(BaseCommand):
                 ('',),
                 ('SOBRE USO DE PROFESIONALES',),
                 ('','Ingresaron','Pendientes','% Ingreso'),
-                ('Profesionales que han ingresado',21,9,70.00),
+                ('Profesionales que han ingresado',ingreso,pendiente,f"{porcentaje_general_1:.2f}"),
                 ('Grupos que han ingresado familias',21,7,33.33),
                 ('',),
                 ('',)
             ]
 
-            for row in totales:
-                ws.append(row)
+            for fila in totales:
+                ws.append(fila)
+
+            acum_ingreso = 0
+            acum_pendiente = 0
 
             for i,row in enumerate(result):
 
                 ws.cell(row=ws.max_row+1, column=1, value="REGIÓN {0}".format(row[0]))
 
-                # TODO: calcular ingresaron, pendientes y porcentaje
-                # TODO: ejecutar segundo query pasandole el filtro de id del grupo padre.
+                query_ingresaron = self.query_detalle()
+                cursor.execute(query_ingresaron,[row[2]])
+                result1 = cursor.fetchall()
+
+                query_pendientes = self.query_detalle('pendiente')
+                cursor.execute(query_pendientes,[row[2]])
+                result2 = cursor.fetchall()
+
+                total_profesionales = row[6] + row[7]
+                porcentaje_profesionales = (row[6] * 100) / total_profesionales
+                total_grupo = len(result1) + len(result2)
+                porcentaje_grupo = (len(result1) * 100) / total_grupo
+
                 data_total = [
                     ('',),
                     ('SOBRE USO DE FAMILIAS',),
@@ -126,22 +177,36 @@ class Command(BaseCommand):
                     ('',),
                     ('SOBRE USO DE PROFESIONALES',),
                     ('','Ingresaron','Pendientes','% Ingreso'),
-                    ('Profesionales que han ingresado',21,9,70.00),
-                    ('Grupos que han ingresado familias',21,7,33.33),
+                    ('Profesionales que han ingresado',row[6],row[7],f"{porcentaje_profesionales:.2f}"),
+                    ('Grupos que han ingresado familias',len(result1),len(result2),f"{porcentaje_grupo:.2f}"),
                     ('',),
                     ('',)
                 ]
 
-                for row in data_total:
-                    ws.append(row)
+                acum_ingreso = acum_ingreso + len(result1)
+                acum_pendiente = acum_pendiente + len(result2)
+
+                for fila in data_total:
+                    ws.append(fila)
+
+            ws['b13'].value = acum_ingreso
+            ws['c13'].value = acum_pendiente
+            t = (acum_ingreso * 100) / (acum_ingreso+acum_pendiente)
+            ws['d13'].value = f"{t:.2f}"
 
             for i, col in enumerate(ws.columns):
                 ws.column_dimensions[get_column_letter(i+1)].width = 35
+
+            for row in ws["B1":"D100"]:
+                for cell in row:
+                    cell.alignment = Alignment(horizontal="center")
 
             self.create_report(wb)
 
             wb.save(archivo)
 
-            #TODO: consultar usuarios, enviar por correo con archivo adjunto.
-            enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=['correo@prueba.com'], attachment_file=archivo)
+            users = User.objects.filter(groups__id=7)
+            for user in users:
+                if user.email:
+                    enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=[user.email], attachment_file=archivo)
 
