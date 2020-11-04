@@ -138,7 +138,7 @@ class Command(BaseCommand):
                 ('SOBRE USO DE PROFESIONALES',),
                 ('','Ingresaron','Pendientes','% Ingreso'),
                 ('Profesionales que han ingresado',ingreso,pendiente,f"{porcentaje_general_1:.2f}"),
-                ('Grupos que han ingresado familias',21,7,33.33),
+                ('Grupos que han ingresado familias',0,0,0),
                 ('',),
                 ('',)
             ]
