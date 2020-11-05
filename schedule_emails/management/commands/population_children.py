@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 from django.db import connection
 from django.contrib.auth.models import User
+from groups.models import Group
 from schedule_emails.methods import enviar_correo
 from openpyxl.styles import Alignment, Font, Border, Side
 from django.core.management.base import BaseCommand, CommandError
@@ -13,7 +14,7 @@ from openpyxl.utils import get_column_letter
 class Command(BaseCommand):
 
     def create_report(self, wb):
-        heading = ('nro','región','distrito','eess','nro de niño de 0 a 24 meses','nombre','apellido paterno', 'apellido materno', 'dni','celular','total de familias','ingreso de profesional en la ultima semana')
+        heading = ('region','grupo','username','first_name','last_name','email','familias','ultima_semana_activo',)
         ws = wb.create_sheet('Reporte')
         ws.append(heading)
 
@@ -26,16 +27,35 @@ class Command(BaseCommand):
 
         cursor = connection.cursor()
 
-        # TODO: carmbiar por el query real
         query = """
-            select * from auth_user
+            select
+                group_concat(distinct grupo_padre.name order by grupo_padre.name asc) as 'region',
+                group_concat(distinct groups_group.name order by groups_group.name asc) as 'grupo',
+                auth_user.username,
+                auth_user.first_name,
+                auth_user.last_name,
+                auth_user.email,
+                count(distinct groups_assignationmessengeruser.user_id ) as 'familias',
+                if(week(auth_user.last_login) >= week(now())-1, 'Si', 'No') as 'ultima_semana_activo'
+            from auth_user
+                inner join groups_rolegroupuser
+                    on groups_rolegroupuser.user_id = auth_user.id
+                inner join groups_group
+                    on groups_rolegroupuser.group_id = groups_group.id
+                inner join groups_group as grupo_padre
+                    on groups_group.parent_id = grupo_padre.id
+                left join groups_assignationmessengeruser
+                    on groups_assignationmessengeruser.group_id = groups_group.id
+            where grupo_padre.parent_id = 38
+            group by auth_user.id
+            order by count(grupo_padre.id) asc, count(groups_group.id) asc, grupo_padre.name asc, groups_group.name asc, username asc
         """
         cursor.execute(query)
         result = cursor.fetchall()
 
         if len(result) > 0:
-            # TODO: loop de la data
-            pass
+            for row in result:
+                ws.append(row)
 
             for row in ws.iter_rows():
                 for cell in row:
@@ -205,8 +225,25 @@ class Command(BaseCommand):
 
             wb.save(archivo)
 
-            users = User.objects.filter(groups__id=7)
-            for user in users:
-                if user.email:
-                    enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=[user.email], attachment_file=archivo)
+            # TODO: corregir query
+            query = """
+            select distinct(email) from auth_user
+                inner join groups_rolegroupuser
+                    on groups_rolegroupuser.user_id = auth_user.id
+                inner join groups_group
+                    on groups_rolegroupuser.group_id = groups_group.id
+                inner join groups_group as grupo_padre
+                    on groups_group.parent_id = grupo_padre.id
+                left join groups_assignationmessengeruser
+                    on groups_assignationmessengeruser.group_id = groups_group.id
+            where grupo_padre.parent_id = 38
+            and email is not null
+            and email != ''
+            """
+            cursor.execute(query)
+            result = cursor.fetchall()
+            if len(result) > 0:
+                for user in result:
+                    if user[0]:
+                        enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=[user[0]], attachment_file=archivo)
 

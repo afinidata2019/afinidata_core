@@ -7,10 +7,26 @@ from django.db import connection
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
-        users = User.objects.filter(groups__id=7)
-        if len(users):
+        cursor = connection.cursor()
+        query = """
+        select distinct(email), auth_user.id, username, first_name, last_name
+        from auth_user
+            inner join groups_rolegroupuser
+                on groups_rolegroupuser.user_id = auth_user.id
+            inner join groups_group
+                on groups_rolegroupuser.group_id = groups_group.id
+            inner join groups_group as grupo_padre
+                on groups_group.parent_id = grupo_padre.id
+            left join groups_assignationmessengeruser
+                on groups_assignationmessengeruser.group_id = groups_group.id
+        where grupo_padre.parent_id = 38
+        and email is not null
+        and email != ''
+        """
+        cursor.execute(query)
+        users = cursor.fetchall()
+        if len(users) > 0:
             for user in users:
-                if user.email:
                     cursor = connection.cursor()
                     # total niños por grupo del usuario actual
                     query = """
@@ -20,7 +36,7 @@ class Command(BaseCommand):
                         group by 2;
                     """
 
-                    cursor.execute(query, [user.id])
+                    cursor.execute(query, [user[1]])
 
                     result = cursor.fetchone()
 
@@ -29,7 +45,7 @@ class Command(BaseCommand):
                     else:
                         total_children = 0
 
-                    group = RoleGroupUser.objects.get(user_id=user.id)
+                    group = RoleGroupUser.objects.get(user_id=user[1])
 
                     # link de referido
                     cursor.execute("""
@@ -39,7 +55,7 @@ class Command(BaseCommand):
                     inner join groups_code t3 on(t2.group_id = t3.group_id)
                     where user_id = %s
                     order by t1.id desc limit 1;
-                    """,[user.id])
+                    """,[user[1]])
 
                     result = cursor.fetchone()
 
@@ -51,9 +67,9 @@ class Command(BaseCommand):
                     enviar_correo(
                         asunto='Recordatorio de email',
                         template='schedule_emails/professional_reminder.html',
-                        recipients=[user.email],
+                        recipients=[user[0]],
                         data={
-                            'user': user,
+                            'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
                             'total_children':total_children,
                             'group': group.pk,
                             'url_referido': url_referido
