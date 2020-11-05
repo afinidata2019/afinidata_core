@@ -75,5 +75,3 @@ class Command(BaseCommand):
                             'url_referido': url_referido
                         }
                     )
-
-        self.stdout.write(f"Proceso finalizado!")

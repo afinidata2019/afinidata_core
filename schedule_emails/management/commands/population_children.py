@@ -225,7 +225,6 @@ class Command(BaseCommand):
 
             wb.save(archivo)
 
-            # TODO: corregir query
             query = """
             select distinct(email) from auth_user
                 inner join groups_rolegroupuser
