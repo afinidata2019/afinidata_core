@@ -140,7 +140,7 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
                 c['ref'] = "m.me/afinidata"
         else:
             c['ref'] = "m.me/afinidata"
-            
+
         if self.object.code_set.exists():
             c['ref'] = "%s?ref=%s" % (c['ref'], self.object.code_set.all().last().code)
 

@@ -86,8 +86,8 @@
     </div>
     <br/>
 <div class="container-fluid bg-white">
-    <div class="container-fluid d-flex flex-column">
-        <div class="row align-items-center">
+    <div class="container-fluid">
+        <div class="row">
             <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
                     <div class="row">
                         <div class="col-xs-12">
@@ -117,11 +117,13 @@
                     </div>
             </div>
             <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
-                <canvas id="chart" width="0" height="0" style=""></canvas>
+                <div class="group-resume-container" id="group-resume"></div>
+
+                <!-- <canvas id="chart" width="0" height="0" style=""></canvas>
                 {% for attribute_type in attribute_types %}
                     <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
                 {% endfor %}
-                <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div>
+                <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div> -->
             </div>
         </div>
     </div>
@@ -524,6 +526,57 @@ show{
     var instanceCardData = new FormData();
     var instanceCardAttributes = {};
 
+    /** nueva funcionalidad */
+
+    const DATA = [
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 1},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 2},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 5},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 20},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 3},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 4},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 1},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 2},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 5},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 20},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 3},
+      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 4},
+    ];
+
+    function renderItem(item){
+      const elemento = $("#group-resume");
+      const fila = `<div style="margin: 12px 0;">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="group-milestone-label">
+              ${item.label}
+            </span>
+          </div>
+          <div class="col-md-8">
+            <div class="progress-text">
+              ${item.value} ${item.value > 1 ? 'casos' : 'caso' }
+            </div>
+            <div class="progress ">
+              <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
+              aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+      elemento.append(fila);
+    }
+
+    $(document).ready(function() {
+      const casos = DATA.map( item => item.value);
+      const maxValue = Math.max(...casos);
+      DATA.forEach( item => {
+        item.porcentaje = (item.value * 100) / maxValue;
+        renderItem(item)
+      });
+    })
+
+    /* end nueva funcionalidad */
+
     function copyToClipboard() {
       var copyText = document.getElementById("myref");
       copyText.select();
@@ -778,31 +831,31 @@ show{
                 chartsArray = []
                 for (i = 0; i < r.factores_riesgo.length; i++) {
                     document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
-                    chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
-                    chartsArray[i]['chart'].render();
-                    $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    // chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
+                    // chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+                    // chartsArray[i]['chart'].render();
+                    // $("#chartRiskContainer"+chartsArray[i]['id']).hide();
                 }
                 document.querySelector('#milestones_count').textContent = r.milestones_count;
-                chartMilestones.options.data[0].dataPoints = r.milestones;
-                $("#chartMilestonesContainer").show();
-                chartMilestones.render();
+                //chartMilestones.options.data[0].dataPoints = r.milestones;
+                // $("#chartMilestonesContainer").show();
+                // chartMilestones.render();
                 $('#milestonesCard').click(function () {
-                    for(i = 0; i < chartsArray.length; i++){
-                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    }
-                    $("#chartMilestonesContainer").show();
+                    // for(i = 0; i < chartsArray.length; i++){
+                    //     $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    // }
+                    // $("#chartMilestonesContainer").show();
                 });
                 $(('[id^="attribute_type_"]')).click(function () {
-                    $("#chartMilestonesContainer").hide();
-                    for(i = 0; i < chartsArray.length; i++){
-                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    }
-                    for(i = 0; i < chartsArray.length; i++){
-                        if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
-                            $("#chartRiskContainer"+chartsArray[i]['id']).show();
-                        }
-                    }
+                    // $("#chartMilestonesContainer").hide();
+                    // for(i = 0; i < chartsArray.length; i++){
+                    //     $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    // }
+                    // for(i = 0; i < chartsArray.length; i++){
+                    //     if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                    //         $("#chartRiskContainer"+chartsArray[i]['id']).show();
+                    //     }
+                    // }
                 });
                 $("#pagination").hide();
                 let data1 = new FormData();
@@ -817,40 +870,40 @@ show{
     })()
 
     window.onload = function () {
-        var bar_ctx = document.getElementById('chart').getContext('2d');
-        var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
-        background_1.addColorStop(0, 'rgb(0,89,217)');
-        background_1.addColorStop(1, 'rgb(105,176,255)');
-        chartStartData = {
-            animationEnabled: true,
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            axisY: {
-                includeZero: true,
-                valueFormatString:" "
-            },
-            axisX:{
-              labelFontFamily: "tahoma",
-              labelFontSize: 14
-            },
-            data: [{
-                type: "bar",
-                click: filterInstances,
-                color: background_1,
-                indexLabelFontFamily: "tahoma",
-                indexLabelFontSize: 18,
-                indexLabelPlacement: "inside",
-                indexLabel: "{y} {y_label}",
-                toolTipContent: "{label}: {y}",
-                showInLegend: false,
-                indexLabelFontColor: "white",
-                legendMarkerColor: "white",
-                legendText: "Respuestas",
-                includeZero: true,
-                cursor: "pointer",
-                dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
-            }]
-        }
-        chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+        // var bar_ctx = document.getElementById('chart').getContext('2d');
+        // var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
+        // background_1.addColorStop(0, 'rgb(0,89,217)');
+        // background_1.addColorStop(1, 'rgb(105,176,255)');
+        // chartStartData = {
+        //     animationEnabled: true,
+        //     theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //     axisY: {
+        //         includeZero: true,
+        //         valueFormatString:" "
+        //     },
+        //     axisX:{
+        //       labelFontFamily: "tahoma",
+        //       labelFontSize: 14
+        //     },
+        //     data: [{
+        //         type: "bar",
+        //         click: filterInstances,
+        //         color: background_1,
+        //         indexLabelFontFamily: "tahoma",
+        //         indexLabelFontSize: 18,
+        //         indexLabelPlacement: "inside",
+        //         indexLabel: "{y} {y_label}",
+        //         toolTipContent: "{label}: {y}",
+        //         showInLegend: false,
+        //         indexLabelFontColor: "white",
+        //         legendMarkerColor: "white",
+        //         legendText: "Respuestas",
+        //         includeZero: true,
+        //         cursor: "pointer",
+        //         dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
+        //     }]
+        // }
+        // chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
 
         $('#search_name').keypress(function(event){
             var keycode = (event.keyCode ? event.keyCode : event.which);
