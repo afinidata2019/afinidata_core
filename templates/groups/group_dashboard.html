@@ -517,8 +517,10 @@ show{
 </style>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script>
-    const DOMAIN =  window.location.origin
-    const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
+    // const DOMAIN =  window.location.origin
+    const DOMAIN = 'https://core.afinidata.com'; // TODO: remove in production
+    // const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
+    const GROUP_ID = '13' // TODO: remove in production
     const URI = `${DOMAIN}/utilities/group_assignations/`
     var requestData = new FormData();
     requestData.append('pag', 0);
@@ -526,54 +528,37 @@ show{
     var instanceCardData = new FormData();
     var instanceCardAttributes = {};
 
-    /** nueva funcionalidad */
+    /** nueva funcionalidad @josequintero */
 
-    const DATA = [
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 1},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 2},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 5},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 20},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 3},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 4},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 1},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 2},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 5},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 20},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 3},
-      {label: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet", value: 4},
-    ];
-
-    function renderItem(item){
-      const elemento = $("#group-resume");
-      const fila = `<div style="margin: 12px 0;">
-        <div class="row">
-          <div class="col-md-4">
-            <span class="group-milestone-label">
-              ${item.label}
-            </span>
-          </div>
-          <div class="col-md-8">
-            <div class="progress-text">
-              ${item.value} ${item.value > 1 ? 'casos' : 'caso' }
+    const chart = {
+      createContainer: (id) => {
+        const element = document.createElement(`div`)
+        element.id = id;
+        $("#group-resume").append(element)
+      },
+      renderItem: (item, name) => {
+        const elemento = $(name);
+        const fila = `<div style="margin: 12px 0;">
+          <div class="row">
+            <div class="col-md-4">
+              <span class="group-milestone-label">
+                ${item.label}
+              </span>
             </div>
-            <div class="progress ">
-              <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
-              aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"></div>
+            <div class="col-md-8">
+              <div class="progress-text">
+                ${item.value} ${item.value > 1 ? 'casos' : 'caso' }
+              </div>
+              <div class="progress ">
+                <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
+                aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>`;
-      elemento.append(fila);
+        </div>`;
+        elemento.append(fila);
+      }
     }
-
-    $(document).ready(function() {
-      const casos = DATA.map( item => item.value);
-      const maxValue = Math.max(...casos);
-      DATA.forEach( item => {
-        item.porcentaje = (item.value * 100) / maxValue;
-        renderItem(item)
-      });
-    })
 
     /* end nueva funcionalidad */
 
@@ -826,6 +811,25 @@ show{
        window.addEventListener('load', e => {
             let data = new FormData();
             getRequest(data, function(r){
+
+                /* nueva funcionalidad @josequintero */
+                  const { milestones, factores_riesgo } = r
+
+                  // graficar milestones
+                  if( milestones ){
+                    const casos = milestones.map( item => item.y);
+                    const maxValue = Math.max(...casos);
+                    chart.createContainer('milestones_1')
+                    milestones.forEach( (item) => {
+                      let porcentaje = (item.y * 100) / maxValue;
+                      chart.renderItem({label: item.label, value: item.y, porcentaje}, '#milestones_1')
+                    });
+                  }
+
+                  // graficar factores de riesgo
+
+                /* end nueva funcionalidad */
+
                 document.querySelector('#assignations').textContent = r.data.count
                 document.querySelector('#children').textContent = r.data.children
                 chartsArray = []
