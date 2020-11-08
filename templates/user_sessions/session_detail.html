@@ -182,6 +182,37 @@
                                 <a href="{% url 'sessions:reply_create' session_id=object.pk field_id=field.pk %}">Add Reply</a>
                             {% endif %}
 
+                            {% if field.field_type == 'buttons' %}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Title</th>
+                                            <th>URL</th>
+                                            <th>Redirect Block</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for button in field.reply_set.all %}
+                                            <tr>
+                                                <td>{{ button.button_type }}</td>
+                                                <td>{% if button.title %}<span>{{ button.title }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if button.url %}<span>{{ button.url }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if button.block_names %}<span>{{ button.block_names }}</span>{% else %}--{% endif %}</td>
+                                                <td>
+                                                    <a href="{% url 'sessions:button_edit' session_id=object.pk field_id=field.pk button_id=button.pk %}"
+                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                                    <a href="{% url 'sessions:button_delete' session_id=object.pk field_id=field.pk button_id=button.pk %}"
+                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'sessions:button_create' session_id=object.pk field_id=field.pk %}">Add Button</a>
+                            {% endif %}
+
                             {% if field.field_type == 'set_attributes' %}
                                 <table class="table">
                                     <thead>
