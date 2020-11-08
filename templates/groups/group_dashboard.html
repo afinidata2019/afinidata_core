@@ -101,7 +101,8 @@
                         </div>
                         {% for attribute_type in attribute_types %}
                             <div class="col-xs-12">
-                                <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="attribute_type_{{ attribute_type.id }}">
+                                <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="attribute_type_{{ attribute_type.id }}"
+                                data-id="{{attribute_type.id}}">
                                 {% if attribute_type.id == 2 %}
                                     <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
                                     {% else %}
@@ -532,12 +533,13 @@ show{
 
     const chart = {
       createContainer: (id) => {
-        const element = document.createElement(`div`)
-        element.id = id;
-        $("#group-resume").append(element)
+        $("#group-resume").append(`<div class='chart-container' id='${id}'></div>`);
+      },
+      showMessage: (name, text) => {
+        $(name).innerHTML = '';
+        $(name).append(`<div class="alert alert-info">${text}.</div>`)
       },
       renderItem: (item, name) => {
-        const elemento = $(name);
         const fila = `<div style="margin: 12px 0;">
           <div class="row">
             <div class="col-md-4">
@@ -556,7 +558,7 @@ show{
             </div>
           </div>
         </div>`;
-        elemento.append(fila);
+        $(name).append(fila);
       }
     }
 
@@ -811,55 +813,93 @@ show{
        window.addEventListener('load', e => {
             let data = new FormData();
             getRequest(data, function(r){
-
-                /* nueva funcionalidad @josequintero */
-                  const { milestones, factores_riesgo } = r
+                /* @josequintero */
+                  const { milestones_count, milestones, factores_riesgo } = r
 
                   // graficar milestones
                   if( milestones ){
-                    const casos = milestones.map( item => item.y);
-                    const maxValue = Math.max(...casos);
-                    chart.createContainer('milestones_1')
-                    milestones.forEach( (item) => {
-                      let porcentaje = (item.y * 100) / maxValue;
-                      chart.renderItem({label: item.label, value: item.y, porcentaje}, '#milestones_1')
-                    });
+                    if(milestones_count > 0){
+                      const casos = milestones.map( item => item.y);
+                      const maxValue = Math.max(...casos);
+                      chart.createContainer('milestones_1')
+                      milestones.forEach( (item) => {
+                        let porcentaje = (item.y * 100) / maxValue;
+                        chart.renderItem({label: item.label, value: item.y, porcentaje}, '#milestones_1')
+                      });
+                    } else {
+                      chart.createContainer('milestones_1')
+                      chart.showMessage('#milestones_1', 'No hay niños con riesgo de desarrollo');
+                    }
                   }
 
                   // graficar factores de riesgo
+                  if(factores_riesgo){
+                    factores_riesgo.forEach((x, i) => {
+                      if(x.total > 0){
+                        const casos = x.factores_riesgo.map( item => item.y);
+                        const maxValue = Math.max(...casos);
+                        chart.createContainer(`factores_riesgo_${x.id}`);
+                        x.factores_riesgo.forEach( (item) => {
+                          let porcentaje = (item.y * 100) / maxValue;
+                          chart.renderItem({label: item.label, value: item.y, porcentaje}, `#factores_riesgo_${x.id}`)
+                        });
+                      } else {
+                        chart.createContainer(`factores_riesgo_${x.id}`);
+                        chart.showMessage(`#factores_riesgo_${x.id}`, `No hay niños con riesgo de ${x.name}`)
+                      }
+                    });
+                  }
 
-                /* end nueva funcionalidad */
+                  $(".chart-container").not(':first').hide();
+
+                /* End nueva funcionalidad */
 
                 document.querySelector('#assignations').textContent = r.data.count
                 document.querySelector('#children').textContent = r.data.children
                 chartsArray = []
+
                 for (i = 0; i < r.factores_riesgo.length; i++) {
                     document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                    // chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
-                    // chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
-                    // chartsArray[i]['chart'].render();
-                    // $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    /*--------------------- old code ---------------------------------------
+                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
+                    chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+                    chartsArray[i]['chart'].render();
+                    $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    ------------------------------------------------------------------------*/
                 }
                 document.querySelector('#milestones_count').textContent = r.milestones_count;
+                /*------------------------ old code ------------------------------------------
                 //chartMilestones.options.data[0].dataPoints = r.milestones;
                 // $("#chartMilestonesContainer").show();
                 // chartMilestones.render();
+                ----------------------------------------------------------------------------*/
                 $('#milestonesCard').click(function () {
-                    // for(i = 0; i < chartsArray.length; i++){
-                    //     $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    // }
-                    // $("#chartMilestonesContainer").show();
+                    // @josequintero
+                    $('.chart-container').hide();
+                    $(`.chart-container:first`).show();
+                    /*----------------------- old code ------------------------
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    }
+                    $("#chartMilestonesContainer").show();
+                    ---------------------------------------------------------*/
                 });
                 $(('[id^="attribute_type_"]')).click(function () {
-                    // $("#chartMilestonesContainer").hide();
-                    // for(i = 0; i < chartsArray.length; i++){
-                    //     $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    // }
-                    // for(i = 0; i < chartsArray.length; i++){
-                    //     if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
-                    //         $("#chartRiskContainer"+chartsArray[i]['id']).show();
-                    //     }
-                    // }
+                    // @josequintero:
+                    const id = $(this).data('id');
+                    $('.chart-container').hide();
+                    $(`#factores_riesgo_${id}`).show();
+                    /*----------------------old code ---------------------------
+                    $("#chartMilestonesContainer").hide();
+                    for(i = 0; i < chartsArray.length; i++){
+                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+                    }
+                    for(i = 0; i < chartsArray.length; i++){
+                        if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                            $("#chartRiskContainer"+chartsArray[i]['id']).show();
+                        }
+                    }
+                    ----------------------------------------------------------*/
                 });
                 $("#pagination").hide();
                 let data1 = new FormData();
