@@ -58,7 +58,7 @@
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-xl-2 col-md-6 mb">
+    <div class="col-xl-4 col-md-6 mb">
       <div class="card bg-dark text-white">
         <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
         <div class="card-img-overlay">
@@ -67,7 +67,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-2 col-md-6 mb">
+    <div class="col-xl-4 col-md-6 mb">
       <div class="card bg-dark text-white">
         <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
         <div class="card-img-overlay">
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-2 col-md-6 mb">
+    <div class="col-xl-4 col-md-6 mb">
       <div class="card bg-dark text-white">
         <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
         <div class="card-img-overlay">
@@ -129,12 +129,11 @@
       </div>
       <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
         <div class="group-resume-container" id="group-resume"></div>
-
         <!-- <canvas id="chart" width="0" height="0" style=""></canvas>
-                {% for attribute_type in attribute_types %}
-                    <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
-                {% endfor %}
-                <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div> -->
+        {% for attribute_type in attribute_types %}
+            <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
+        {% endfor %}
+        <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div> -->
       </div>
     </div>
   </div>
@@ -574,10 +573,13 @@
 </style>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script>
-  // const DOMAIN =  window.location.origin
-  const DOMAIN = 'https://core.afinidata.com'; // TODO: remove in production
-  // const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
-  const GROUP_ID = '13' // TODO: remove in production
+  const DOMAIN =  window.location.origin
+  const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
+
+  // data for test
+  // const DOMAIN = 'https://core.afinidata.com';
+  // const GROUP_ID = '13';
+
   const URI = `${DOMAIN}/utilities/group_assignations/`
   var requestData = new FormData();
   requestData.append('pag', 0);
@@ -611,16 +613,31 @@
               <div class="progress-text">
                 ${item.value} ${item.value > 1 ? 'casos' : 'caso'}
               </div>
-              <div class="progress ">
-                <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
-                aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"></div>
+              <div class="item-chart"
+              data-type="${item.type}"
+              data-id="${item.id}"
+              data-label="${item.label}">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
+                    aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"
+                    ></div>
+                  </div>
+                </div>
               </div>
-            </div>
           </div>
         </div>`;
       $(name).append(fila);
     }
   }
+
+  $(document).on('click','.item-chart', function() {
+    const instance = {
+      label: $(this).data('label'),
+      type: $(this).data('type'),
+      id: $(this).data('id')
+    }
+    filterInstances(instance);
+  });
 
   /* end nueva funcionalidad */
 
@@ -769,18 +786,22 @@
     $("#table_id tbody").append(rowHTML);
   }
 
-  function filterInstances(e) {
+  function filterInstances({id, type, label}) {
     let data = new FormData();
+    /**--------------------- old code ---------------------------------------
     if ('program_attribute_id' in e.dataPoint) {
       data.append('attribute_id', String(e.dataPoint.program_attribute_id));
     }
     if ('milestone_id' in e.dataPoint) {
       data.append('milestone_id', String(e.dataPoint.milestone_id));
     }
+    -------------------------------------------------------------------------*/
+    /* @josequintero */
+    data.append(type==='milestone' ?  'milestone_id' : 'attribute_id', id);
     $("#pag_n").html(1);
     $("#table_id tbody tr").remove();
     getRequest(data, function (r) {
-      $("#filtrado_por").text("Filtrado por: " + e.dataPoint.label);
+      $("#filtrado_por").text("Filtrado por: " + label);
       $("#search_name").val("");
       r.data.forEach(function (instance) { writeRow(instance); });
       $('#overlay').fadeOut();
@@ -883,8 +904,13 @@
             const maxValue = Math.max(...casos);
             chart.createContainer('milestones_1', 'Niños con riesgo de desarrollo')
             milestones.forEach((item) => {
-              let porcentaje = (item.y * 100) / maxValue;
-              chart.renderItem({ label: item.label, value: item.y, porcentaje }, '#milestones_1')
+              chart.renderItem({
+                label: item.label,
+                value: item.y,
+                porcentaje: (item.y * 100) / maxValue,
+                type: 'milestone',
+                id: item.milestone_id
+              }, '#milestones_1')
             });
           } else {
             chart.createContainer('milestones_1','Niños con riesgo de desarrollo')
@@ -900,8 +926,13 @@
               const maxValue = Math.max(...casos);
               chart.createContainer(`factores_riesgo_${x.id}`, x.name );
               x.factores_riesgo.forEach((item) => {
-                let porcentaje = (item.y * 100) / maxValue;
-                chart.renderItem({ label: item.label, value: item.y, porcentaje }, `#factores_riesgo_${x.id}`)
+                chart.renderItem({
+                  label: item.label,
+                  value: item.y,
+                  porcentaje: (item.y * 100) / maxValue,
+                  type: 'program',
+                  id: item.program_attribute_id
+                }, `#factores_riesgo_${x.id}`)
               });
             } else {
               chart.createContainer(`factores_riesgo_${x.id}`, x.name);
