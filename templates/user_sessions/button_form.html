@@ -21,6 +21,7 @@
                         <input type="text" class="form-control" value="{{ session }}" disabled></div>
                     <div class="form-group"><label for="">Field: </label>
                         <input type="text" class="form-control" value="{{ field }}" disabled></div>
+                    <div class="form-group"><label for="">Types: web_url, show_block</label>
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">{{ action }} Button</button>
