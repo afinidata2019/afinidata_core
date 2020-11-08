@@ -194,7 +194,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for button in field.reply_set.all %}
+                                        {% for button in field.button_set.all %}
                                             <tr>
                                                 <td>{{ button.button_type }}</td>
                                                 <td>{% if button.title %}<span>{{ button.title }}</span>{% else %}--{% endif %}</td>
