@@ -342,6 +342,28 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class ButtonCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_button'
+    model = models.Button
+    fields = ('button_type', 'title', 'url', 'block_names')
+
+    def get_context_data(self, **kwargs):
+        c = super(ButtonCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        form.instance.session_id = self.kwargs['session_id']
+        return super(ButtonCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Button added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class ReplyEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_reply'
     model = models.Reply
@@ -360,6 +382,24 @@ class ReplyEditView(PermissionRequiredMixin, UpdateView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class ButtonEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_button'
+    model = models.Button
+    fields = ('button_type', 'title', 'url', 'block_names')
+    pk_url_kwarg = 'button_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ButtonEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Button changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class ReplyDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = 'user_sessions.delete_reply'
     model = models.Reply
@@ -373,6 +413,22 @@ class ReplyDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, "Reply deleted in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class ButtonDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_button'
+    model = models.Button
+    pk_url_kwarg = 'button_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(ButtonDeleteView, self).get_context_data()
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Button deleted in field.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
