@@ -420,7 +420,16 @@ class GroupInstanceCardView(View):
                             else:
                                 risk = -1
                     else:
-                        reply_value = Reply.objects.filter(attribute=attribute.attribute.name, value=attribute.value)
+                        if months:
+                            reply_value = Reply.objects.filter(attribute=attribute.attribute.name,
+                                                               field__session__programs=program,
+                                                               field__session__min__lte=months,
+                                                               field__session__max__gte=months,
+                                                               value=attribute.value)
+                        else:
+                            reply_value = Reply.objects.filter(attribute=attribute.attribute.name,
+                                                               field__session__programs=program,
+                                                               value=attribute.value)
                         if reply_value.exists():
                             value = reply_value.first().label
                         else:
