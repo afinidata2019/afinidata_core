@@ -5,267 +5,296 @@
 {% block content %}
 {% load static %}
 <div id="overlay" style="display:none;">
-    <div class="spinner"></div>
-    <br/>
-    Cargando...
+  <div class="spinner"></div>
+  <br />
+  Cargando...
 </div>
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <div class="col-xl-9 col-md-9 mb">
-                <h1 class="h3 mb-0 text-black-800 group-title" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
-            </div>
-            <div class="col-xl-3 col-md-3 mb">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#invitarFamilias">
-                  Invitar Familias
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="invitarFamilias" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Invitar Familias</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                          Copia el siguiente link para invitar familias Afinidata <br/><br/>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Ref:</span>
-                              </div>
-                          <input type="text" class="form-control" readonly placeholder="{{ ref }}" aria-label="{{ ref }}" aria-describedby="basic-addon2" value="{{ ref }}" id="myref">
-                          <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()"><i class="far fa-copy"></i> Copiar</button>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-            </div>
-        </div>
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="col-xl-9 col-md-9 mb">
+      <h1 class="h3 mb-0 text-black-800 group-title" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
     </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xl-2 col-md-6 mb">
-                <div class="card bg-dark text-white">
-                  <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Total usuarios</h5>
-                    <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
-                  </div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-md-6 mb">
-                <div class="card bg-dark text-white">
-                  <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Total niños</h5>
-                    <h5 class="card-text" id="children"><i class="fas fa-spinner fa-pulse"></i></h5>
-                  </div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-md-6 mb">
-                <div class="card bg-dark text-white">
-                  <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Actividades enviadas</h5>
-                    <h5 class="card-text" id="assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
-                  </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br/>
-<div class="container-fluid bg-white">
-    <div class="container-fluid d-flex flex-column">
-        <div class="row align-items-center">
-            <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="milestonesCard">
-                              <img class="card-img shadow-none" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
-                              <div class="card-img-overlay shadow-none d-flex flex-column justify-content-end">
-                                <p class="card-text"><span id="milestones_count"><i class="fas fa-spinner fa-pulse"></i></span>
-                                    <br/>Niños con Riesgos de Desarrollo</p>
-                              </div>
-                            </div>
-                        </div>
-                        {% for attribute_type in attribute_types %}
-                            <div class="col-xs-12">
-                                <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="attribute_type_{{ attribute_type.id }}">
-                                {% if attribute_type.id == 2 %}
-                                    <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png" alt="Card image">
-                                    {% else %}
-                                    <img class="card-img" src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.57.53.png" alt="Card image">
-                                {% endif %}
-                                  <div class="card-img-overlay d-flex flex-column justify-content-end">
-                                    <p class="card-text"><span id="attribute_type_count_{{ attribute_type.id }}"><i class="fas fa-spinner fa-pulse"></i></span>
-                                        <br/>{{ attribute_type.name }}</p>
-                                  </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-            </div>
-            <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
-                <canvas id="chart" width="0" height="0" style=""></canvas>
-                {% for attribute_type in attribute_types %}
-                    <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
-                {% endfor %}
-                <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div>
-            </div>
-        </div>
-    </div>
+    <div class="col-xl-3 col-md-3 mb">
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#invitarFamilias">
+        Invitar Familias
+      </button>
 
-</div>
-    <br/>
-    <div class="container-fluid" id="tableContainer">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex"><div class="container-fluid d-flex flex-column justify-content-start">
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrando últimos 10 usuarios: </h6><br/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
-                        <div class="dropdown">
-                          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="search_age" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Buscar por edad
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <div class="container-fluid">
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="0_3" id="search_age1" name="search_age_option">
-                                  <label class="form-check-label" for="search_age1">0 a 3 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="4_6" id="search_age2" name="search_age_option">
-                                  <label class="form-check-label" for="search_age2">4 a 6 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="7_9" id="search_age3" name="search_age_option">
-                                  <label class="form-check-label" for="search_age3">7 a 9 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="10_12" id="search_age4" name="search_age_option">
-                                  <label class="form-check-label" for="search_age4">10 a 12 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="13_15" id="search_age5" name="search_age_option">
-                                  <label class="form-check-label" for="search_age5">13 a 15 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="16_18" id="search_age6" name="search_age_option">
-                                  <label class="form-check-label" for="search_age6">16 a 18 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="19_21" id="search_age7" name="search_age_option">
-                                  <label class="form-check-label" for="search_age7">19 a 21 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="22_24" id="search_age8" name="search_age_option">
-                                  <label class="form-check-label" for="search_age8">22 a 24 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="25_30" id="search_age9" name="search_age_option">
-                                  <label class="form-check-label" for="search_age9">25 a 30 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="31_35" id="search_age10" name="search_age_option">
-                                  <label class="form-check-label" for="search_age10">31 a 35 meses</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <input class="form-check-input" type="checkbox" value="-9_0" id="search_age11" name="search_age_option">
-                                  <label class="form-check-label" for="search_age11">Embarazo</label>
-                                </div>
-                                <div class="form-check dropdown-item">
-                                  <button class="btn btn-primary my-2 my-sm-0" onclick="searchInstances()">Buscar <i class="fas fa-search"></i></button>
-                                </div>
-                              </div>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
-                        <button class="btn btn-primary my-2 my-sm-0" onclick="searchAllInstances()">Ver todos</button>
-                    </div>
-                    <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
-                        <div class="input-group mb-3 float-right">
-                          <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar..." aria-label="Search">
-                            <div class="input-group-append" onclick="searchInstances()">
-                                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                              </div>
-                        </div>
-                    </div>
-                </div></div>
+      <!-- Modal -->
+      <div class="modal fade" id="invitarFamilias" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Invitar Familias</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table" id="table_id" cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                        <tr>
-                            <th scope="col"></th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Encargado</th>
-                            <th scope="col">Edad</th>
-                            <th scope="col">Fecha de nacimiento</th>
-                            <th scope="col">Teléfono</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Nivel de riesgo
-                                <a href="" data-toggle="modal" data-target="#infoModal"><i class="far fa-question-circle"></i></a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+            <div class="modal-body">
+              Copia el siguiente link para invitar familias Afinidata <br /><br />
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Ref:</span>
+                </div>
+                <input type="text" class="form-control" readonly placeholder="{{ ref }}" aria-label="{{ ref }}"
+                  aria-describedby="basic-addon2" value="{{ ref }}" id="myref">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()"><i
+                      class="far fa-copy"></i> Copiar</button>
+                </div>
               </div>
-                <div class="container-fluid d-flex flex-column justify-content-start">
-                    <div class="row" id="pagination">
-                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
-                            <h6 id="page_label">Pág. 1 / 1</h6>
-                        </div>
-                        <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
-                            <nav aria-label="Page navigation example" class="float-right">
-                              <ul class="pagination float-right">
-                                <li class="page-item" onclick="changePag(-1)">
-                                  <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                  </a>
-                                </li>
-                                <li class="page-item" onclick="changePag(0)"><a class="page-link" href="#" id="pag_1">1</a></li>
-                                <li class="page-item active"><a class="page-link" id="pag_n">1</a></li>
-                                <li class="page-item" onclick="changePag(2)"><a class="page-link" href="#" id="pag_last">1</a></li>
-                                <li class="page-item" onclick="changePag(1)">
-                                  <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar</button>
+            </div>
+          </div>
         </div>
+      </div>
+
+
     </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-4 col-md-6 mb">
+      <div class="card bg-dark text-white">
+        <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
+        <div class="card-img-overlay">
+          <h5 class="card-title">Total usuarios</h5>
+          <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb">
+      <div class="card bg-dark text-white">
+        <img class="card-img" src="{% static 'images/cards_bg_2.jpg' %}" alt="Card image">
+        <div class="card-img-overlay">
+          <h5 class="card-title">Total niños</h5>
+          <h5 class="card-text" id="children"><i class="fas fa-spinner fa-pulse"></i></h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb">
+      <div class="card bg-dark text-white">
+        <img class="card-img" src="{% static 'images/cards_bg_3.jpg' %}" alt="Card image">
+        <div class="card-img-overlay">
+          <h5 class="card-title">Actividades enviadas</h5>
+          <h5 class="card-text" id="assignations"><i class="fas fa-spinner fa-pulse"></i></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+<div class="container-fluid bg-white">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom" id="milestonesCard">
+              <img class="card-img shadow-none"
+                src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png"
+                alt="Card image">
+              <div class="card-img-overlay shadow-none d-flex flex-column justify-content-end">
+                <p class="card-text"><span id="milestones_count"><i class="fas fa-spinner fa-pulse"></i></span>
+                  <br />Niños con Riesgos de Desarrollo</p>
+              </div>
+            </div>
+          </div>
+          {% for attribute_type in attribute_types %}
+          <div class="col-xs-12">
+            <div class="card bg-dark text-white shadow-none my-md-2 mx-md-4 border-0 zoom"
+              id="attribute_type_{{ attribute_type.id }}" data-id="{{attribute_type.id}}">
+              {% if attribute_type.id == 2 %}
+              <img class="card-img"
+                src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.55.15.png"
+                alt="Card image">
+              {% else %}
+              <img class="card-img"
+                src="https://estuardiaz.github.io/Captura%20de%20Pantalla%202020-10-09%20a%20la(s)%2011.57.53.png"
+                alt="Card image">
+              {% endif %}
+              <div class="card-img-overlay d-flex flex-column justify-content-end">
+                <p class="card-text"><span id="attribute_type_count_{{ attribute_type.id }}"><i
+                      class="fas fa-spinner fa-pulse"></i></span>
+                  <br />{{ attribute_type.name }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 border-0 theme-canvas-container">
+        <div class="group-resume-container" id="group-resume"></div>
+        <!-- <canvas id="chart" width="0" height="0" style=""></canvas>
+        {% for attribute_type in attribute_types %}
+            <div id="chartRiskContainer{{ attribute_type.id }}" class="theme-risk-container" style="height: 85%;"></div>
+        {% endfor %}
+        <div id="chartMilestonesContainer" class="theme-risk-container" style="height: 85%;"></div> -->
+      </div>
+    </div>
+  </div>
+
+</div>
+<br />
+<div class="container-fluid" id="tableContainer">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex">
+      <div class="container-fluid d-flex flex-column justify-content-start">
+        <div class="row">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <h6 class="m-0 font-weight-bold text-primary" id="filtrado_por">Mostrando últimos 10 usuarios: </h6><br />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
+            <div class="dropdown">
+              <button class="btn btn-outline-primary dropdown-toggle" type="button" id="search_age"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Buscar por edad
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <div class="container-fluid">
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="0_3" id="search_age1"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age1">0 a 3 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="4_6" id="search_age2"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age2">4 a 6 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="7_9" id="search_age3"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age3">7 a 9 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="10_12" id="search_age4"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age4">10 a 12 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="13_15" id="search_age5"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age5">13 a 15 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="16_18" id="search_age6"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age6">16 a 18 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="19_21" id="search_age7"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age7">19 a 21 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="22_24" id="search_age8"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age8">22 a 24 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="25_30" id="search_age9"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age9">25 a 30 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="31_35" id="search_age10"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age10">31 a 35 meses</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <input class="form-check-input" type="checkbox" value="-9_0" id="search_age11"
+                      name="search_age_option">
+                    <label class="form-check-label" for="search_age11">Embarazo</label>
+                  </div>
+                  <div class="form-check dropdown-item">
+                    <button class="btn btn-primary my-2 my-sm-0" onclick="searchInstances()">Buscar <i
+                        class="fas fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12">
+            <button class="btn btn-primary my-2 my-sm-0" onclick="searchAllInstances()">Ver todos</button>
+          </div>
+          <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
+            <div class="input-group mb-3 float-right">
+              <input class="form-control mr-sm-2" type="search" id="search_name" placeholder="Buscar..."
+                aria-label="Search">
+              <div class="input-group-append" onclick="searchInstances()">
+                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table" id="table_id" cellpadding="0" cellspacing="0" border="0">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Encargado</th>
+              <th scope="col">Edad</th>
+              <th scope="col">Fecha de nacimiento</th>
+              <th scope="col">Teléfono</th>
+              <th scope="col">Dirección</th>
+              <th scope="col">Nivel de riesgo
+                <a href="" data-toggle="modal" data-target="#infoModal"><i class="far fa-question-circle"></i></a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div class="container-fluid d-flex flex-column justify-content-start">
+        <div class="row" id="pagination">
+          <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
+            <h6 id="page_label">Pág. 1 / 1</h6>
+          </div>
+          <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 float-right">
+            <nav aria-label="Page navigation example" class="float-right">
+              <ul class="pagination float-right">
+                <li class="page-item" onclick="changePag(-1)">
+                  <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <li class="page-item" onclick="changePag(0)"><a class="page-link" href="#" id="pag_1">1</a></li>
+                <li class="page-item active"><a class="page-link" id="pag_n">1</a></li>
+                <li class="page-item" onclick="changePag(2)"><a class="page-link" href="#" id="pag_last">1</a></li>
+                <li class="page-item" onclick="changePag(1)">
+                  <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="snoAlertBox" class="alert alert-success" data-alert="alert">Se actualizaron los datos correctamente.</div>
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
-          <div class="container" id="ficha_header">
+        <div class="container" id="ficha_header">
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -274,25 +303,27 @@
       <div class="modal-body">
         <div class="container" id="ficha_instancia">
         </div>
-          <div class="container" id="ficha_observaciones_grupo">
-            <h4 class="modal-title" style="padding: 10px;">Seguimiento:</h4>
-            <div class="row" style="width:100%; padding-left:40px;">
-                <select class="form-control" id="ficha_seguimiento">
-                  <option value="">Sin seguimiento</option>
-                  <option value="1">Pendiente</option>
-                  <option value="2">En progreso</option>
-                  <option value="3">Atendido</option>
-                </select>
-            </div>
-            <h4 class="modal-title" style="padding: 10px;">Observaciones:</h4>
-            <div class="row" style="width:100%; padding-left:40px;">
-                    <textarea class="form-control" id="ficha_observaciones" rows="2"></textarea>
-            </div>
+        <div class="container" id="ficha_observaciones_grupo">
+          <h4 class="modal-title" style="padding: 10px;">Seguimiento:</h4>
+          <div class="row" style="width:100%; padding-left:40px;">
+            <select class="form-control" id="ficha_seguimiento">
+              <option value="">Sin seguimiento</option>
+              <option value="1">Pendiente</option>
+              <option value="2">En progreso</option>
+              <option value="3">Atendido</option>
+            </select>
+          </div>
+          <h4 class="modal-title" style="padding: 10px;">Observaciones:</h4>
+          <div class="row" style="width:100%; padding-left:40px;">
+            <textarea class="form-control" id="ficha_observaciones" rows="2"></textarea>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes">Guardar cambios <i class="far fa-save"></i></button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i class="fas fa-reply"></i></button>
+        <button type="button" class="btn btn-info" onclick="saveAttributes()" id="button_guardar_attributes">Guardar
+          cambios <i class="far fa-save"></i></button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Regresar <i
+            class="fas fa-reply"></i></button>
       </div>
     </div>
   </div>
@@ -310,20 +341,28 @@
       </div>
       <div class="modal-body">
         Existen tres niveles de riesgo:
-          <ul>
-              <li><div class="d-flex flex-wrap p-2">
-                  <button type="button" class="btn btn-success">Bajo</button>
-                  <span class="px-3">No se encontró ningún riesgo en el desarrollo del niño ni tiene antecedentes de riesgo.</span>
-              </div></li>
-              <li><div class="d-flex flex-wrap p-2">
-                  <button type="button" class="btn btn-warning">Medio</button>
-                  <span class="px-3">Tiene entre 1 y 3 riesgos en el desarrollo o antecedentes de riesgo.</span>
-              </div></li>
-              <li><div class="d-flex flex-wrap p-2">
-                  <button type="button" class="btn btn-danger">Alto</button>
-                  <span class="px-3">Se encontraron 4 o más riesgos en el desarrollo del niño o antecedentes de riesgo.</span>
-              </div></li>
-            </ul>
+        <ul>
+          <li>
+            <div class="d-flex flex-wrap p-2">
+              <button type="button" class="btn btn-success">Bajo</button>
+              <span class="px-3">No se encontró ningún riesgo en el desarrollo del niño ni tiene antecedentes de
+                riesgo.</span>
+            </div>
+          </li>
+          <li>
+            <div class="d-flex flex-wrap p-2">
+              <button type="button" class="btn btn-warning">Medio</button>
+              <span class="px-3">Tiene entre 1 y 3 riesgos en el desarrollo o antecedentes de riesgo.</span>
+            </div>
+          </li>
+          <li>
+            <div class="d-flex flex-wrap p-2">
+              <button type="button" class="btn btn-danger">Alto</button>
+              <span class="px-3">Se encontraron 4 o más riesgos en el desarrollo del niño o antecedentes de
+                riesgo.</span>
+            </div>
+          </li>
+        </ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
@@ -335,156 +374,172 @@
 
 {% block scripts %}
 <style>
-/* Boostrap Buttons Styling */
+  /* Boostrap Buttons Styling */
 
-canvas {
+  canvas {
     width: 100% !important;
-}
+  }
 
-.theme-canvas-container,
-.theme-risk-container {
+  .theme-canvas-container,
+  .theme-risk-container {
     height: 500px;
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
+
     .theme-canvas-container,
     .theme-risk-container {
-        height: 300px;
+      height: 300px;
     }
-}
+  }
 
-h{
+  h {
     font-size: 14px;
     font-size: max(1.1vw, 15px);
-}
-p{
+  }
+
+  p {
     font-size: 13px;
     font-size: max(0.9vw, 13px);
-}
-h3 a{
+  }
+
+  h3 a {
     font-size: 15px;
     font-size: max(1.1vw, 15px);
-}
-h4{
+  }
+
+  h4 {
     font-size: 15px;
     font-size: max(0.9vw, 15px);
     color: black;
-}
-h5{
+  }
+
+  h5 {
     font-size: 13px;
     font-size: max(0.9vw, 13px);
-}
-table {border: 0px;}
-tr, td {border: 0px;}
-show{
-  transition: opacity 0.6s linear;
-  transform: scale(1.1);
-}
+  }
 
-.zoom:hover {
-  transform: scale(1.1); /* (120% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
-  cursor: pointer;
-}
+  table {
+    border: 0px;
+  }
 
-.btn-default {
-  font-size: 17px;
-  color: rgba(108, 88, 179, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(108, 89, 179, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
+  tr,
+  td {
+    border: 0px;
+  }
 
-.btn-default:hover {
-  color: #FFF;
-  background: rgba(108, 88, 179, 0.75);
-  border: 2px solid rgba(108, 89, 179, 0.75);
-}
+  show {
+    transition: opacity 0.6s linear;
+    transform: scale(1.1);
+  }
 
-.btn-primary {
-  font-size: 17px;
-  color: rgba(58, 133, 191, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(58, 133, 191, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
+  .zoom:hover {
+    transform: scale(1.1);
+    /* (120% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+    cursor: pointer;
+  }
 
-.btn-primary:hover {
-  color: #FFF;
-  background: rgba(58, 133, 191, 0.75);
-  border: 2px solid rgba(58, 133, 191, 0.75);
-}
+  .btn-default {
+    font-size: 17px;
+    color: rgba(108, 88, 179, 0.75);
+    letter-spacing: 1px;
+    line-height: 15px;
+    border: 2px solid rgba(108, 89, 179, 0.75);
+    border-radius: 40px;
+    background: transparent;
+    transition: all 0.3s ease 0s;
+  }
 
-.btn-success {
-  font-size: 17px;
-  color: rgba(103, 192, 103, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(103, 192, 103, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
+  .btn-default:hover {
+    color: #FFF;
+    background: rgba(108, 88, 179, 0.75);
+    border: 2px solid rgba(108, 89, 179, 0.75);
+  }
 
-.btn-success:hover {
-  color: #FFF;
-  background: rgb(103, 192, 103, 0.75);
-  border: 2px solid rgb(103, 192, 103, 0.75);
-}
+  .btn-primary {
+    font-size: 17px;
+    color: rgba(58, 133, 191, 0.75);
+    letter-spacing: 1px;
+    line-height: 15px;
+    border: 2px solid rgba(58, 133, 191, 0.75);
+    border-radius: 40px;
+    background: transparent;
+    transition: all 0.3s ease 0s;
+  }
 
-.btn-warning {
-  font-size: 17px;
-  color: rgba(240, 173, 78, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(240, 173, 78, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
+  .btn-primary:hover {
+    color: #FFF;
+    background: rgba(58, 133, 191, 0.75);
+    border: 2px solid rgba(58, 133, 191, 0.75);
+  }
 
-.btn-warning:hover {
-  color: #FFF;
-  background: rgb(240, 173, 78, 0.75);
-  border: 2px solid rgba(240, 173, 78, 0.75);
-}
+  .btn-success {
+    font-size: 17px;
+    color: rgba(103, 192, 103, 0.75);
+    letter-spacing: 1px;
+    line-height: 15px;
+    border: 2px solid rgba(103, 192, 103, 0.75);
+    border-radius: 40px;
+    background: transparent;
+    transition: all 0.3s ease 0s;
+  }
 
-.btn-danger {
-  font-size: 17px;
-  color: rgba(217, 83, 78, 0.75);
-  letter-spacing: 1px;
-  line-height: 15px;
-  border: 2px solid rgba(217, 83, 78, 0.75);
-  border-radius: 40px;
-  background: transparent;
-  transition: all 0.3s ease 0s;
-}
+  .btn-success:hover {
+    color: #FFF;
+    background: rgb(103, 192, 103, 0.75);
+    border: 2px solid rgb(103, 192, 103, 0.75);
+  }
 
-.btn-danger:hover {
-  color: #FFF;
-  background: rgba(217, 83, 78, 0.75);
-  border: 2px solid rgba(217, 83, 78, 0.75);
-}
-#overlay {
-  background: #ffffff;
-  color: #666666;
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  z-index: 5000;
-  top: 0;
-  left: 0;
-  float: left;
-  text-align: center;
-  padding-top: 25%;
-  opacity: .80;
-}
-.spinner {
+  .btn-warning {
+    font-size: 17px;
+    color: rgba(240, 173, 78, 0.75);
+    letter-spacing: 1px;
+    line-height: 15px;
+    border: 2px solid rgba(240, 173, 78, 0.75);
+    border-radius: 40px;
+    background: transparent;
+    transition: all 0.3s ease 0s;
+  }
+
+  .btn-warning:hover {
+    color: #FFF;
+    background: rgb(240, 173, 78, 0.75);
+    border: 2px solid rgba(240, 173, 78, 0.75);
+  }
+
+  .btn-danger {
+    font-size: 17px;
+    color: rgba(217, 83, 78, 0.75);
+    letter-spacing: 1px;
+    line-height: 15px;
+    border: 2px solid rgba(217, 83, 78, 0.75);
+    border-radius: 40px;
+    background: transparent;
+    transition: all 0.3s ease 0s;
+  }
+
+  .btn-danger:hover {
+    color: #FFF;
+    background: rgba(217, 83, 78, 0.75);
+    border: 2px solid rgba(217, 83, 78, 0.75);
+  }
+
+  #overlay {
+    background: #ffffff;
+    color: #666666;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+    opacity: .80;
+  }
+
+  .spinner {
     margin: 0 auto;
     height: 64px;
     width: 64px;
@@ -492,373 +547,507 @@ show{
     border: 5px solid #4F73DF;
     border-right-color: transparent;
     border-radius: 50%;
-}
-@keyframes rotate {
+  }
+
+  @keyframes rotate {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
+
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
-#snoAlertBox{
+  }
+
+  #snoAlertBox {
     position: -webkit-sticky;
     position: sticky;
-    z-index:1400;
-   top:2%;
-    right:4%;
-    margin:0px auto;
-	text-align:center;
-    display:none;
+    z-index: 1400;
+    top: 2%;
+    right: 4%;
+    margin: 0px auto;
+    text-align: center;
+    display: none;
     width: 400px;
-}
+  }
 </style>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-    <script>
-    const DOMAIN =  window.location.origin
-    const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
-    const URI = `${DOMAIN}/utilities/group_assignations/`
-    var requestData = new FormData();
-    requestData.append('pag', 0);
-    var total_pag = 0;
-    var instanceCardData = new FormData();
-    var instanceCardAttributes = {};
+<script>
+  const DOMAIN =  window.location.origin
+  const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
 
-    function copyToClipboard() {
-      var copyText = document.getElementById("myref");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
-      document.execCommand("copy");
+  // data for test
+  // const DOMAIN = 'https://core.afinidata.com';
+  // const GROUP_ID = '13';
+
+  const URI = `${DOMAIN}/utilities/group_assignations/`
+  var requestData = new FormData();
+  requestData.append('pag', 0);
+  var total_pag = 0;
+  var instanceCardData = new FormData();
+  var instanceCardAttributes = {};
+
+  /** nueva funcionalidad @josequintero */
+
+  const chart = {
+    createContainer: (id, title = '') => {
+      $("#group-resume").append(`
+        <div class='chart-container' id='${id}'>
+          <h4 style="margin: 15px 0">${title}</h4>
+        </div>
+      `);
+    },
+    showMessage: (name, text) => {
+      $(name).innerHTML = '';
+      $(name).append(`<div class="alert alert-info">${text}.</div>`)
+    },
+    renderItem: (item, name) => {
+      const fila = `<div style="margin: 12px 0;">
+          <div class="row">
+            <div class="col-md-4">
+              <span class="group-milestone-label">
+                ${item.label}
+              </span>
+            </div>
+            <div class="col-md-8">
+              <div class="progress-text">
+                ${item.value} ${item.value > 1 ? 'casos' : 'caso'}
+              </div>
+              <div class="item-chart"
+              data-type="${item.type}"
+              data-id="${item.id}"
+              data-label="${item.label}">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="${item.value}"
+                    aria-valuemin="0" aria-valuemax="100" style="width:${item.porcentaje}%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>`;
+      $(name).append(fila);
     }
+  }
 
-    function getRequest(data, callback){
-       if(GROUP_ID) {
-            requestData = data;
-            $('#overlay').fadeIn();
-            data.set('group', String(GROUP_ID));
-            let request = fetch(URI, {
-               method: 'post',
-               body: data
-            })
-            .then(r => r.json())
-            .then(r => {
-                if(r.hasOwnProperty('total')){
-                    total_pag = Math.ceil(r.total/20)-1;
-                    $("#pag_last").html(total_pag+1);
-                    $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
-                    if(Number(total_pag) <= 0){ $("#pagination").hide(); }
-                    else{ $("#pagination").show(); }
-                }
-                callback(r);
-            })
-       }
+  $(document).on('click','.item-chart', function() {
+    const instance = {
+      label: $(this).data('label'),
+      type: $(this).data('type'),
+      id: $(this).data('id')
     }
+    filterInstances(instance);
+  });
 
-    function fichaInstancia(instance_id, user_id, tipo, edad, telefono, direccion){
-        $('#overlay').fadeIn();
-        let data = new FormData();
-        data.set('group_id', String(GROUP_ID));
-        data.set('instance_id', String(instance_id));
-        data.set('user_id', String(user_id));
-        instanceCardAttributes = {};
-        instanceCardData = new FormData();
-        instanceCardData.set('group_id', String(GROUP_ID));
-        instanceCardData.set('instance_id', instance_id);
-        instanceCardData.set('user_id', user_id);
-        instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
-        if(tipo){
-            data.set('type', String('instance'));
-            instanceCardData.set('type', String('instance'));
-        }
-        else{
-            data.set('type', String('user'));
-            instanceCardData.set('type', String('user'));
-        }
-        let request = fetch(`${DOMAIN}/utilities/ficha_instancia/`, {
-           method: 'post',
-           body: data
-        })
+  /* end nueva funcionalidad */
+
+  function copyToClipboard() {
+    var copyText = document.getElementById("myref");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+  }
+
+  function getRequest(data, callback) {
+    if (GROUP_ID) {
+      requestData = data;
+      $('#overlay').fadeIn();
+      data.set('group', String(GROUP_ID));
+      let request = fetch(URI, {
+        method: 'post',
+        body: data
+      })
         .then(r => r.json())
         .then(r => {
-            if(tipo){
-                $("#ficha_header").html('<div class="row justify-content-start">'+
-                                    '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
-                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +'<a class="px-2" href="https://program.afinidata.com/instances/'+instance_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Edad: '+edad+' </span></div></div>');
+          if (r.hasOwnProperty('total')) {
+            total_pag = Math.ceil(r.total / 20) - 1;
+            $("#pag_last").html(total_pag + 1);
+            $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
+            if (Number(total_pag) <= 0) { $("#pagination").hide(); }
+            else { $("#pagination").show(); }
+          }
+          callback(r);
+        })
+    }
+  }
+
+  function fichaInstancia(instance_id, user_id, tipo, edad, telefono, direccion) {
+    $('#overlay').fadeIn();
+    let data = new FormData();
+    data.set('group_id', String(GROUP_ID));
+    data.set('instance_id', String(instance_id));
+    data.set('user_id', String(user_id));
+    instanceCardAttributes = {};
+    instanceCardData = new FormData();
+    instanceCardData.set('group_id', String(GROUP_ID));
+    instanceCardData.set('instance_id', instance_id);
+    instanceCardData.set('user_id', user_id);
+    instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
+    if (tipo) {
+      data.set('type', String('instance'));
+      instanceCardData.set('type', String('instance'));
+    }
+    else {
+      data.set('type', String('user'));
+      instanceCardData.set('type', String('user'));
+    }
+    let request = fetch(`${DOMAIN}/utilities/ficha_instancia/`, {
+      method: 'post',
+      body: data
+    })
+      .then(r => r.json())
+      .then(r => {
+        if (tipo) {
+          $("#ficha_header").html('<div class="row justify-content-start">' +
+            '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
+            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + '<a class="px-2" href="https://program.afinidata.com/instances/' + instance_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Edad: ' + edad + ' </span></div></div>');
+        }
+        else {
+          $("#ficha_header").html('<div class="row justify-content-start">' +
+            '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
+            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + ' <a class="px-2" href="https://program.afinidata.com/users/' + user_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Tel: ' + telefono + '. Dir: ' + direccion + '</span></div></div>');
+        }
+        let html = '';
+        r.attributes_types.forEach(function (attributes_type) {
+          html += '<h4 style="padding: 10px;">' + attributes_type.name + '</h4><ul class="row">';
+          attributes_type.program_attributes.forEach(function (program_attribute) {
+            if (program_attribute.risk == 0) {
+              var button_class = 'btn-success';
             }
-            else{
-                $("#ficha_header").html('<div class="row justify-content-start">'+
-                                    '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+ r.image +'" width="50" height="50" style="padding:0px; border:0px;"></img></div>'+
-                                    '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">'+ r.name +' <a class="px-2" href="https://program.afinidata.com/users/'+user_id+'/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Tel: '+telefono+'. Dir: '+direccion+'</span></div></div>');
+            else if (program_attribute.risk == 1) {
+              var button_class = 'btn-danger';
             }
-            let html = '';
-            r.attributes_types.forEach(function(attributes_type){
-                html += '<h4 style="padding: 10px;">' + attributes_type.name + '</h4><ul class="row">';
-                attributes_type.program_attributes.forEach(function(program_attribute){
-                    if(program_attribute.risk == 0){
-                        var button_class = 'btn-success';
-                    }
-                    else if(program_attribute.risk == 1){
-                        var button_class = 'btn-danger';
-                    }
-                    else{
-                        var button_class = 'btn-primary';
-                    }
-                    if(attributes_type.attributes_type_id == 0){
-                        var columns = "col-12";
-                    }
-                    else{
-                        var columns = "col-12 col-lg-6";
-                    }
-                    html += '<li class="'+columns+' py-2"><div class="d-flex flex-wrap p-2"><span class="pr-2">' + program_attribute.name + ': </span>';
-                    if(program_attribute.options.length > 0){
-                        html += '<div class="dropdown">'+
-                                '<button class="btn '+button_class+' dropdown-toggle" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
-                                program_attribute.value+
-                                '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_'+program_attribute.program_attribute_id+'">';
-                        program_attribute.options.forEach(function(option){
-                            html += '<a class="dropdown-item" href="#row_'+instance_id+'" data-programattribute="'+program_attribute.program_attribute_id+'" data-threshold="'+program_attribute.threshold+'" data-value="'+option.value+'">'+option.label+'</a>';
-                        });
-                        html += '</div></div>';
-                    }
-                    else{
-                        html += '<button class="btn '+button_class+'" type="button" id="program_attribute_'+program_attribute.program_attribute_id+'">'+program_attribute.value+'</button>';
-                    }
-                    html += '</div></li>';
-                });
-                html += '</ul>';
+            else {
+              var button_class = 'btn-primary';
+            }
+            if (attributes_type.attributes_type_id == 0) {
+              var columns = "col-12";
+            }
+            else {
+              var columns = "col-12 col-lg-6";
+            }
+            html += '<li class="' + columns + ' py-2"><div class="d-flex flex-wrap p-2"><span class="pr-2">' + program_attribute.name + ': </span>';
+            if (program_attribute.options.length > 0) {
+              html += '<div class="dropdown">' +
+                '<button class="btn ' + button_class + ' dropdown-toggle" type="button" id="program_attribute_' + program_attribute.program_attribute_id + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+                program_attribute.value +
+                '<span class="caret"></span></button><div class="dropdown-menu" aria-labelledby="program_attribute_' + program_attribute.program_attribute_id + '">';
+              program_attribute.options.forEach(function (option) {
+                html += '<a class="dropdown-item" href="#row_' + instance_id + '" data-programattribute="' + program_attribute.program_attribute_id + '" data-threshold="' + program_attribute.threshold + '" data-value="' + option.value + '">' + option.label + '</a>';
+              });
+              html += '</div></div>';
+            }
+            else {
+              html += '<button class="btn ' + button_class + '" type="button" id="program_attribute_' + program_attribute.program_attribute_id + '">' + program_attribute.value + '</button>';
+            }
+            html += '</div></li>';
+          });
+          html += '</ul>';
+        });
+        $("#ficha_instancia").html(html);
+        if (tipo) {
+          $("#ficha_observaciones_grupo").show();
+          $("#ficha_seguimiento").val(r.seguimiento);
+          $("#ficha_observaciones").val(r.observaciones);
+        }
+        else {
+          $("#ficha_observaciones_grupo").hide();
+        }
+        $('#overlay').fadeOut();
+        $(".dropdown-menu a").click(function () {
+          $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+          $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+          if ($(this).data('value') <= $(this).data('threshold')) {
+            $(this).parents(".dropdown").find('.btn').removeClass("btn-success btn-danger btn-primary").addClass("btn-danger");
+          }
+          else {
+            $(this).parents(".dropdown").find('.btn').removeClass("btn-success btn-danger btn-primary").addClass("btn-success");
+          }
+          instanceCardAttributes[$(this).data('programattribute')] = $(this).data('value');
+          instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
+          //$('#button_guardar_attributes').prop('disabled', false);
+        });
+      })
+  }
+
+  function writeRow(instance) {
+    rowHTML = '<tr id="row_' + instance.id + '">' +
+      '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + instance.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
+      '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(' + instance.id + ', ' + instance.user_id + ', true, \'' + instance.months + '\', null, null)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
+      '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(' + instance.id + ', ' + instance.user_id + ', false, null, \'' + instance.tel + '\', \'' + instance.dir + '\')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
+      '<td>' + instance.months + '</td>' +
+      '<td>' + instance.birthdate + '</td>' +
+      '<td>' + instance.tel + '</td>' +
+      '<td>' + instance.dir + '</td>';
+    if (instance.risk == 0) { rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
+    else if (instance.risk == 1) { rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
+    else { rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
+    rowHTML += '</tr>';
+    $("#table_id tbody").append(rowHTML);
+  }
+
+  function filterInstances({id, type, label}) {
+    let data = new FormData();
+    /**--------------------- old code ---------------------------------------
+    if ('program_attribute_id' in e.dataPoint) {
+      data.append('attribute_id', String(e.dataPoint.program_attribute_id));
+    }
+    if ('milestone_id' in e.dataPoint) {
+      data.append('milestone_id', String(e.dataPoint.milestone_id));
+    }
+    -------------------------------------------------------------------------*/
+    /* @josequintero */
+    data.append(type==='milestone' ?  'milestone_id' : 'attribute_id', id);
+    $("#pag_n").html(1);
+    $("#table_id tbody tr").remove();
+    getRequest(data, function (r) {
+      $("#filtrado_por").text("Filtrado por: " + label);
+      $("#search_name").val("");
+      r.data.forEach(function (instance) { writeRow(instance); });
+      $('#overlay').fadeOut();
+      $("body,html").animate({ scrollTop: $("#tableContainer").offset().top }, 800);
+    });
+  }
+
+  function searchInstances() {
+    let data = new FormData();
+    var edades = [];
+    $.each($("input[name='search_age_option']:checked"), function () {
+      edades.push($(this).val());
+    });
+    var search_edad = edades.join(",");
+    if ($("#search_name").val() != '' || search_edad != '') {
+      data.append('name', String($("#search_name").val()));
+      data.append('months', String(search_edad));
+      $("#pag_n").html(1);
+      $("#table_id tbody tr").remove();
+      getRequest(data, function (r) {
+        $("#filtrado_por").text("Filtrado por:");
+        r.data.forEach(function (instance) { writeRow(instance); });
+        $('#overlay').fadeOut();
+        $("body,html").animate({ scrollTop: $("#tableContainer").offset().top }, 800);
+      });
+    }
+  }
+
+  function searchAllInstances() {
+    let data = new FormData();
+    data.append('all', String("true"));
+    $("#pag_n").html(1);
+    $("#table_id tbody tr").remove();
+    getRequest(data, function (r) {
+      $("#filtrado_por").text("Mostrar todos:");
+      r.data.forEach(function (instance) { writeRow(instance); });
+      $('#overlay').fadeOut();
+      $("body,html").animate({ scrollTop: $("#tableContainer").offset().top }, 800);
+    });
+  }
+
+  function changePag(n) {
+    if (n == -1) {
+      requestData.set('pag', Math.max(0, Number(requestData.get('pag')) - 1));
+    }
+    else if (n == 0) {
+      requestData.set('pag', 0);
+    }
+    else if (n == 1) {
+      requestData.set('pag', Math.min(total_pag, Number(requestData.get('pag')) + 1));
+    }
+    else if (n == 2) {
+      requestData.set('pag', total_pag);
+    }
+    $("#pag_n").html(Number(requestData.get('pag')) + 1);
+    $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
+    $("#table_id tbody tr").remove();
+    getRequest(requestData, function (r) {
+      $("#filtrado_por").text("Mostrar todos:");
+      r.data.forEach(function (instance) { writeRow(instance); });
+      $('#overlay').fadeOut();
+      $("body,html").animate({ scrollTop: $("#tableContainer").offset().top }, 800);
+    });
+  }
+
+  function saveAttributes() {
+    $('#overlay').fadeIn();
+    instanceCardData.set('seguimiento', String($("#ficha_seguimiento").val()));
+    instanceCardData.set('observaciones', String($("#ficha_observaciones").val()));
+    let request = fetch(`${DOMAIN}/utilities/save_program_attributes/`, {
+      method: 'post',
+      body: instanceCardData
+    })
+      .then(r => r.json())
+      .then(r => {
+        console.log(r);
+        $('#exampleModalCenter').modal('toggle');
+        $('#overlay').fadeOut();
+        SnoAlertBox();
+      })
+  }
+
+  function SnoAlertBox() {
+    $("#snoAlertBox").fadeIn();
+    window.setTimeout(function () {
+      $("#snoAlertBox").fadeOut(300)
+    }, 3000);
+  }
+  (() => {
+    window.addEventListener('load', e => {
+      let data = new FormData();
+      getRequest(data, function (r) {
+        /* @josequintero */
+        const { milestones_count, milestones, factores_riesgo } = r
+
+        // graficar milestones
+        if (milestones) {
+          if (milestones_count > 0) {
+            const casos = milestones.map(item => item.y);
+            const maxValue = Math.max(...casos);
+            chart.createContainer('milestones_1', 'Niños con riesgo de desarrollo')
+            milestones.forEach((item) => {
+              chart.renderItem({
+                label: item.label,
+                value: item.y,
+                porcentaje: (item.y * 100) / maxValue,
+                type: 'milestone',
+                id: item.milestone_id
+              }, '#milestones_1')
             });
-            $("#ficha_instancia").html(html);
-            if(tipo){
-                $("#ficha_observaciones_grupo").show();
-                $("#ficha_seguimiento").val(r.seguimiento);
-                $("#ficha_observaciones").val(r.observaciones);
+          } else {
+            chart.createContainer('milestones_1','Niños con riesgo de desarrollo')
+            chart.showMessage('#milestones_1', 'No hay niños con riesgo de desarrollo');
+          }
+        }
+
+        // graficar factores de riesgo
+        if (factores_riesgo) {
+          factores_riesgo.forEach((x, i) => {
+            if (x.total > 0) {
+              const casos = x.factores_riesgo.map(item => item.y);
+              const maxValue = Math.max(...casos);
+              chart.createContainer(`factores_riesgo_${x.id}`, x.name );
+              x.factores_riesgo.forEach((item) => {
+                chart.renderItem({
+                  label: item.label,
+                  value: item.y,
+                  porcentaje: (item.y * 100) / maxValue,
+                  type: 'program',
+                  id: item.program_attribute_id
+                }, `#factores_riesgo_${x.id}`)
+              });
+            } else {
+              chart.createContainer(`factores_riesgo_${x.id}`, x.name);
+              chart.showMessage(`#factores_riesgo_${x.id}`, `No hay niños con riesgo de ${x.name}`)
             }
-            else{
-                $("#ficha_observaciones_grupo").hide();
-            }
-            $('#overlay').fadeOut();
-            $(".dropdown-menu a").click(function(){
-              $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-              $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-              if($(this).data('value') <= $(this).data('threshold')){
-                $(this).parents(".dropdown").find('.btn').removeClass( "btn-success btn-danger btn-primary").addClass( "btn-danger");
+          });
+        }
+
+        $(".chart-container").not(':first').hide();
+
+        /* End nueva funcionalidad */
+
+        document.querySelector('#assignations').textContent = r.data.count
+        document.querySelector('#children').textContent = r.data.children
+        chartsArray = []
+
+        for (i = 0; i < r.factores_riesgo.length; i++) {
+          document.querySelector('#attribute_type_count_' + r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
+          /*--------------------- old code ---------------------------------------
+          chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
+          chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
+          chartsArray[i]['chart'].render();
+          $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+          ------------------------------------------------------------------------*/
+        }
+        document.querySelector('#milestones_count').textContent = r.milestones_count;
+        /*------------------------ old code ------------------------------------------
+        //chartMilestones.options.data[0].dataPoints = r.milestones;
+        // $("#chartMilestonesContainer").show();
+        // chartMilestones.render();
+        ----------------------------------------------------------------------------*/
+        $('#milestonesCard').click(function () {
+          // @josequintero
+          $('.chart-container').hide();
+          $(`.chart-container:first`).show();
+          /*----------------------- old code ------------------------
+          for(i = 0; i < chartsArray.length; i++){
+              $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+          }
+          $("#chartMilestonesContainer").show();
+          ---------------------------------------------------------*/
+        });
+        $(('[id^="attribute_type_"]')).click(function () {
+          // @josequintero:
+          const id = $(this).data('id');
+          $('.chart-container').hide();
+          $(`#factores_riesgo_${id}`).show();
+          /*----------------------old code ---------------------------
+          $("#chartMilestonesContainer").hide();
+          for(i = 0; i < chartsArray.length; i++){
+              $("#chartRiskContainer"+chartsArray[i]['id']).hide();
+          }
+          for(i = 0; i < chartsArray.length; i++){
+              if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
+                  $("#chartRiskContainer"+chartsArray[i]['id']).show();
               }
-              else{
-                $(this).parents(".dropdown").find('.btn').removeClass( "btn-success btn-danger btn-primary").addClass( "btn-success");
-              }
-              instanceCardAttributes[$(this).data('programattribute')] = $(this).data('value');
-              instanceCardData.set('attributes', JSON.stringify(instanceCardAttributes));
-              //$('#button_guardar_attributes').prop('disabled', false);
-            });
-        })
-    }
-
-    function writeRow(instance){
-        rowHTML = '<tr id="row_'+instance.id+'">' +
-            '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/'+instance.image+'" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', true, \''+instance.months+'\', null, null)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
-            '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia('+instance.id+', '+instance.user_id+', false, null, \''+instance.tel+'\', \''+instance.dir+'\')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
-            '<td>'+instance.months+'</td>' +
-            '<td>'+instance.birthdate+'</td>' +
-            '<td>'+instance.tel+'</td>' +
-            '<td>'+instance.dir+'</td>';
-        if(instance.risk == 0){ rowHTML += '<td><button type="button" class="btn btn-success">Bajo</button></td>'; }
-        else if (instance.risk == 1){ rowHTML += '<td><button type="button" class="btn btn-warning">Medio</button></td>'; }
-        else{ rowHTML += '<td><button type="button" class="btn btn-danger">Alto</button></td>'; }
-        rowHTML +='</tr>';
-        $("#table_id tbody").append(rowHTML);
-    }
-
-    function filterInstances(e) {
-        let data = new FormData();
-        if('program_attribute_id' in e.dataPoint){
-            data.append('attribute_id', String(e.dataPoint.program_attribute_id));
-        }
-        if('milestone_id' in e.dataPoint){
-            data.append('milestone_id', String(e.dataPoint.milestone_id));
-        }
-        $("#pag_n").html(1);
-        $("#table_id tbody tr").remove();
-        getRequest(data, function(r){
-            $("#filtrado_por").text("Filtrado por: "+e.dataPoint.label);
-            $("#search_name").val("");
-            r.data.forEach(function(instance){ writeRow(instance); });
-            $('#overlay').fadeOut();
-            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
+          }
+          ----------------------------------------------------------*/
         });
-    }
-
-    function searchInstances(){
-        let data = new FormData();
-        var edades = [];
-        $.each($("input[name='search_age_option']:checked"), function(){
-            edades.push($(this).val());
+        $("#pagination").hide();
+        let data1 = new FormData();
+        data1.append('all', String("true"));
+        getRequest(data1, function (r) {
+          $("#filtrado_por").text("Mostrar todos:");
+          r.data.forEach(function (instance) { writeRow(instance); });
+          $('#overlay').fadeOut();
         });
-        var search_edad = edades.join(",");
-        if($("#search_name").val() != '' || search_edad != ''){
-            data.append('name', String($("#search_name").val()));
-            data.append('months', String(search_edad));
-            $("#pag_n").html(1);
-            $("#table_id tbody tr").remove();
-            getRequest(data, function(r){
-                $("#filtrado_por").text("Filtrado por:");
-                r.data.forEach(function(instance){ writeRow(instance); });
-                $('#overlay').fadeOut();
-                $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
-            });
-        }
-    }
+      });
+    })
+  })()
 
-    function searchAllInstances(){
-        let data = new FormData();
-        data.append('all', String("true"));
-        $("#pag_n").html(1);
-        $("#table_id tbody tr").remove();
-        getRequest(data, function(r){
-            $("#filtrado_por").text("Mostrar todos:");
-            r.data.forEach(function(instance){ writeRow(instance); });
-            $('#overlay').fadeOut();
-            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
-        });
+  window.onload = function () {
+    /*----------------------old code ---------------------------
+    var bar_ctx = document.getElementById('chart').getContext('2d');
+    var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
+    background_1.addColorStop(0, 'rgb(0,89,217)');
+    background_1.addColorStop(1, 'rgb(105,176,255)');
+    chartStartData = {
+        animationEnabled: true,
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        axisY: {
+            includeZero: true,
+            valueFormatString:" "
+        },
+        axisX:{
+          labelFontFamily: "tahoma",
+          labelFontSize: 14
+        },
+        data: [{
+            type: "bar",
+            click: filterInstances,
+            color: background_1,
+            indexLabelFontFamily: "tahoma",
+            indexLabelFontSize: 18,
+            indexLabelPlacement: "inside",
+            indexLabel: "{y} {y_label}",
+            toolTipContent: "{label}: {y}",
+            showInLegend: false,
+            indexLabelFontColor: "white",
+            legendMarkerColor: "white",
+            legendText: "Respuestas",
+            includeZero: true,
+            cursor: "pointer",
+            dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
+        }]
     }
-
-    function changePag(n){
-        if(n == -1){
-            requestData.set('pag', Math.max(0, Number(requestData.get('pag')) - 1));
-        }
-        else if(n == 0){
-            requestData.set('pag', 0);
-        }
-        else if(n == 1){
-            requestData.set('pag', Math.min(total_pag, Number(requestData.get('pag')) + 1));
-        }
-        else if(n == 2){
-            requestData.set('pag', total_pag);
-        }
-        $("#pag_n").html(Number(requestData.get('pag')) + 1);
-        $("#page_label").html("Pág. " + Number(Number(requestData.get('pag')) + 1) + " / " + Number(Number(total_pag) + 1));
-        $("#table_id tbody tr").remove();
-        getRequest(requestData, function(r){
-            $("#filtrado_por").text("Mostrar todos:");
-            r.data.forEach(function(instance){ writeRow(instance); });
-            $('#overlay').fadeOut();
-            $("body,html").animate({scrollTop: $("#tableContainer").offset().top}, 800);
-        });
-    }
-
-    function saveAttributes(){
-        $('#overlay').fadeIn();
-        instanceCardData.set('seguimiento', String($("#ficha_seguimiento").val()));
-        instanceCardData.set('observaciones', String($("#ficha_observaciones").val()));
-        let request = fetch(`${DOMAIN}/utilities/save_program_attributes/`, {
-           method: 'post',
-           body: instanceCardData
-        })
-        .then(r => r.json())
-        .then(r => {
-            console.log(r);
-            $('#exampleModalCenter').modal('toggle');
-            $('#overlay').fadeOut();
-            SnoAlertBox();
-        })
-    }
-
-    function SnoAlertBox(){
-        $("#snoAlertBox").fadeIn();
-        window.setTimeout(function () {
-          $("#snoAlertBox").fadeOut(300)
-        }, 3000);
-    }
-    (() => {
-       window.addEventListener('load', e => {
-            let data = new FormData();
-            getRequest(data, function(r){
-                document.querySelector('#assignations').textContent = r.data.count
-                document.querySelector('#children').textContent = r.data.children
-                chartsArray = []
-                for (i = 0; i < r.factores_riesgo.length; i++) {
-                    document.querySelector('#attribute_type_count_'+r.factores_riesgo[i].id).textContent = r.factores_riesgo[i].total;
-                    chartsArray[i] = {id:r.factores_riesgo[i].id, chart:new CanvasJS.Chart("chartRiskContainer"+r.factores_riesgo[i].id, {... chartStartData})};
-                    chartsArray[i]['chart'].options.data[0].dataPoints = r.factores_riesgo[i].factores_riesgo;
-                    chartsArray[i]['chart'].render();
-                    $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                }
-                document.querySelector('#milestones_count').textContent = r.milestones_count;
-                chartMilestones.options.data[0].dataPoints = r.milestones;
-                $("#chartMilestonesContainer").show();
-                chartMilestones.render();
-                $('#milestonesCard').click(function () {
-                    for(i = 0; i < chartsArray.length; i++){
-                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    }
-                    $("#chartMilestonesContainer").show();
-                });
-                $(('[id^="attribute_type_"]')).click(function () {
-                    $("#chartMilestonesContainer").hide();
-                    for(i = 0; i < chartsArray.length; i++){
-                        $("#chartRiskContainer"+chartsArray[i]['id']).hide();
-                    }
-                    for(i = 0; i < chartsArray.length; i++){
-                        if("attribute_type_"+chartsArray[i]['id'] == $(this).attr('id')){
-                            $("#chartRiskContainer"+chartsArray[i]['id']).show();
-                        }
-                    }
-                });
-                $("#pagination").hide();
-                let data1 = new FormData();
-                data1.append('all', String("true"));
-                getRequest(data1, function(r){
-                    $("#filtrado_por").text("Mostrar todos:");
-                    r.data.forEach(function(instance){ writeRow(instance); });
-                    $('#overlay').fadeOut();
-                });
-            });
-       })
-    })()
-
-    window.onload = function () {
-        var bar_ctx = document.getElementById('chart').getContext('2d');
-        var background_1 = bar_ctx.createLinearGradient(0, 0, 600, 0);
-        background_1.addColorStop(0, 'rgb(0,89,217)');
-        background_1.addColorStop(1, 'rgb(105,176,255)');
-        chartStartData = {
-            animationEnabled: true,
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            axisY: {
-                includeZero: true,
-                valueFormatString:" "
-            },
-            axisX:{
-              labelFontFamily: "tahoma",
-              labelFontSize: 14
-            },
-            data: [{
-                type: "bar",
-                click: filterInstances,
-                color: background_1,
-                indexLabelFontFamily: "tahoma",
-                indexLabelFontSize: 18,
-                indexLabelPlacement: "inside",
-                indexLabel: "{y} {y_label}",
-                toolTipContent: "{label}: {y}",
-                showInLegend: false,
-                indexLabelFontColor: "white",
-                legendMarkerColor: "white",
-                legendText: "Respuestas",
-                includeZero: true,
-                cursor: "pointer",
-                dataPoints: [{ y: 0, y_label: "", label: "Loading..." }]
-            }]
-        }
-        chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
-
-        $('#search_name').keypress(function(event){
-            var keycode = (event.keyCode ? event.keyCode : event.which);
-            if(keycode == '13'){
-                searchInstances();
-            }
-        });
-    }
-    </script>
+    chartMilestones = new CanvasJS.Chart("chartMilestonesContainer", chartStartData);
+    ----------------------------------------------------------*/
+    $('#search_name').keypress(function (event) {
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if (keycode == '13') {
+        searchInstances();
+      }
+    });
+  }
+</script>
 
 {% endblock %}
