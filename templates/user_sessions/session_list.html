@@ -11,7 +11,62 @@
                 <i class="fas fa-plus fa-sm text-white-50"></i> Create Session</a>
         </div>
     </div>
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div class="form-group inline-form-content">
+                <form class="form-inline" action="" method="get">
+                    <div class="row">
+                        <input class="form-control m-1" type="text" name="name" placeholder="name" value="{{ name }}">
+                        <input class="form-control m-1" type="number" name="min_range" placeholder="min" value="{{ min_range }}">
+                        <input class="form-control m-1" type="number" name="max_range" placeholder="max" value="{{ max_range }}">
+                        <select class="form-control m-1" name="programs" id="programs" value="{{ programs }}">
+                            <option value="">All Programs</option>
+                            {% for option in programs_list %}
+                                {% if programs == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <select class="form-control m-1" name="types" id="types" value="{{ types }}">
+                            <option value="">All Types</option>
+                            {% for option in types_list %}
+                                {% if types == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <select class="form-control m-1" name="topics" id="topics" value="{{ topics }}">
+                            <option value="">All Topics</option>
+                            {% for option in topics_list %}
+                                {% if topics == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <select class="form-control m-1" name="areas" id="areas" value="{{ areas }}">
+                            <option value="">All Areas</option>
+                            {% for option in areas_list %}
+                                {% if areas == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input type="submit" class="btn btn-primary m-1 mx-4" value="Filter">
 
+                        <strong class="float-right total-sessions m-2 mt-3"> Total: {{ total }}</strong>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -47,18 +102,18 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        {% for object in sessions %}
+                        {% for session in sessions %}
                             <tr>
-                                <td>{{ object.pk }}</td>
-                                <td>{{ object.type }}</td>
-                                <td>{{ object.name }}</td>
-                                <td>{{ object.topics }}</td>
-                                <td>{{ object.areas_list }}</td>
-                                <td>{{ object.programs_list }}</td>
-                                <td>{{ object.min }}</td>
-                                <td>{{ object.max }}</td>
+                                <td>{{ session.pk }}</td>
+                                <td>{{ session.type }}</td>
+                                <td>{{ session.name }}</td>
+                                <td>{{ session.topics }}</td>
+                                <td>{{ session.areas_list }}</td>
+                                <td>{{ session.programs_list }}</td>
+                                <td>{{ session.min }}</td>
+                                <td>{{ session.max }}</td>
                                 <td>
-                                    <a href="{% url 'sessions:session_detail' session_id=object.pk %}"
+                                    <a href="{% url 'sessions:session_detail' session_id=session.pk %}"
                                        class="btn btn-primary"><i class="fas fa-eye"></i></a>
                                 </td>
                             </tr>
@@ -66,7 +121,6 @@
                     </tbody>
                 </table>
               </div>
-
                 {% include 'base/pagination.html' %}
             </div>
         </div>
