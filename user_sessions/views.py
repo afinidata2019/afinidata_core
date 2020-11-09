@@ -556,8 +556,7 @@ class SetAttributeDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ConditionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_condition'
-    model = models.Condition
-    fields = ('attribute', 'condition', 'value')
+    form_class = forms.ConditionForm
 
     def get_context_data(self, **kwargs):
         c = super(ConditionCreateView, self).get_context_data()
@@ -578,9 +577,8 @@ class ConditionCreateView(PermissionRequiredMixin, CreateView):
 
 class ConditionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_condition'
-    model = models.Condition
-    fields = ('attribute', 'condition', 'value')
     pk_url_kwarg = 'condition_id'
+    form_class = forms.ConditionForm
 
     def get_context_data(self, **kwargs):
         c = super(ConditionEditView, self).get_context_data()
