@@ -226,7 +226,7 @@ class Command(BaseCommand):
             wb.save(archivo)
 
             query = """
-            select distinct(email) from auth_user
+            select distinct(email), first_name, last_name from auth_user
                 inner join groups_rolegroupuser
                     on groups_rolegroupuser.user_id = auth_user.id
                 inner join groups_group
@@ -244,5 +244,10 @@ class Command(BaseCommand):
             if len(result) > 0:
                 for user in result:
                     if user[0]:
-                        enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data=None, recipients=[user[0]], attachment_file=archivo)
+                        enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
+                            'user': {
+                                'first_name': user[1],
+                                'last_name': user[2]
+                            }
+                        }, recipients=[user[0]], attachment_file=archivo)
 
