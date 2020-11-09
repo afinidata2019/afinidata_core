@@ -494,7 +494,7 @@ class ButtonDeleteView(PermissionRequiredMixin, DeleteView):
 class SetAttributeCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_setattribute'
     model = models.SetAttribute
-    fields = ('attribute', 'value')
+    form_class = forms.SetAttributeForm
 
     def get_context_data(self, **kwargs):
         c = super(SetAttributeCreateView, self).get_context_data()
@@ -516,8 +516,8 @@ class SetAttributeCreateView(PermissionRequiredMixin, CreateView):
 class SetAttributeEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_setattribute'
     model = models.SetAttribute
-    fields = ('attribute', 'value')
     pk_url_kwarg = 'setattribute_id'
+    form_class = forms.SetAttributeForm
 
     def get_context_data(self, **kwargs):
         c = super(SetAttributeEditView, self).get_context_data()
@@ -654,8 +654,7 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 
 class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_redirectsession'
-    model = models.RedirectSession
-    fields = ('session', )
+    form_class = forms.RedirectSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionCreateView, self).get_context_data()
@@ -675,9 +674,8 @@ class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
 
 class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_redirectsession'
-    model = models.RedirectSession
-    fields = ('session', )
     pk_url_kwarg = 'redirectsession_id'
+    form_class = forms.RedirectSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionEditView, self).get_context_data()
