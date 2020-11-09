@@ -291,6 +291,8 @@ class GroupAssignationsView(View):
                             y_label = label_caso
                         factores_riesgo_data.append(dict(y=risk_count, y_label=y_label, label=program_attribute.label,
                                                          program_attribute_id=program_attribute.id))
+                    if len(factores_riesgo_data) == 0:
+                        factores_riesgo_data = [dict(y=0)]
                     factores_riesgo.append(dict(id=attributes_type.id, name=attributes_type.name,
                                                 factores_riesgo=sorted(factores_riesgo_data,
                                                                        key=lambda k: k['y'], reverse=True),
