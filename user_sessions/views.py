@@ -7,22 +7,81 @@ from attributes.models import Attribute
 from entities.models import Entity
 from instances.models import AttributeValue
 from messenger_users.models import UserData
+from areas.models import Area
+from topics.models import Topic
+from programs.models import Program
 
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
     model = models.Session
-    paginate_by = 30
+    context_object_name = 'sessions'
+    paginate_by = 15
+
+    def get_queryset(self):
+        try:
+            params = dict()
+            if self.request.GET.get('name'):
+                params['name__icontains'] = self.request.GET['name']
+            if self.request.GET.get('min_range'):
+                params['min'] = self.request.GET['min_range']
+            if self.request.GET.get('max_range'):
+                params['max'] = self.request.GET['max_range']
+            if self.request.GET.get('programs'):
+                params['programs'] = self.request.GET['programs']
+            if self.request.GET.get('types'):
+                params['session_type'] = self.request.GET['types']
+            if self.request.GET.get('topics'):
+                params['areas__topic'] = self.request.GET['topics']
+            if self.request.GET.get('areas'):
+                params['areas'] = self.request.GET['areas']
+            return models.Session.objects.filter(**params)
+        except:
+            return models.Session.objects.all()
 
     def get_context_data(self, **kwargs):
         c = super(SessionListView, self).get_context_data()
+        get_copy = self.request.GET.copy()
+        parameters = get_copy.pop('page', True) and get_copy.urlencode()
+        c['get_params'] = parameters
         sessions = models.Session.objects.all().order_by('-session_type', 'name')
-        for session in sessions:
+        c['programs_list'] = Program.objects.all().order_by('name')
+        c['types_list'] = models.SessionType.objects.all().order_by('name')
+        c['topics_list'] = Topic.objects.all().order_by('name')
+        c['areas_list'] = Area.objects.all().order_by('name')
+        c['programs'] = ''
+        c['types'] = ''
+        c['topics'] = ''
+        c['areas'] = ''
+        params = dict()
+        if self.request.GET.get('name'):
+            params['name__icontains'] = self.request.GET['name']
+            c['name'] = self.request.GET['name']
+        if self.request.GET.get('min_range'):
+            params['min'] = self.request.GET['min_range']
+            c['min_range'] = self.request.GET['min_range']
+        if self.request.GET.get('max_range'):
+            params['max'] = self.request.GET['max_range']
+            c['max_range'] = self.request.GET['max_range']
+        if self.request.GET.get('programs'):
+            params['programs'] = self.request.GET['programs']
+            c['programs'] = int(self.request.GET['programs'])
+        if self.request.GET.get('types'):
+            params['session_type'] = self.request.GET['types']
+            c['types'] = int(self.request.GET['types'])
+        if self.request.GET.get('topics'):
+            params['areas__topic'] = self.request.GET['topics']
+            c['topics'] = int(self.request.GET['topics'])
+        if self.request.GET.get('areas'):
+            params['areas'] = self.request.GET['areas']
+            c['areas'] = int(self.request.GET['areas'])
+        sessions = sessions.filter(**params)
+        for session in c['sessions']:
             session.type = session.session_type.name
             session.topics = ', '.join(set([area.topic.name for area in session.areas.all() if area.topic]))
             session.areas_list = ', '.join([area.name for area in session.areas.all()])
             session.programs_list = ', '.join([program.name.replace('Afini ', '') for program in session.programs.all()])
-        c['sessions'] = sessions
+        c['total'] = sessions.count()
         return c
 
 
