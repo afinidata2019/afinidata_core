@@ -63,8 +63,16 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if field.padding == 1 %}
+                <div class="col-11 pl-5">
+                {% else %}
                 <div class="col-11">
+                {% endif %}
+                    {% if field.field_type == 'condition' %}
+                    <div class="card shadow mb-0">
+                    {% else %}
                     <div class="card shadow mb-4">
+                    {% endif %}
                         <div class="card-body">
                             <span class="m-0 font-weight-bold text-primary">{{ field.field_type_display }}</span>
                             <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
@@ -148,7 +156,7 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                <a href="{% url 'sessions:userinput_create' session_id=object.pk field_id=field.pk %}">Add message</a>
+                                <a href="{% url 'sessions:userinput_create' session_id=object.pk field_id=field.pk %}">Add validation</a>
                             {% endif %}
 
                             {% if field.field_type == 'quick_replies' %}
