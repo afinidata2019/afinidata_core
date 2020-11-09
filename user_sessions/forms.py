@@ -50,6 +50,14 @@ class SetAttributeForm(forms.ModelForm):
         fields = ('attribute', 'value')
 
 
+class ConditionForm(forms.ModelForm):
+    attribute = forms.ModelChoiceField(queryset=Attribute.objects.all().order_by('name'))
+
+    class Meta:
+        model = models.Condition
+        fields = ('attribute', 'condition', 'value')
+
+
 class RedirectSessionForm(forms.ModelForm):
     session = forms.ModelChoiceField(queryset=models.Session.objects.all().order_by('name'))
 
