@@ -162,6 +162,13 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(SessionDetailView, self).get_context_data()
         c['fields'] = self.object.field_set.order_by('position')
+        is_condition = False
+        for field in c['fields']:
+            if is_condition:
+                field.padding = 1
+            else:
+                field.padding = 0
+            is_condition = (field.field_type == 'condition')
         c['last_field'] = c['fields'].last()
         c['type'] = self.object.session_type.name
         c['topics'] = ', '.join(set([area.topic.name for area in self.object.areas.all() if area.topic]))
