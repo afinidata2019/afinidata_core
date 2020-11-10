@@ -661,7 +661,8 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 
 class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_redirectsession'
-    form_class = forms.RedirectSessionForm
+    model = models.RedirectSession
+    fields = ('session', )
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionCreateView, self).get_context_data()
@@ -681,8 +682,9 @@ class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
 
 class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_redirectsession'
+    model = models.RedirectSession
+    fields = ('session',)
     pk_url_kwarg = 'redirectsession_id'
-    form_class = forms.RedirectSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionEditView, self).get_context_data()
