@@ -57,7 +57,8 @@ class UserView(PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         c = super(UserView, self).get_context_data()
         quick_replies = []
-        replies = SessionInteraction.objects.filter(user_id=self.object.pk, type='quick_reply').order_by('-id')
+        replies = SessionInteraction.objects.filter(user_id=self.object.pk,
+                                                    type__in=['quick_reply', 'user_input']).order_by('-id')
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
