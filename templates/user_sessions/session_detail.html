@@ -4,6 +4,15 @@
 
 {% block content %}
 
+    <div class="container" id="sessions">
+        <h3>@{message}</h3>
+        <div v-if="loading">Cargando...</div>
+        <div v-if="!loading">
+            <p>title: @{todo.title}</p>
+            <p>status: @{todo.completed}</p>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
@@ -13,7 +22,7 @@
     </div>
 
     <div class="container-fluid">
-        <div class="card shadow mb-4">
+        <div class="card shadow mb-4" draggable="true">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Info</h6>
             </div>
@@ -298,7 +307,7 @@
                                 </table>
                                 <a href="{% url 'sessions:condition_create' session_id=object.pk field_id=field.pk %}">Add Condition</a>
                             {% endif %}
-                        
+
                             {% if field.field_type == 'save_values_block' %}
                                 {% if field.redirectblock %}
                                     <table class="table">
@@ -388,4 +397,35 @@
         {% endfor %}
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const sessions = new Vue({
+            el: "#sessions",
+            data: () => {
+                return {
+                    message: 'it works',
+                    todo: {},
+                    loading: true
+                }
+            },
+            methods:{
+                testApi: function() {
+                    fetch("https://jsonplaceholder.typicode.com/todos/1")
+                    .then( resp => resp.json() )
+                    .then( data => {
+                        this.todo = data;
+                        this.loading = false;
+                    })
+                }
+            },
+            mounted: function() {
+                console.log('it works')
+                setTimeout(() => {
+                    this.testApi();
+                }, 1500)
+            }
+        });
+    </script>
 {% endblock %}
