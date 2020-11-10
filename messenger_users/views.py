@@ -12,6 +12,7 @@ from messenger_users import forms
 from dateutil.parser import parse
 from user_sessions.models import Session, Field, Message, Reply, UserInput, Interaction as SessionInteraction
 from bots.models import UserInteraction
+from groups.models import AssignationMessengerUser
 from django.db.models import Max
 
 
@@ -59,6 +60,9 @@ class UserView(PermissionRequiredMixin, DetailView):
         quick_replies = []
         replies = SessionInteraction.objects.filter(user_id=self.object.pk,
                                                     type__in=['quick_reply', 'user_input']).order_by('-id')
+        assignations = AssignationMessengerUser.objects.filter(user_id=self.object.pk)
+        if assignations:
+            c['assignations'] = assignations
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
