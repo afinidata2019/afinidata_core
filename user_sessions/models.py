@@ -175,7 +175,8 @@ class SetAttribute(models.Model):
 
 
 CONDITIONS = (('equal', 'Equal'), ('not_equal', 'Not equal'), ('in', 'Is in'), ('lt', 'Less than'),
-              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'))
+              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'),
+              ('is_set', 'Is set'), ('is_not_set', 'Is not set'))
 
 
 class Condition(models.Model):
