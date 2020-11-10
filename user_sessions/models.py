@@ -210,7 +210,7 @@ class Response(models.Model):
 
 
 class RedirectBlock(models.Model):
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    field = models.OneToOneField(Field, on_delete=models.CASCADE)
     block = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -220,7 +220,7 @@ class RedirectBlock(models.Model):
 
 
 class RedirectSession(models.Model):
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    field = models.OneToOneField(Field, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -230,7 +230,7 @@ class RedirectSession(models.Model):
 
 
 class Service(models.Model):
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    field = models.OneToOneField(Field, on_delete=models.CASCADE)
     service = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
