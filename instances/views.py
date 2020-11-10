@@ -4,7 +4,7 @@ from instances.models import Instance, AttributeValue, Response
 from attributes.models import Attribute
 from django.shortcuts import get_object_or_404
 from messenger_users.models import User, UserData
-from user_sessions.models import Field, Message, Reply, Interaction as SessionInteraction
+from user_sessions.models import Field, Message, Reply, UserInput, Interaction as SessionInteraction
 from django.urls import reverse_lazy
 from django.http import HttpResponse, Http404
 from django.contrib import messages
@@ -76,16 +76,22 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
             question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1).last()
-            rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
-            answer = Reply.objects.filter(field_id=field.id, value=reply.value)
-            if answer.exists():
-                rep['answer'] = answer.first().label
-                rep['attribute'] = answer.first().attribute
-            else:
-                rep['answer'] = reply.text or ''
-                rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
-            rep['value'] = reply.value or 0
             rep['response'] = reply.created_at
+            if reply.type == 'quick_reply':
+                rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                answer = Reply.objects.filter(field_id=field.id, value=reply.value)
+                if answer.exists():
+                    rep['answer'] = answer.first().label
+                    rep['attribute'] = answer.first().attribute
+                else:
+                    rep['answer'] = reply.text or ''
+                    rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
+                rep['value'] = reply.value or 0
+            elif reply.type == 'user_input':
+                rep['question'] = UserInput.objects.filter(field_id=field.id).first().text
+                rep['answer'] = reply.text
+                rep['value'] = ''
+                rep['attribute'] = UserInput.objects.filter(field_id=field.id).first().attribute.name
             quick_replies.append(rep)
         attribute_set = []
         for attribute in self.object.get_attributes():
