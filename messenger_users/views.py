@@ -10,7 +10,7 @@ from articles.models import Interaction as ArticleInteraction
 from django.contrib import messages
 from messenger_users import forms
 from dateutil.parser import parse
-from user_sessions.models import Session, Field, Message, Reply, Interaction as SessionInteraction
+from user_sessions.models import Session, Field, Message, Reply, UserInput, Interaction as SessionInteraction
 from bots.models import UserInteraction
 from django.db.models import Max
 
@@ -63,18 +63,24 @@ class UserView(PermissionRequiredMixin, DetailView):
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
             question_field = Field.objects.filter(session_id=field.session_id, position=field.position - 1).last()
-            rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
             rep['session'] = Session.objects.get(id=reply.session_id)
-            answer = Reply.objects.filter(field_id=field.id, value=reply.value)
-            if answer.exists():
-                rep['answer'] = answer.first().label
-                rep['attribute'] = answer.first().attribute
-            else:
-                rep['answer'] = reply.text or ''
-                rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
-            Attribute.objects.filter(name=rep['attribute']).first()
-            rep['value'] = reply.value or 0
             rep['response'] = reply.created_at
+            if reply.type == 'quick_reply':
+                rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                answer = Reply.objects.filter(field_id=field.id, value=reply.value)
+                if answer.exists():
+                    rep['answer'] = answer.first().label
+                    rep['attribute'] = answer.first().attribute
+                else:
+                    rep['answer'] = reply.text or ''
+                    rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute
+                Attribute.objects.filter(name=rep['attribute']).first()
+                rep['value'] = reply.value or 0
+            elif reply.type == 'user_input':
+                rep['question'] = UserInput.objects.filter(field_id=field.id).first().text
+                rep['answer'] = reply.text
+                rep['value'] = ''
+                rep['attribute'] = UserInput.objects.filter(field_id=field.id).first().attribute.name
             quick_replies.append(rep)
         c['quick_replies'] = quick_replies
         return c
