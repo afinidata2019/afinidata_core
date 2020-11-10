@@ -84,7 +84,7 @@ class GroupAssignationsView(View):
                         except:
                             months = 0
                         risks = [r.milestone_id for r in MilestoneRisk.objects.\
-                            filter(milestone_id=self.request.POST['milestone_id'], value__lte=months)]
+                            filter(program=program, milestone_id=self.request.POST['milestone_id'], value__lte=months)]
                         if len(risks) > 0:
                             last_responses = instance.response_set.filter(milestone_id__in=risks).\
                                 values('milestone_id').annotate(max_id=Max('id'))
@@ -232,7 +232,8 @@ class GroupAssignationsView(View):
                                 months = months + (age.years * 12)
                         except:
                             months = 0
-                        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+                        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(program=program,
+                                                                                      value__lte=months)]
                         last_responses = instance.response_set.filter(milestone_id__in=risks).values('milestone_id').\
                             annotate(max_id=Max('id'))
                         responses = instance.response_set.filter(response__in=['failed', 'dont-know'],
@@ -331,7 +332,7 @@ class GroupInstanceCardView(View):
         except:
             months = 0
         # Milestones
-        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(value__lte=months)]
+        risks = [r.milestone_id for r in MilestoneRisk.objects.filter(program=program, value__lte=months)]
         if self.request.POST['type'] == 'instance' and len(risks) > 0:
             last_responses = instance.response_set.filter(milestone_id__in=risks). \
                 values('milestone_id').annotate(max_id=Max('id'))
