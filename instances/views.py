@@ -70,7 +70,8 @@ class InstanceView(PermissionRequiredMixin, DetailView):
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
         quick_replies = []
-        replies = SessionInteraction.objects.filter(instance_id=self.object.pk, type='quick_reply').order_by('id')
+        replies = SessionInteraction.objects.filter(instance_id=self.object.pk,
+                                                    type__in=['quick_reply', 'user_input']).order_by('id')
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
