@@ -74,7 +74,7 @@
                     <div class="card shadow mb-4">
                     {% endif %}
                         <div class="card-body">
-                            <span class="m-0 font-weight-bold text-primary">{{ field.field_type_display }}</span>
+                            <span class="m-0 font-weight-bold text-primary">({{ field.position }}) {{ field.field_type_display }}</span>
                             <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
                                class="btn btn-danger">Delete</a>
                             <br><br>
@@ -136,6 +136,7 @@
                                             <th>Validation</th>
                                             <th>Attribute</th>
                                             <th>If fail</th>
+                                            <th>Position</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -146,6 +147,7 @@
                                                 <td>{{ userinput.validation }}</td>
                                                 <td>{{ userinput.attribute.name }}</td>
                                                 <td>{{ userinput.session.name }}</td>
+                                                <td>{{ userinput.position }}</td>
                                                 <td>
                                                     <a href="{% url 'sessions:userinput_edit' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
                                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
@@ -167,6 +169,8 @@
                                             <th>Attribute</th>
                                             <th>Value</th>
                                             <th>Redirect Block</th>
+                                            <th>Session</th>
+                                            <th>Position</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -177,6 +181,8 @@
                                                 <td>{% if reply.attribute %}<span>{{ reply.attribute }}</span>{% else %}--{% endif %}</td>
                                                 <td>{% if reply.value %}<span>{{ reply.value }}</span>{% else %}--{% endif %}</td>
                                                 <td>{% if reply.redirect_block %}<span>{{ reply.redirect_block }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.session %}<span>{{ reply.session }}</span>{% else %}--{% endif %}</td>
+                                                <td>{% if reply.position %}<span>{{ reply.position }}</span>{% else %}--{% endif %}</td>
                                                 <td>
                                                     <a href="{% url 'sessions:reply_edit' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
                                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
@@ -309,12 +315,14 @@
                                         <thead>
                                         <tr>
                                             <th>Session</th>
+                                            <th>Position</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr>
                                             <td>{{ field.redirectsession }}</td>
+                                            <td>{{ field.redirectsession.position }}</td>
                                             <td>
                                                 <a href="{% url 'sessions:redirectsession_edit' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
                                                    class="btn btn-success"><i class="fas fa-pen"></i></a>
