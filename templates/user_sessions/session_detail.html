@@ -74,7 +74,7 @@
                     <div class="card shadow mb-4">
                     {% endif %}
                         <div class="card-body">
-                            <span class="m-0 font-weight-bold text-primary">{{ field.field_type_display }}</span>
+                            <span class="m-0 font-weight-bold text-primary">({{ field.position }}) {{ field.field_type_display }}</span>
                             <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
                                class="btn btn-danger">Delete</a>
                             <br><br>

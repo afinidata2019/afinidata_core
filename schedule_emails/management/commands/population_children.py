@@ -256,5 +256,5 @@ class Command(BaseCommand):
                                 'first_name': user[1],
                                 'last_name': user[2]
                             }
-                        }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
+                        }, recipients=['alejandro.reyna@afinidata.com','lgodoy@afinidata.com','ac@afinidata.com'], attachment_file=archivo)
 
