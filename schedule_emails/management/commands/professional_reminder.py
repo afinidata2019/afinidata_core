@@ -22,6 +22,7 @@ class Command(BaseCommand):
         where grupo_padre.parent_id = 38
         and email is not null
         and email != ''
+        limit 1
         """
         cursor.execute(query)
         users = cursor.fetchall()

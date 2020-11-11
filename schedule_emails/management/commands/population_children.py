@@ -244,6 +244,7 @@ class Command(BaseCommand):
             if len(result) > 0:
                 for user in result:
                     if user[0]:
+                        pass
                         # enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
                         #     'user': {
                         #         'first_name': user[1],
@@ -251,10 +252,10 @@ class Command(BaseCommand):
                         #     }
                         # }, recipients=[user[0]], attachment_file=archivo)
 
-                        enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
-                            'user': {
-                                'first_name': user[1],
-                                'last_name': user[2]
-                            }
-                        }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
+            enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
+                'user': {
+                    'first_name': "prueba",
+                    'last_name': "prueba"
+                }
+            }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
 
