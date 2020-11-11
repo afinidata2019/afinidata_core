@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from messenger_users import models as user_models
 from posts.models import Post, Interaction
+from programs.models import Program
 from milestones.models import Milestone, Session
 from attributes.models import Attribute
 from entities.models import Entity
@@ -13,6 +14,8 @@ class Instance(models.Model):
     name = models.TextField()
     attributes = models.ManyToManyField(Attribute, through='AttributeValue')
     milestones = models.ManyToManyField(Milestone, through='Response')
+    program = models.ForeignKey(Program, on_delete=models.DO_NOTHING, null=True)
+    sessions = models.ManyToManyField(Session)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
