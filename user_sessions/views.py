@@ -348,7 +348,7 @@ class UserInputCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         c = super(UserInputCreateView, self).get_context_data()
-        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         c['action'] = 'Create'
         return c
@@ -366,7 +366,7 @@ class UserInputEditView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         c = super(UserInputEditView, self).get_context_data()
-        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         c['action'] = 'Update'
         return c
@@ -394,7 +394,7 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         c = super(ReplyCreateView, self).get_context_data()
         c['action'] = 'Create'
-        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         return c
 
@@ -439,7 +439,7 @@ class ReplyEditView(PermissionRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         c = super(ReplyEditView, self).get_context_data()
         c['action'] = 'Edit'
-        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         return c
 
@@ -473,7 +473,7 @@ class ReplyDeleteView(PermissionRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         c = super(ReplyDeleteView, self).get_context_data()
-        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         return c
 

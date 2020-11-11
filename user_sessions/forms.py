@@ -39,7 +39,7 @@ class UserInputForm(forms.ModelForm):
 
     class Meta:
         model = models.UserInput
-        fields = ('text', 'validation', 'attribute', 'session')
+        fields = ('text', 'validation', 'attribute', 'session', 'position')
 
 
 class SetAttributeForm(forms.ModelForm):
