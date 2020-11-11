@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from messenger_users import models as user_models
 from posts.models import Post, Interaction
-from milestones.models import Milestone
+from milestones.models import Milestone, Session
 from attributes.models import Attribute
 from entities.models import Entity
 from django.db import models
@@ -144,6 +144,7 @@ class Response(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE)
     response = models.CharField(max_length=255)
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)
 
