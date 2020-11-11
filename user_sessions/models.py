@@ -130,6 +130,7 @@ class UserInput(models.Model):
                                                                      ('date', 'Date')))
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
+    position = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -144,6 +145,7 @@ class Reply(models.Model):
     value = models.CharField(max_length=100, null=True, blank=True)
     redirect_block = models.CharField(max_length=100, null=True, blank=True)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True, blank=True)
+    position = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
