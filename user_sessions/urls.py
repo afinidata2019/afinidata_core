@@ -76,5 +76,9 @@ urlpatterns = [
     path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/edit/',
          views.RedirectSessionEditView.as_view(), name='redirectsession_edit'),
     path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/delete/',
-         views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete')
+         views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete'),
+
+     # rutas vue
+     path('fields/<int:pk>/', views.FieldsData.as_view(), name="fields_get")
+
 ]
