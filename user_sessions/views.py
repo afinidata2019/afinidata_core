@@ -661,7 +661,7 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ServiceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_service'
-    model = models.RedirectBlock
+    model = models.Service
     fields = ('url', 'request_type')
 
     def get_context_data(self, **kwargs):
