@@ -5,11 +5,10 @@
 {% block content %}
 
     <div class="container" id="sessions">
-        <h3>@{message}</h3>
+        <h3>[[ message ]]</h3>
         <div v-if="loading">Cargando...</div>
         <div v-if="!loading">
-            <p>title: @{todo.title}</p>
-            <p>status: @{todo.completed}</p>
+            <h3>Aqui las cards</h3>
         </div>
     </div>
 
@@ -354,24 +353,22 @@
                 return {
                     message: 'it works',
                     todo: {},
-                    loading: true
+                    loading: true,
+                    fields: []
                 }
             },
             methods:{
-                testApi: function() {
-                    fetch("https://jsonplaceholder.typicode.com/todos/1")
+                getData: function() {
+                    fetch('/sessions/fields/352/')
                     .then( resp => resp.json() )
                     .then( data => {
-                        this.todo = data;
+                        this.fields = data;
                         this.loading = false;
                     })
                 }
             },
             mounted: function() {
-                console.log('it works')
-                setTimeout(() => {
-                    this.testApi();
-                }, 1500)
+                this.getData()
             }
         });
     </script>
