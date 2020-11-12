@@ -80,11 +80,13 @@
                                     <span class="m-0 px-3">{{ field.service.url }}</span>
                                     <a href="{% url 'sessions:service_edit' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
                                        class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                    <a href="{% url 'sessions:service_delete' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
+                                    <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
                                        class="btn btn-danger"><i class="fas fa-times"></i></a>
                                 {% else %}
                                     <a href="{% url 'sessions:service_create' session_id=object.pk field_id=field.pk %}"
                                        class="btn btn-success"><i class="fas fa-plus"></i></a>
+                                    <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                                       class="btn btn-danger">Delete</a>
                                 {% endif %}
                                 <br><br>
                             {% else %}
@@ -330,6 +332,7 @@
                                         <tr>
                                             <th>Parameter</th>
                                             <th>Value</th>
+                                            <th>Actions</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -347,6 +350,7 @@
                                         {% endfor %}
                                         </tbody>
                                     </table>
+                                    <a href="{% url 'sessions:serviceparam_create' session_id=object.pk field_id=field.pk %}">Add Parameter</a>
                                 {% endif %}
                             {% endif %}
 
