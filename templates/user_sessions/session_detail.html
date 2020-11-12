@@ -1,375 +1,534 @@
 {% extends 'base/private.html' %}
 
-{% block title %}Session: {{ object.name }}{% endblock %}
+{% block title %}
+    Session: {{ object.name }}
+{%endblock %}
 
 {% block content %}
 
-    <div class="container" id="sessions">
-        <h3>[[ message ]]</h3>
-        <div v-if="loading">Cargando...</div>
-        <div v-if="!loading">
-            <h3>Aqui las cards</h3>
-        </div>
-    </div>
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
+    <a
+      href="{% url 'sessions:session_list' %}"
+      class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+    >
+      <i class="fas fa-list fa-sm text-white-50"></i> Back to Sessions</a
+    >
+  </div>
+</div>
 
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
-            <a href="{% url 'sessions:session_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-list fa-sm text-white-50"></i> Back to Sessions</a>
-        </div>
+<div class="container-fluid">
+  <div class="card shadow mb-4" draggable="true">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Info</h6>
     </div>
+    <div class="card-body">
+      <strong>ID: </strong><span>{{ object.pk }}</span><br />
+      <strong>Type: </strong><span>{{ type }}</span><br />
+      <strong>Topics: </strong><span>{{ topics }}</span><br />
+      <strong>Areas: </strong><span>{{ areas_list }}</span><br />
+      <strong>Programs: </strong><span>{{ programs_list }}</span><br />
+      <strong>Entities: </strong><span>{{ entities_list }}</span><br />
+      <strong>Licences: </strong><span>{{ licences_list }}</span><br />
+      <strong>Fields: </strong><span>{{ object.field_set.count }}</span><br />
+      <strong>Min: </strong><span>{{ object.min }}</span><br />
+      <strong>Max: </strong><span>{{ object.max }}</span><br />
+      <strong>Created At: </strong><span>{{ object.created_at }}</span><br />
+      <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br />
+      <strong>Actions: </strong>
+      <a
+        href="{% url 'sessions:session_update' session_id=object.pk %}"
+        class="btn btn-success"
+        >Edit</a
+      >
+      <a
+        href="{% url 'sessions:session_delete' session_id=object.pk %}"
+        class="btn btn-danger"
+        >Delete</a
+      >
+    </div>
+  </div>
+</div>
 
-    <div class="container-fluid">
-        <div class="card shadow mb-4" draggable="true">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Info</h6>
-            </div>
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Fields:</h1>
+    <a
+      href="{% url 'sessions:field_create' session_id=object.pk %}"
+      class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+    >
+      <i class="fas fa-plus fa-sm text-white-50"></i> Add field</a
+    >
+  </div>
+</div>
+
+<div class="container-fluid" id="sessions">
+  <div v-if="loading" class="my-5">
+    <div class="d-flex justify-content-center">
+      <div
+        class="spinner-border text-primary"
+        role="status"
+        style="width: 4rem; height: 4rem"
+      >
+        <span class="sr-only">Cargando...</span>
+      </div>
+    </div>
+  </div>
+  <div v-if="!loading">
+    <div v-for="field in fields">
+      <div class="row my-4">
+        <div class="col-md-12">
+          <div class="card">
             <div class="card-body">
-                <strong>ID: </strong><span>{{ object.pk }}</span><br>
-                <strong>Type: </strong><span>{{ type }}</span><br>
-                <strong>Topics: </strong><span>{{ topics }}</span><br>
-                <strong>Areas: </strong><span>{{ areas_list }}</span><br>
-                <strong>Programs: </strong><span>{{ programs_list }}</span><br>
-                <strong>Entities: </strong><span>{{ entities_list }}</span><br>
-                <strong>Licences: </strong><span>{{ licences_list }}</span><br>
-                <strong>Fields: </strong><span>{{ object.field_set.count }}</span><br>
-                <strong>Min: </strong><span>{{ object.min }}</span><br>
-                <strong>Max: </strong><span>{{ object.max }}</span><br>
-                <strong>Created At: </strong><span>{{ object.created_at }}</span><br>
-                <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br>
-                <strong>Actions: </strong>
-                <a href="{% url 'sessions:session_update' session_id=object.pk %}" class="btn btn-success">Edit</a>
-                <a href="{% url 'sessions:session_delete' session_id=object.pk %}" class="btn btn-danger">Delete</a>
-            </div>
-        </div>
-    </div>
+              <div class="card-title">
+                <span class="m-0 font-weight-bold text-primary"
+                  >[[ field.field_type_display ]]</span
+                >
+                <a
+                  :href="`/sessions/{{ object.pk}}/fields/${field.pk}/delete/`"
+                  class="btn btn-danger"
+                  >Delete</a
+                >
+              </div>
 
-    <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Fields: </h1>
-            <a href="{% url 'sessions:field_create' session_id=object.pk %}"
-               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add field</a>
-        </div>
-    </div>
+              <!-- field type text-->
+              <div v-if="field.field_type == 'text'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Message</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="message in field.message_set">
+                      <td>[[ message.text ]]</td>
+                      <td>
+                        <a
+                          :href="`/sessions/{{ object.pk }}/fields/${field.id}/messages/${message.id}/edit/`"
+                          class="btn btn-success"
+                        >
+                          <i class="fas fa-pen"></i>
+                        </a>
+                        <a
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
+                          class="btn btn-danger"
+                        >
+                          <i class="fas fa-times"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <a
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`"
+                  >Add message</a
+                >
+              </div>
+              <!-- end field type text-->
 
-    <div class="container-fluid">
-        {% for field in fields %}
-            <div class="row">
-                <div class="col-1">
-                    <div class="btn-group">
-                        {% if field.position != 0 %}
-                            <a class="btn btn-outline-secondary" href="{% url 'sessions:field_up' session_id=object.pk field_id=field.pk %}">
-                                <i class="fas fa-chevron-up"></i>
-                            </a>
-                        {% endif %}
-                        {% if field.position != last_field.position %}
-                            <a class="btn btn-outline-secondary" href="{% url 'sessions:field_down' session_id=object.pk field_id=field.pk %}">
-                                <i class="fas fa-chevron-down"></i>
-                            </a>
-                        {% endif %}
-                    </div>
+              <!-- field type image -->
+              <div v-if="field.field_type=='image'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>URL</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="message in field.message_set">
+                      <td>[[ message.text ]]</td>
+                      <td>
+                        {%comment%}
+                        <a
+                          href="{% url 'sessions:message_edit' session_id=object.pk field_id=field.pk message_id=message.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:message_delete' session_id=object.pk field_id=field.pk message_id=message.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {%endcomment%}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {%comment%}
+                <a
+                  href="{% url 'sessions:message_create' session_id=object.pk field_id=field.pk %}"
+                  >Add url</a
+                >
+                {%endcomment%}
+              </div>
+              <!-- end field type image -->
+
+              <!-- field type quick replies -->
+              <div v-if="field.field_type == 'quick_replies'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Label</th>
+                      <th>Attribute</th>
+                      <th>Value</th>
+                      <th>Redirect Block</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="reply in field.reply_set">
+                      <td>[[ reply.label ]]</td>
+                      <td>
+                        <span v-if="reply.attribute">[[reply.attribute]]</span>
+                        <span v-else>--</span>
+                      </td>
+                      <td>
+                        <span v-if="reply.value">[[ reply.value ]]</span>
+                        <span v-else>--</span>
+                      </td>
+                      <td>
+                        <span v-if="reply.redirect_block"
+                          >[[ reply.redirect_block ]]</span
+                        >
+                        <span v-else>--</span>
+                      </td>
+                      <td>
+                        {%comment%}
+                        <a
+                          href="{% url 'sessions:reply_edit' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:reply_delete' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {% endcomment %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {%comment%}
+                <a
+                  href="{% url 'sessions:reply_create' session_id=object.pk field_id=field.pk %}"
+                  >Add Reply</a
+                >
+                {%endcomment%}
+              </div>
+              <!-- end field type quick replies -->
+
+              <!-- field type user input  -->
+              <div v-if="field.field_type == 'user_input'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Message</th>
+                      <th>Validation</th>
+                      <th>Attribute</th>
+                      <th>If fail</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="userinput in field.userinput_set">
+                      <td>[[ userinput.text ]]</td>
+                      <td>[[ userinput.validation ]]</td>
+                      <td>
+                        <span
+                          >[[userinput.attribute ? userinput.attribute.name :
+                          '']]</span
+                        >
+                      </td>
+                      <td>
+                        <span
+                          >[[userinput.session ? userinput.session.name :
+                          '']]</span
+                        >
+                      </td>
+                      <td>
+                        {% comment %}
+                        <a
+                          href="{% url 'sessions:userinput_edit' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:userinput_delete' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {% endcomment %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {% comment %}
+                <a
+                  href="{% url 'sessions:userinput_create' session_id=object.pk field_id=field.pk %}"
+                  >Add validation</a
+                >
+                {% endcomment %}
+              </div>
+              <!-- end field type user input  -->
+
+              <!-- field type buttons-->
+
+              <div v-if="field.field_type == 'buttons'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Title</th>
+                      <th>URL</th>
+                      <th>Redirect Block</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="button in field.button_set">
+                      <td>[[ button.button_type ]]</td>
+                      <td>
+                        <span>[[ button.title ? button.title : '--'</span>
+                      </td>
+                      <td>
+                        <span>[[button.url ? button.url : '--' ]]</span>
+                      </td>
+                      <td>
+                        <span
+                          >[[ button.block_names ? button.block_names : ''
+                          ]]</span
+                        >
+                      </td>
+                      <td>
+                        {% comment %}
+                        <a
+                          href="{% url 'sessions:button_edit' session_id=object.pk field_id=field.pk button_id=button.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:button_delete' session_id=object.pk field_id=field.pk button_id=button.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {% endcomment %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {% comment %}
+                <a
+                  href="{% url 'sessions:button_create' session_id=object.pk field_id=field.pk %}"
+                  >Add Button</a
+                >
+                {% endcomment %}
+              </div>
+              <!-- end field type buttons-->
+
+              <!-- field type set_attributes -->
+              <div v-if="field.field_type == 'set_attributes'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Attribute</th>
+                      <th>Value</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="setattribute in field.setattribute_set">
+                      <td>{{ setattribute.attribute.name }}</td>
+                      <td>{{ setattribute.value }}</td>
+                      <td>
+                        {% comment %}
+                        <a
+                          href="{% url 'sessions:setattribute_edit' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:setattribute_delete' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {% endcomment %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {% comment %}
+                <a
+                  href="{% url 'sessions:setattribute_create' session_id=object.pk field_id=field.pk %}"
+                  >Add Attribute</a
+                >
+                {% endcomment %}
+              </div>
+              <!-- end field type set_attributes-->
+
+              <!-- field type condition -->
+              <div v-if="field.field_type == 'condition'">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Attribute</th>
+                      <th>Condition</th>
+                      <th>Value</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="condition in field.condition_set">
+                      <td>[[ condition.attribute.name ]]</td>
+                      <td>[[ condition.condition_display ]]</td>
+                      <td>[[ condition.value ]]</td>
+                      <td>
+                        {% comment %}
+                        <a
+                          href="{% url 'sessions:condition_edit' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
+                          class="btn btn-success"
+                          ><i class="fas fa-pen"></i
+                        ></a>
+                        <a
+                          href="{% url 'sessions:condition_delete' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
+                          class="btn btn-danger"
+                          ><i class="fas fa-times"></i
+                        ></a>
+                        {% endcomment %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {% comment %}
+                <a
+                  href="{% url 'sessions:condition_create' session_id=object.pk field_id=field.pk %}"
+                  >Add Condition</a
+                >
+                {% endcomment %}
+              </div>
+              <!-- end field type condition-->
+
+              <!-- field type save_values_block-->
+              <div v-if="field.field_type == 'save_values_block'">
+                <div v-if="field.redirectblock">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Block</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>[[ field.redirectblock.block ]]</td>
+                        <td>
+                          {% comment %}
+                          <a
+                            href="{% url 'sessions:block_edit' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
+                            class="btn btn-success"
+                            ><i class="fas fa-pen"></i
+                          ></a>
+                          <a
+                            href="{% url 'sessions:block_delete' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
+                            class="btn btn-danger"
+                            ><i class="fas fa-times"></i
+                          ></a>
+                          {% endcomment %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                {% if field.padding == 1 %}
-                <div class="col-11 pl-5">
-                {% else %}
-                <div class="col-11">
-                {% endif %}
-                    {% if field.field_type == 'condition' %}
-                    <div class="card shadow mb-0">
-                    {% else %}
-                    <div class="card shadow mb-4">
-                    {% endif %}
-                        <div class="card-body">
-                            <span class="m-0 font-weight-bold text-primary">{{ field.field_type_display }}</span>
-                            <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
-                               class="btn btn-danger">Delete</a>
-                            <br><br>
-                            {% if field.field_type == 'text' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Message</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for message in field.message_set.all %}
-                                            <tr>
-                                                <td>{{ message.text }}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:message_edit' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:message_delete' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:message_create' session_id=object.pk field_id=field.pk %}">Add message</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'image' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>URL</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for message in field.message_set.all %}
-                                            <tr>
-                                                <td>{{ message.text }}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:message_edit' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:message_delete' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:message_create' session_id=object.pk field_id=field.pk %}">Add url</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'user_input' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Message</th>
-                                            <th>Validation</th>
-                                            <th>Attribute</th>
-                                            <th>If fail</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for userinput in field.userinput_set.all %}
-                                            <tr>
-                                                <td>{{ userinput.text }}</td>
-                                                <td>{{ userinput.validation }}</td>
-                                                <td>{{ userinput.attribute.name }}</td>
-                                                <td>{{ userinput.session.name }}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:userinput_edit' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:userinput_delete' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:userinput_create' session_id=object.pk field_id=field.pk %}">Add validation</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'quick_replies' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Label</th>
-                                            <th>Attribute</th>
-                                            <th>Value</th>
-                                            <th>Redirect Block</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for reply in field.reply_set.all %}
-                                            <tr>
-                                                <td>{{ reply.label }}</td>
-                                                <td>{% if reply.attribute %}<span>{{ reply.attribute }}</span>{% else %}--{% endif %}</td>
-                                                <td>{% if reply.value %}<span>{{ reply.value }}</span>{% else %}--{% endif %}</td>
-                                                <td>{% if reply.redirect_block %}<span>{{ reply.redirect_block }}</span>{% else %}--{% endif %}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:reply_edit' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:reply_delete' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:reply_create' session_id=object.pk field_id=field.pk %}">Add Reply</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'buttons' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Title</th>
-                                            <th>URL</th>
-                                            <th>Redirect Block</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for button in field.button_set.all %}
-                                            <tr>
-                                                <td>{{ button.button_type }}</td>
-                                                <td>{% if button.title %}<span>{{ button.title }}</span>{% else %}--{% endif %}</td>
-                                                <td>{% if button.url %}<span>{{ button.url }}</span>{% else %}--{% endif %}</td>
-                                                <td>{% if button.block_names %}<span>{{ button.block_names }}</span>{% else %}--{% endif %}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:button_edit' session_id=object.pk field_id=field.pk button_id=button.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:button_delete' session_id=object.pk field_id=field.pk button_id=button.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:button_create' session_id=object.pk field_id=field.pk %}">Add Button</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'set_attributes' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Attribute</th>
-                                            <th>Value</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for setattribute in field.setattribute_set.all %}
-                                            <tr>
-                                                <td>{{ setattribute.attribute.name }}</td>
-                                                <td>{{ setattribute.value }}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:setattribute_edit' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:setattribute_delete' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:setattribute_create' session_id=object.pk field_id=field.pk %}">Add Attribute</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'condition' %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Attribute</th>
-                                            <th>Condition</th>
-                                            <th>Value</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for condition in field.condition_set.all %}
-                                            <tr>
-                                                <td>{{ condition.attribute.name }}</td>
-                                                <td>{{ condition.condition_display }}</td>
-                                                <td>{{ condition.value }}</td>
-                                                <td>
-                                                    <a href="{% url 'sessions:condition_edit' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
-                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                    <a href="{% url 'sessions:condition_delete' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
-                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <a href="{% url 'sessions:condition_create' session_id=object.pk field_id=field.pk %}">Add Condition</a>
-                            {% endif %}
-
-                            {% if field.field_type == 'save_values_block' %}
-                                {% if field.redirectblock %}
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>Block</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>{{ field.redirectblock }}</td>
-                                            <td>
-                                                <a href="{% url 'sessions:block_edit' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
-                                                   class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                <a href="{% url 'sessions:block_delete' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
-                                                   class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                {% else %}
-                                    <a href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}">Add Block</a>
-                                {% endif %}
-                            {% endif %}
-
-                            {% if field.field_type == 'redirect_session' %}
-                                {% if field.redirectsession %}
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>Session</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>{{ field.redirectsession }}</td>
-                                            <td>
-                                                <a href="{% url 'sessions:redirectsession_edit' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
-                                                   class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                                <a href="{% url 'sessions:redirectsession_delete' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
-                                                   class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                {% else %}
-                                    <a href="{% url 'sessions:redirectsession_create' session_id=object.pk field_id=field.pk %}">Add Session</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
+                <div v-else>
+                  {% comment %}
+                  <a
+                    href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}"
+                    >Add Block</a
+                  >
+                  {% endcomment %}
+                  <a href="">Agrega</a>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+              </div>
+              <!-- end field type save_values_block-->
 
+              <!-- field type redirect_session-->
+              <div v-if="field.field_type == 'redirect_session'">
+                <div v-if="field.redirectsession">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Session</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>[[ field.redirectsession ]]</td>
+                        <td>
+                          {% comment %}
+                          <a
+                            href="{% url 'sessions:redirectsession_edit' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
+                            class="btn btn-success"
+                            ><i class="fas fa-pen"></i
+                          ></a>
+                          <a
+                            href="{% url 'sessions:redirectsession_delete' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
+                            class="btn btn-danger"
+                            ><i class="fas fa-times"></i
+                          ></a>
+                          {% endcomment %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div v-else>
+                  {% comment %}
+                  <a
+                    href="{% url 'sessions:redirectsession_create' session_id=object.pk field_id=field.pk %}"
+                    >Add Session</a
+                  >
+                  {% endcomment %}
+                  <a href="">Add</a>
+                </div>
+              </div>
+              <!-- end field type redirect_session-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        const sessions = new Vue({
-            el: "#sessions",
-            data: () => {
-                return {
-                    message: 'it works',
-                    todo: {},
-                    loading: true,
-                    fields: []
-                }
-            },
-            methods:{
-                getData: function() {
-                    fetch('/sessions/fields/352/')
-                    .then( resp => resp.json() )
-                    .then( data => {
-                        this.fields = data;
-                        this.loading = false;
-                    })
-                }
-            },
-            mounted: function() {
-                this.getData()
-            }
-        });
-    </script>
+<script>
+  const sessions = new Vue({
+    el: "#sessions",
+    data: () => {
+      return {
+        loading: true,
+        fields: [],
+      };
+    },
+    methods: {
+      getData: function () {
+        fetch("/sessions/fields/{{ object.id }}/")
+          .then((resp) => resp.json())
+          .then((data) => {
+            console.log(data);
+            this.fields = data;
+            this.loading = false;
+          });
+      },
+    },
+    mounted: function () {
+      this.getData();
+    },
+  });
+</script>
 {% endblock %}
