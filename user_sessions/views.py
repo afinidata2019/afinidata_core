@@ -718,7 +718,7 @@ class FieldsData(APIView):
 
     def get_object(self, pk):
         try:
-            return models.Field.objects.filter(session_id=pk).prefetch_related('redirectblock').order_by('position')
+            return models.Field.objects.filter(session_id=pk).order_by('position')
         except models.Field.DoesNotExist:
             raise Http404
 
