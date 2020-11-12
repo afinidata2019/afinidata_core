@@ -75,6 +75,12 @@
                         {% if object.parent %}
                             <strong class="text-gray-900">Grupo padre: </strong><a href="{% url 'groups:group' group_id=object.parent_id %}">{{ object.parent.name }}</a><br>
                         {% endif %}
+                        {% if object.country %}
+                            <strong class="text-gray-900">País: </strong><span>{{ object.country }}</span><br>
+                        {% endif %}
+                        {% if object.region %}
+                            <strong class="text-gray-900">Región: </strong><span>{{ object.region }}</span><br>
+                        {% endif %}
                     </div>
                 </div>
             </div>

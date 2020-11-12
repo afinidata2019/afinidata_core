@@ -176,7 +176,7 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
 class EditGroupView(PermissionRequiredMixin, UpdateView):
     model = models.Group
     permission_required = 'groups.change_group'
-    fields = ('name', 'parent')
+    fields = ('name', 'parent', 'country', 'region')
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'group_id'
 
