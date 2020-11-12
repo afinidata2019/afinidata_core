@@ -21,10 +21,10 @@
                 <strong>ID: </strong><span>{{ object.pk }}</span><br>
                 <strong>Parameter: </strong><span>{{ object.parameter }}</span><br>
                 <strong>Value: </strong><span>{{ object.value }}</span><br>
-                <strong>Field: </strong><span>{{ object.field.identifier }}</span><br>
+                <strong>Service: </strong><span>{{ object.service }}</span><br>
                 <strong>Session: </strong>
                 <a target="_blank"
-                   href="{% url 'sessions:session_detail' session_id=object.field.session_id %}">{{ object.field.session.name }}</a><br><br>
+                   href="{% url 'sessions:session_detail' session_id=object.service.field.session_id %}">{{ object.service.field.session.name }}</a><br><br>
                 <form action="." method="post">
                     {% csrf_token %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>

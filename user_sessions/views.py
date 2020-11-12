@@ -714,13 +714,14 @@ class ServiceParamCreateView(PermissionRequiredMixin, CreateView):
     fields = ('parameter', 'value')
 
     def form_valid(self, form):
-        form.instance.field_id = self.kwargs['field_id']
+        form.instance.service_id = models.Service.objects.get(field__id=self.kwargs['field_id']).id
         return super(ServiceParamCreateView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         c = super(ServiceParamCreateView, self).get_context_data()
         c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        c['service'] = models.Service.objects.get(field__id=self.kwargs['field_id'])
         c['action'] = 'Create'
         return c
 
@@ -739,6 +740,7 @@ class ServiceParamEditView(PermissionRequiredMixin, UpdateView):
         c = super(ServiceParamEditView, self).get_context_data()
         c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        c['service'] = models.Service.objects.get(field__id=self.kwargs['field_id'])
         c['action'] = 'Update'
         return c
 

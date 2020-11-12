@@ -21,6 +21,8 @@
                         <input type="text" class="form-control" value="{{ session }}" disabled></div>
                     <div class="form-group"><label for="">Field: </label>
                         <input type="text" class="form-control" value="{{ field }}" disabled></div>
+                    <div class="form-group"><label for="">Service: </label>
+                        <input type="text" class="form-control" value="{{ service }}" disabled></div>
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">{{ action }} Service parameter</button>
