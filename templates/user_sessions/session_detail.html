@@ -77,20 +77,53 @@
   </div>
   <div v-if="!loading">
     <div v-for="field in fields">
-      <div class="row my-4">
+      <div class="row my-2">
         <div class="col-md-12">
-          <div class="card">
+          <div class="card" v-bind:class="{ 'ml-5': field.padding == 1 }">
             <div class="card-body">
               <div class="card-title">
                 <span class="m-0 font-weight-bold text-primary"
-                  >[[ field.field_type_display ]]</span
+                  >([[ field.position ]]) [[ field.field_type_display ]]</span
                 >
                 <a
                   :href="`/sessions/{{ object.pk}}/fields/${field.pk}/delete/`"
                   class="btn btn-danger"
                   >Delete</a
                 >
+                <div style="float:right">
+                  <a href=""><i class="fa fa-arrows-alt"></i></a>
+                </div>
               </div>
+
+              <!-- field type consumer service -->
+              <div v-if="field.field_type == 'consume_service'">
+                  <div v-if="field.service">
+                      <span class="m-0 px-3">[[ field.service.url ]]</span>
+                      {% comment %}
+                        <a href="{% url 'sessions:service_edit' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
+                          class="btn btn-success"><i class="fas fa-pen"></i></a>
+                        <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                          class="btn btn-danger"><i class="fas fa-times"></i></a>
+                      {% endcomment %}
+                  </div>
+                  <div v-else>
+                      {% comment %}
+                        <a href="{% url 'sessions:service_create' session_id=object.pk field_id=field.pk %}"
+                          class="btn btn-success"><i class="fas fa-plus"></i></a>
+                        <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                          class="btn btn-danger">Delete</a>
+                      {% endcomment %}
+                      <a href="#">Delete</a>
+                  </div>
+              </div>
+              <div v-else>
+                {% comment %}
+                <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                class="btn btn-danger">Delete</a>
+                {% endcomment %}
+                <a href="#">Delete</a>
+              </div>
+              <!-- end field type consumer service -->
 
               <!-- field type text-->
               <div v-if="field.field_type == 'text'">
@@ -454,6 +487,39 @@
               </div>
               <!-- end field type save_values_block-->
 
+              <!-- field type consume service-->
+              <div v-if="field.field_type == 'consume_service'">
+                <div v-if="field.service">
+                    <table class="table">
+                      <thead>
+                      <tr>
+                          <th>Parameter</th>
+                          <th>Value</th>
+                          <th>Actions</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                          <tr v-for="serviceparam in field.service.serviceparam_set">
+                              <td>[[ serviceparam.parameter ]]</td>
+                              <td>[[ serviceparam.value ]]</td>
+                              <td>
+                                {% comment %}
+                                  <a href="{% url 'sessions:serviceparam_edit' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
+                                    class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                  <a href="{% url 'sessions:serviceparam_delete' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
+                                    class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                {% endcomment %}
+                              </td>
+                          </tr>
+                      </tbody>
+                    </table>
+                    {% comment %}
+                      <a href="{% url 'sessions:serviceparam_create' session_id=object.pk field_id=field.pk %}">Add Parameter</a>
+                    {% endcomment %}
+                </div>
+              </div>
+              <!-- end field type consume service-->
+
               <!-- field type redirect_session-->
               <div v-if="field.field_type == 'redirect_session'">
                 <div v-if="field.redirectsession">
@@ -461,12 +527,14 @@
                     <thead>
                       <tr>
                         <th>Session</th>
+                        <th>Position</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>[[ field.redirectsession ]]</td>
+                        <td>[[ field.redirectsession.session.name ]]</td>
+                        <td>[[ field.redirectsession.position ]]</td>
                         <td>
                           {% comment %}
                           <a
@@ -520,8 +588,19 @@
         fetch("/sessions/fields/{{ object.id }}/")
           .then((resp) => resp.json())
           .then((data) => {
-            console.log(data);
-            this.fields = data;
+            var f = []
+            var isCondition = false;
+
+            data.forEach( (item, i) => {
+              if(isCondition){
+                f.push({...item, padding: 1});
+              } else {
+                f.push({...item, padding: 0});
+              }
+              isCondition = !!(item.field_type === 'condition');
+            });
+
+            this.fields = f;
             this.loading = false;
           });
       },
