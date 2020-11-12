@@ -67,7 +67,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'user_sessions.apps.UserSessionsConfig',
     'topics.apps.TopicsConfig',
-    'user_passwd_reset'
+    'user_passwd_reset',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

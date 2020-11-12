@@ -10,10 +10,15 @@ from messenger_users.models import UserData
 from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
+
 from django.http import JsonResponse, HttpResponse
 import json
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
+from user_sessions.serializers import FieldSerializer
+from rest_framework.views import APIView
+from django.http import Http404
+from rest_framework.response import Response
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -709,34 +714,15 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
         messages.success(self.request, "Redirect Session has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
-class FieldsData(DetailView):
-    model = models.Session
+class FieldsData(APIView):
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        fields = self.object.field_set.order_by('position')
-        data = []
+    def get_object(self, pk):
+        try:
+            return models.Field.objects.filter(session_id=pk).prefetch_related('redirectblock').order_by('position')
+        except models.Field.DoesNotExist:
+            raise Http404
 
-        for field in fields:
-            valores = {
-                'id': field.id,
-                'position': field.position,
-                'type': field.field_type,
-                'messages': list( field.message_set.all().values() ),
-                'buttons': list( field.button_set.all().values() ),
-                'setattribute': list( field.setattribute_set.all().values() ),
-                'userinput': list( field.userinput_set.all().values() ),
-                'reply': list( field.reply_set.all().values() ),
-                'condition': list( field.condition_set.all().values() ),
-                'field_type_display': field.field_type_display()
-            }
-
-            if field.field_type == 'save_values_block':
-                valores['redirectblock'] = model_to_dict(models.RedirectBlock.objects.get(field_id=field.id))
-
-            if field.field_type == 'redirect_session':
-                valores['redirectsession'] = model_to_dict(models.RedirectSession.objects.get(field_id=field.id))
-
-            data.append(valores)
-
-        return JsonResponse({'fields': data}, safe=False)
+    def get(self, request, pk, format=None):
+        fields = self.get_object(pk)
+        serializer = FieldSerializer(fields, many=True)
+        return Response(serializer.data)
