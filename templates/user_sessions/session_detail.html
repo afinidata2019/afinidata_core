@@ -75,9 +75,23 @@
                     {% endif %}
                         <div class="card-body">
                             <span class="m-0 font-weight-bold text-primary">({{ field.position }}) {{ field.field_type_display }}</span>
-                            <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
-                               class="btn btn-danger">Delete</a>
-                            <br><br>
+                            {% if field.field_type == 'consume_service' %}
+                                {% if field.service %}
+                                    <span class="m-0 px-3">{{ field.service.url }}</span>
+                                    <a href="{% url 'sessions:service_edit' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
+                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                    <a href="{% url 'sessions:service_delete' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
+                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                {% else %}
+                                    <a href="{% url 'sessions:service_create' session_id=object.pk field_id=field.pk %}"
+                                       class="btn btn-success"><i class="fas fa-plus"></i></a>
+                                {% endif %}
+                                <br><br>
+                            {% else %}
+                                <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                                   class="btn btn-danger">Delete</a>
+                                <br><br>
+                            {% endif %}
                             {% if field.field_type == 'text' %}
                                 <table class="table">
                                     <thead>
@@ -306,6 +320,33 @@
                                     </table>
                                 {% else %}
                                     <a href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}">Add Block</a>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if field.field_type == 'consume_service' %}
+                                {% if field.service %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for serviceparam in field.service.serviceparam_set.all %}
+                                            <tr>
+                                                <td>{{ serviceparam.parameter }}</td>
+                                                <td>{{ serviceparam.value }}</td>
+                                                <td>
+                                                    <a href="{% url 'sessions:serviceparam_edit' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
+                                                       class="btn btn-success"><i class="fas fa-pen"></i></a>
+                                                    <a href="{% url 'sessions:serviceparam_delete' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
+                                                       class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 {% endif %}
                             {% endif %}
 
