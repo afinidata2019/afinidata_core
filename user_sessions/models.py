@@ -130,6 +130,7 @@ class UserInput(models.Model):
                                                                      ('date', 'Date')))
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
+    position = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -143,6 +144,8 @@ class Reply(models.Model):
     attribute = models.CharField(max_length=50, null=True, blank=True)
     value = models.CharField(max_length=100, null=True, blank=True)
     redirect_block = models.CharField(max_length=100, null=True, blank=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True, blank=True)
+    position = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -175,7 +178,8 @@ class SetAttribute(models.Model):
 
 
 CONDITIONS = (('equal', 'Equal'), ('not_equal', 'Not equal'), ('in', 'Is in'), ('lt', 'Less than'),
-              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'))
+              ('gt', 'Greater than'), ('lte', 'Less than or equal'), ('gte', 'Greater than or equal'),
+              ('is_set', 'Is set'), ('is_not_set', 'Is not set'))
 
 
 class Condition(models.Model):
@@ -222,6 +226,7 @@ class RedirectBlock(models.Model):
 class RedirectSession(models.Model):
     field = models.OneToOneField(Field, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -231,12 +236,24 @@ class RedirectSession(models.Model):
 
 class Service(models.Model):
     field = models.OneToOneField(Field, on_delete=models.CASCADE)
-    service = models.CharField(max_length=100)
+    url = models.CharField(max_length=100)
+    request_type = models.CharField(max_length=5, choices=(('post', 'POST'), ('get', 'GET')), default='post')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.service
+        return self.url
+
+
+class ServiceParam(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    parameter = models.CharField(max_length=30)
+    value = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.parameter + '=' + self.value
 
 
 class FieldProgramExclusion(models.Model):
