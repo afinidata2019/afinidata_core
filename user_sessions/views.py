@@ -13,7 +13,7 @@ from programs.models import Program
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from user_sessions.serializers import FieldSerializer
 
 class SessionListView(PermissionRequiredMixin, ListView):
@@ -828,3 +828,20 @@ class FieldsData(APIView):
         fields = self.get_object(pk)
         serializer = FieldSerializer(fields, many=True)
         return Response(serializer.data)
+
+    def post(self, request, pk, format=None):
+        try:
+            data = request.data
+
+            for val in data['fields']:
+                #if models.Field.objects.filter(pk=val['id']).exists():
+                f = models.Field.objects.get(pk=val['id'])
+                f.position = val['position']
+                f.save()
+
+            return JsonResponse({ 'ok': True, 'message': "success" })
+
+        except DoesNotExist:
+            raise Http404
+        except Exception as err:
+            return JsonResponse({ 'ok': False, 'message': str(err) })
