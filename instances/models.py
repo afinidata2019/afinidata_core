@@ -1,12 +1,15 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from messenger_users import models as user_models
-from posts.models import Post, Interaction
-from programs.models import Program
 from milestones.models import Milestone, Session
+from posts.models import Post, Interaction
+from dateutil import parser, relativedelta
 from attributes.models import Attribute
+from programs.models import Program
 from entities.models import Entity
-from django.db import models
+from django.utils import timezone
 from areas.models import Area
+from datetime import datetime
+from django.db import models
 
 
 class Instance(models.Model):
@@ -26,6 +29,42 @@ class Instance(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_months(self):
+        if self.entity_id == 1:
+            births = self.attributevalue_set.filter(attribute__name='birthday')
+            if not births.exists():
+                return None
+            birth = births.last()
+            print(self)
+            print(birth)
+            try:
+                birthday = parser.parse(birth.value)
+                if timezone.is_aware(birthday):
+                    now = timezone.now()
+                else:
+                    now = datetime.now()
+                rd = relativedelta.relativedelta(now, birthday)
+                if rd.months:
+                    months = rd.months
+                else:
+                    months = 0
+                if rd.years:
+                    months = months + (rd.years * 12)
+                return months
+            except:
+                return None
+        elif self.entity_id == 2:
+            pregnant_weeks = self.attributevalue_set.filter(attribute__name='pregnant_weeks')
+            if not pregnant_weeks.exists():
+                return None
+            pw = pregnant_weeks.last()
+            months = round(int(pw.value) / 4)
+            if months == 0:
+                months = -1
+            return months
+        else:
+            return None
 
     def get_time_feeds(self, first_limit, last_limit):
         feeds = self.instancefeedback_set.filter(created_at__gte=first_limit, created_at__lte=last_limit)

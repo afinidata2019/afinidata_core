@@ -1,0 +1,53 @@
+{% extends 'base/private.html' %}
+{% load static %}
+
+{% block title %}Dashboard V2{% endblock %}
+
+{% block content %}
+    <div id="group-content" data-group-id="{{ object.pk }}">
+        <div class="container-fluid">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div class="col-xl-9 col-md-9 mb">
+                  <h1 class="h3 mb-0 text-black-900" data-group-id="{{ object.pk }}">Grupo: {{ object.name }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Usuarios</h6>
+                </div>
+                <div class="card-body">
+                    <div class="users-loader">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                              <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-bordered users-table" style="display: none;">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Encargado</th>
+                            <th>Edad</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Nivel de Riesgo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/group_analytics.js' %}"></script>
+{% endblock %}

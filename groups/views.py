@@ -1,17 +1,24 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from instances.models import InstanceAssociationUser
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 from messenger_users.models import UserData
+from instances.models import AttributeValue
+from messenger_users.models import User
+from instances.models import Instance
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from groups import models, forms
-from instances.models import AttributeValue
 from programs.models import Program
-import datetime
 from dateutil.parser import parse
+from groups import models, forms
 from django.db.models import Max
+import datetime
+import requests
+import os
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -147,6 +154,15 @@ class GroupDashboardView(PermissionRequiredMixin, DetailView):
         return c
 
 
+class GroupDashboardV2View(PermissionRequiredMixin, DetailView):
+    model = models.Group
+    permission_required = 'groups.view_user_groups'
+    pk_url_kwarg = 'group_id'
+    login_url = reverse_lazy('pages:login')
+    permission_denied_message = 'Unauthorized'
+    template_name = 'groups/group_dashboard_v2.html'
+
+
 class CreateGroupView(PermissionRequiredMixin, CreateView):
     model = models.Group
     permission_required = 'groups.add_group'
@@ -253,3 +269,40 @@ class AddBotView(PermissionRequiredMixin, CreateView):
         c = super(AddBotView, self).get_context_data(**kwargs)
         c['group'] = models.Group.objects.get(id=self.kwargs['group_id'])
         return c
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GroupUsersViewService(View):
+
+    def post(self, request, *args, **kwargs):
+        uri = "%s/groups/%s/risk-score?aggregation_level=instance" % (os.getenv('ANALYTICS_URI'),
+                                                                      self.kwargs['group_id'])
+        req = requests.get(uri, auth=(os.getenv('ANALYTICS_USER'), os.getenv('ANALYTICS_PASS')))
+        if not req.status_code == 200:
+            return JsonResponse(dict(status='error', error='Invalid status code. %s' % req.status_code))
+        response = req.json()
+        for r in response:
+            user = User.objects.get(id=r['user_id'])
+            instance = Instance.objects.get(id=r['instance_id'])
+            birthday = instance.get_attribute_values('birthday')
+            months = instance.get_months()
+            address_set = user.userdata_set.filter(data_key='direccion')
+            r['user'] = "%s %s" % (user.first_name, user.last_name)
+            r['instance'] = instance.name
+            if months:
+                if months <= 12:
+                    r['age'] = "%s meses" % months
+                else:
+                    years = int(months / 12)
+                    r['age'] = "%s año(s) y %s meses" % (years, months - (years * 12))
+            else:
+                r['age'] = '--'
+            if birthday:
+                r['birthday'] = birthday.value.replace('-', '/')[0:10]
+            else:
+                r['birthday'] = '--'
+            if address_set.exists():
+                r['address'] = address_set.last().data_value
+            else:
+                r['address'] = '--'
+        return JsonResponse(dict(status='done', data=response))
