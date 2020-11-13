@@ -99,12 +99,10 @@
               <div v-if="field.field_type == 'consume_service'">
                   <div v-if="field.service">
                       <span class="m-0 px-3">[[ field.service.url ]]</span>
-                      {% comment %}
-                        <a href="{% url 'sessions:service_edit' session_id=object.pk field_id=field.pk service_id=field.service.pk %}"
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/services/${field.service.pk}/edit/`"
                           class="btn btn-success"><i class="fas fa-pen"></i></a>
-                        <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+                        <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
                           class="btn btn-danger"><i class="fas fa-times"></i></a>
-                      {% endcomment %}
                   </div>
                   <div v-else>
                       {% comment %}

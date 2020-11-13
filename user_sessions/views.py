@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView, TemplateView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -11,14 +11,6 @@ from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
 
-from django.http import JsonResponse, HttpResponse
-import json
-from django.core.serializers import serialize
-from django.forms.models import model_to_dict
-from user_sessions.serializers import FieldSerializer
-from rest_framework.views import APIView
-from django.http import Http404
-from rest_framework.response import Response
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -185,6 +177,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c['entities_list'] = ', '.join([entity.name for entity in self.object.entities.all()])
         c['licences_list'] = ', '.join([user_license.name for user_license in self.object.licences.all()])
         return c
+
 
 class SessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_session'
@@ -814,6 +807,8 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
         messages.success(self.request, "Redirect Session has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
+
+"""" Api view para data detail session """
 class FieldsData(APIView):
 
     def get_object(self, pk):
