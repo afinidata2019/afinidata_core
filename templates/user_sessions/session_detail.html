@@ -357,8 +357,8 @@
                     </thead>
                     <tbody>
                       <tr v-for="setattribute in field.setattribute_set">
-                        <td>{{ setattribute.attribute.name }}</td>
-                        <td>{{ setattribute.value }}</td>
+                        <td>[[ setattribute.attribute.name ]]</td>
+                        <td>[[ setattribute.value ]]</td>
                         <td class="text-right">
                           <a
                             :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/edit/`"
