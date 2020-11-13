@@ -11,6 +11,10 @@ from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.http import Http404
+from user_sessions.serializers import FieldSerializer
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'

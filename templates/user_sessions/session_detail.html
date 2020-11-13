@@ -86,7 +86,7 @@
                   >([[ field.position ]]) [[ field.field_type_display ]]</span
                 >
                 <a
-                  :href="`/sessions/{{ object.pk}}/fields/${field.pk}/delete/`"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
                   class="btn btn-danger"
                   >Delete</a
                 >
@@ -100,27 +100,21 @@
                   <div v-if="field.service">
                       <span class="m-0 px-3">[[ field.service.url ]]</span>
                         <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/services/${field.service.pk}/edit/`"
-                          class="btn btn-success"><i class="fas fa-pen"></i></a>
-                        <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
-                          class="btn btn-danger"><i class="fas fa-times"></i></a>
+                          class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/delete/`"
+                          class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                   </div>
                   <div v-else>
-                      {% comment %}
-                        <a href="{% url 'sessions:service_create' session_id=object.pk field_id=field.pk %}"
-                          class="btn btn-success"><i class="fas fa-plus"></i></a>
-                        <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
-                          class="btn btn-danger">Delete</a>
-                      {% endcomment %}
-                      <a href="#">Delete</a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/add_service/`"
+                          class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/delete/`"
+                          class="btn btn-danger btn-sm">Delete</a>
                   </div>
               </div>
-              <div v-else>
-                {% comment %}
-                <a href="{% url 'sessions:field_delete' session_id=object.pk field_id=field.pk %}"
+              <!-- <div v-else>
+                <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
                 class="btn btn-danger">Delete</a>
-                {% endcomment %}
-                <a href="#">Delete</a>
-              </div>
+              </div> -->
               <!-- end field type consumer service -->
 
               <!-- field type text-->
@@ -128,23 +122,23 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Message</th>
-                      <th>Actions</th>
+                      <th width="85%">Message</th>
+                      <th width="20%">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="message in field.message_set">
                       <td>[[ message.text ]]</td>
-                      <td>
+                      <td class="text-right">
                         <a
                           :href="`/sessions/{{ object.pk }}/fields/${field.id}/messages/${message.id}/edit/`"
-                          class="btn btn-success"
+                          class="btn btn-success btn-sm"
                         >
                           <i class="fas fa-pen"></i>
                         </a>
                         <a
                           :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
-                          class="btn btn-danger"
+                          class="btn btn-danger btn-sm"
                         >
                           <i class="fas fa-times"></i>
                         </a>
@@ -164,36 +158,32 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>URL</th>
-                      <th>Actions</th>
+                      <th width="80%">URL</th>
+                      <th width="20%">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="message in field.message_set">
                       <td>[[ message.text ]]</td>
-                      <td>
-                        {%comment%}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:message_edit' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
                         <a
-                          href="{% url 'sessions:message_delete' session_id=object.pk field_id=field.pk message_id=message.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {%endcomment%}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {%comment%}
                 <a
-                  href="{% url 'sessions:message_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`"
                   >Add url</a
                 >
-                {%endcomment%}
               </div>
               <!-- end field type image -->
 
@@ -226,29 +216,25 @@
                         >
                         <span v-else>--</span>
                       </td>
-                      <td>
-                        {%comment%}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:reply_edit' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
                         <a
-                          href="{% url 'sessions:reply_delete' session_id=object.pk field_id=field.pk reply_id=reply.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {%comment%}
                 <a
-                  href="{% url 'sessions:reply_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_reply/`"
                   >Add Reply</a
                 >
-                {%endcomment%}
               </div>
               <!-- end field type quick replies -->
 
@@ -280,29 +266,25 @@
                           '']]</span
                         >
                       </td>
-                      <td>
-                        {% comment %}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:userinput_edit' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
                         <a
-                          href="{% url 'sessions:userinput_delete' session_id=object.pk field_id=field.pk userinput_id=userinput.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {% comment %}
                 <a
-                  href="{% url 'sessions:userinput_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_userinput/`"
                   >Add validation</a
                 >
-                {% endcomment %}
               </div>
               <!-- end field type user input  -->
 
@@ -334,29 +316,26 @@
                           ]]</span
                         >
                       </td>
-                      <td>
-                        {% comment %}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:button_edit' session_id=object.pk field_id=field.pk button_id=button.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
+
                         <a
-                          href="{% url 'sessions:button_delete' session_id=object.pk field_id=field.pk button_id=button.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {% comment %}
                 <a
-                  href="{% url 'sessions:button_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_button/`"
                   >Add Button</a
                 >
-                {% endcomment %}
               </div>
               <!-- end field type buttons-->
 
@@ -374,29 +353,25 @@
                     <tr v-for="setattribute in field.setattribute_set">
                       <td>{{ setattribute.attribute.name }}</td>
                       <td>{{ setattribute.value }}</td>
-                      <td>
-                        {% comment %}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:setattribute_edit' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
                         <a
-                          href="{% url 'sessions:setattribute_delete' session_id=object.pk field_id=field.pk setattribute_id=setattribute.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {% comment %}
                 <a
-                  href="{% url 'sessions:setattribute_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_setattribute/`"
                   >Add Attribute</a
                 >
-                {% endcomment %}
               </div>
               <!-- end field type set_attributes-->
 
@@ -416,29 +391,25 @@
                       <td>[[ condition.attribute.name ]]</td>
                       <td>[[ condition.condition_display ]]</td>
                       <td>[[ condition.value ]]</td>
-                      <td>
-                        {% comment %}
+                      <td class="text-right">
                         <a
-                          href="{% url 'sessions:condition_edit' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
-                          class="btn btn-success"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/edit/`"
+                          class="btn btn-success btn-sm"
                           ><i class="fas fa-pen"></i
                         ></a>
                         <a
-                          href="{% url 'sessions:condition_delete' session_id=object.pk field_id=field.pk condition_id=condition.pk %}"
-                          class="btn btn-danger"
+                          :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/delete/`"
+                          class="btn btn-danger btn-sm"
                           ><i class="fas fa-times"></i
                         ></a>
-                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                {% comment %}
                 <a
-                  href="{% url 'sessions:condition_create' session_id=object.pk field_id=field.pk %}"
+                  :href="`/sessions/{{object.pk}}/fields/${field.id}/add_condition/`"
                   >Add Condition</a
                 >
-                {% endcomment %}
               </div>
               <!-- end field type condition-->
 
@@ -455,32 +426,27 @@
                     <tbody>
                       <tr>
                         <td>[[ field.redirectblock.block ]]</td>
-                        <td>
-                          {% comment %}
+                        <td class="text-right">
                           <a
-                            href="{% url 'sessions:block_edit' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
-                            class="btn btn-success"
+                            :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/edit/`"
+                            class="btn btn-success btn-sm"
                             ><i class="fas fa-pen"></i
                           ></a>
                           <a
-                            href="{% url 'sessions:block_delete' session_id=object.pk field_id=field.pk block_id=field.redirectblock.pk %}"
-                            class="btn btn-danger"
+                            :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/delete/`"
+                            class="btn btn-danger btn-sm"
                             ><i class="fas fa-times"></i
                           ></a>
-                          {% endcomment %}
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <div v-else>
-                  {% comment %}
                   <a
-                    href="{% url 'sessions:block_create' session_id=object.pk field_id=field.pk %}"
+                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_block/`"
                     >Add Block</a
                   >
-                  {% endcomment %}
-                  <a href="">Agrega</a>
                 </div>
               </div>
               <!-- end field type save_values_block-->
@@ -500,20 +466,16 @@
                           <tr v-for="serviceparam in field.service.serviceparam_set">
                               <td>[[ serviceparam.parameter ]]</td>
                               <td>[[ serviceparam.value ]]</td>
-                              <td>
-                                {% comment %}
-                                  <a href="{% url 'sessions:serviceparam_edit' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
-                                    class="btn btn-success"><i class="fas fa-pen"></i></a>
-                                  <a href="{% url 'sessions:serviceparam_delete' session_id=object.pk field_id=field.pk serviceparam_id=serviceparam.pk %}"
-                                    class="btn btn-danger"><i class="fas fa-times"></i></a>
-                                {% endcomment %}
+                              <td class="text-right">
+                                <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/edit/`"
+                                  class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                                <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/delete/`"
+                                  class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                               </td>
                           </tr>
                       </tbody>
                     </table>
-                    {% comment %}
-                      <a href="{% url 'sessions:serviceparam_create' session_id=object.pk field_id=field.pk %}">Add Parameter</a>
-                    {% endcomment %}
+                      <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_serviceparam/`">Add Parameter</a>
                 </div>
               </div>
               <!-- end field type consume service-->
@@ -533,32 +495,27 @@
                       <tr>
                         <td>[[ field.redirectsession.session.name ]]</td>
                         <td>[[ field.redirectsession.position ]]</td>
-                        <td>
-                          {% comment %}
+                        <td class="text-right">
                           <a
-                            href="{% url 'sessions:redirectsession_edit' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
-                            class="btn btn-success"
+                            :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/edit/`"
+                            class="btn btn-success btn-sm"
                             ><i class="fas fa-pen"></i
                           ></a>
                           <a
-                            href="{% url 'sessions:redirectsession_delete' session_id=object.pk field_id=field.pk redirectsession_id=field.redirectsession.pk %}"
-                            class="btn btn-danger"
+                            :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/delete/`"
+                            class="btn btn-danger btn-sm"
                             ><i class="fas fa-times"></i
                           ></a>
-                          {% endcomment %}
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <div v-else>
-                  {% comment %}
                   <a
-                    href="{% url 'sessions:redirectsession_create' session_id=object.pk field_id=field.pk %}"
+                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_redirectsession/`"
                     >Add Session</a
                   >
-                  {% endcomment %}
-                  <a href="">Add</a>
                 </div>
               </div>
               <!-- end field type redirect_session-->
