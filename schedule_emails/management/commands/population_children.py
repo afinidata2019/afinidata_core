@@ -252,10 +252,10 @@ class Command(BaseCommand):
                         #     }
                         # }, recipients=[user[0]], attachment_file=archivo)
 
-            enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
-                'user': {
-                    'first_name': "prueba",
-                    'last_name': "prueba"
-                }
-            }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
+            # enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
+            #     'user': {
+            #         'first_name': "prueba",
+            #         'last_name': "prueba"
+            #     }
+            # }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
 
