@@ -59,14 +59,22 @@ urlpatterns = [
          name='block_edit'),
     path('<int:session_id>/fields/<int:field_id>/blocks/<int:block_id>/delete/',
          views.RedirectBlockDeleteView.as_view(), name='block_delete'),
+    path('<int:session_id>/fields/<int:field_id>/add_service/', views.ServiceCreateView.as_view(),
+         name='service_create'),
+    path('<int:session_id>/fields/<int:field_id>/services/<int:service_id>/edit/', views.ServiceEditView.as_view(),
+         name='service_edit'),
+    path('<int:session_id>/fields/<int:field_id>/services/<int:service_id>/delete/',
+         views.ServiceDeleteView.as_view(), name='service_delete'),
+    path('<int:session_id>/fields/<int:field_id>/add_serviceparam/', views.ServiceParamCreateView.as_view(),
+         name='serviceparam_create'),
+    path('<int:session_id>/fields/<int:field_id>/serviceparams/<int:serviceparam_id>/edit/',
+         views.ServiceParamEditView.as_view(), name='serviceparam_edit'),
+    path('<int:session_id>/fields/<int:field_id>/serviceparams/<int:serviceparam_id>/delete/',
+         views.ServiceParamDeleteView.as_view(), name='serviceparam_delete'),
     path('<int:session_id>/fields/<int:field_id>/add_redirectsession/', views.RedirectSessionCreateView.as_view(),
          name='redirectsession_create'),
     path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/edit/',
          views.RedirectSessionEditView.as_view(), name='redirectsession_edit'),
     path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/delete/',
-         views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete'),
-
-     # rutas vue
-     path('fields/<int:pk>/', views.FieldsData.as_view(), name="fields_get")
-
+         views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete')
 ]
