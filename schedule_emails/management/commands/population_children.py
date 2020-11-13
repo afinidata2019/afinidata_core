@@ -67,17 +67,17 @@ class Command(BaseCommand):
     def query_detalle(self, tipo = 'ingreso'):
         query = """
             select
-            count(distinct groups_assignationmessengeruser.user_id) as 'familias'
+            count(distinct groups_assignationmessengeruser.messenger_user_id) as 'familias'
             from groups_group
                 left join groups_group as grupo_padre
                     on groups_group.parent_id = grupo_padre.id
                 left join groups_assignationmessengeruser
                     on groups_assignationmessengeruser.group_id = groups_group.id
                 left join user_sessions_interaction
-                    on user_sessions_interaction.user_id = groups_assignationmessengeruser.user_id
+                    on user_sessions_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                     and user_sessions_interaction.`type` = 'session_init'
                 left join posts_interaction
-                    on posts_interaction.user_id = groups_assignationmessengeruser.user_id
+                    on posts_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                     and posts_interaction.`type` = 'dispatched'
                 left join groups_rolegroupuser
                     on groups_rolegroupuser.group_id = groups_group.id
@@ -101,7 +101,7 @@ class Command(BaseCommand):
         select grupo_padre.name as 'Región',
             groups_group.name as 'Grupo',
             grupo_padre.id,
-            count(distinct groups_assignationmessengeruser.user_id) as 'familias',
+            count(distinct groups_assignationmessengeruser.messenger_user_id) as 'familias',
             count(distinct posts_interaction.id) as 'actividades',
             count(distinct user_sessions_interaction.id) as 'sesiones',
             count(distinct case when auth_user.last_login is null
@@ -114,10 +114,10 @@ class Command(BaseCommand):
             left join groups_assignationmessengeruser
                 on groups_assignationmessengeruser.group_id = groups_group.id
             left join user_sessions_interaction
-                on user_sessions_interaction.user_id = groups_assignationmessengeruser.user_id
+                on user_sessions_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                 and user_sessions_interaction.`type` = 'session_init'
             left join posts_interaction
-                on posts_interaction.user_id = groups_assignationmessengeruser.user_id
+                on posts_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                 and posts_interaction.`type` = 'dispatched'
             left join groups_rolegroupuser
                 on groups_rolegroupuser.group_id = groups_group.id
