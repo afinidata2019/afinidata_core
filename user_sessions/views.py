@@ -834,7 +834,6 @@ class FieldsData(APIView):
             data = request.data
 
             for val in data['fields']:
-                #if models.Field.objects.filter(pk=val['id']).exists():
                 f = models.Field.objects.get(pk=val['id'])
                 f.position = val['position']
                 f.save()
