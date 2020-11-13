@@ -549,9 +549,20 @@
     },
     methods: {
       updateOrder: function(evt){
-        console.log(evt)
-        const newOrder = this.fields.map( item => item.id ).join(", ");
-        console.log(values)
+        const fields = this.fields.map( (item, i) => ({...item, position: i}));
+        fetch("/sessions/fields/{{ object.id }}/",{
+          method: 'post',
+          headers: {
+            "X-CSRFToken": '{{ csrf_token }}',
+            'Content-Type': "application/json",
+          },
+          body: JSON.stringify({fields})
+        })
+        .then( resp => resp.json() )
+        .then( data => {
+          this.fields = fields;
+        })
+        .catch(err => console.log(err) );
       },
       getData: function () {
         fetch("/sessions/fields/{{ object.id }}/")
