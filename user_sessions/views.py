@@ -808,7 +808,10 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
-"""" Api view para data detail session """
+""""
+    Api view para data detail session
+    @author: jose quintero
+"""
 class FieldsData(APIView):
 
     def get_object(self, pk):
