@@ -127,7 +127,7 @@ class UserInput(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     text = models.TextField()
     validation = models.CharField(max_length=50, null=True, choices=(('phone', 'Phone'), ('email', 'Email'),
-                                                                     ('date', 'Date')))
+                                                                     ('date', 'Date'), ('number', 'Number')))
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     position = models.IntegerField(default=0)
