@@ -212,7 +212,7 @@ class GroupAssignationsView(View):
                     label_nohay = 'No hay niños con riesgos de desarrollo'
                 # Count Sent activities
                 count = Interaction.objects.filter(user_id__in=group_users,
-                                                   type='dispatched').count()
+                                                   type='session', value__gte=0).count()
 
                 # Count Cases of risk in Development through risk milestones
                 group_instances = set([])
@@ -298,14 +298,11 @@ class GroupAssignationsView(View):
                                                 factores_riesgo=sorted(factores_riesgo_data,
                                                                        key=lambda k: k['y'], reverse=True),
                                                 total=len(factores_riesgo_count)))
-                children = InstanceAssociationUser.objects.filter(
-                    user_id__in=[u.messenger_user_id for u in group.assignationmessengeruser_set.all()]).count()
-                '''for assign in self.object.assignationmessengeruser_set.all():
-                            data = User.objects.get(id=assign.messenger_user_id).get_instances().filter(entity_id=1)
-                            children = children + data.count()
-                            assignations = assignations + Interaction.objects.filter(user_id=assign.messenger_user_id,
-                                                                                     type='dispatched').count()'''
-                return JsonResponse(dict(data=dict(count=count, children=children),
+                instances_users = InstanceAssociationUser.objects.filter(
+                    user_id__in=[u.messenger_user_id for u in group.assignationmessengeruser_set.all()])
+                children = instances_users.values('instance_id').distinct().count()
+                users = instances_users.values('user_id').distinct().count()
+                return JsonResponse(dict(data=dict(count=count, children=children, users=users),
                                          milestones=sorted(milestones_data, key=lambda k: k['y'], reverse=True),
                                          milestones_count=milestones_count, factores_riesgo=factores_riesgo))
         return JsonResponse(dict(data=dict(count=0)))
