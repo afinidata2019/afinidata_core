@@ -86,7 +86,11 @@ class InstanceView(PermissionRequiredMixin, DetailView):
                 question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1)
                 if question_field.exist():
                     question_field.last()
-                    rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                    ms = Message.objects.filter(field_id=question_field.id)
+                    if ms.exists():
+                        rep['question'] = ms.order_by('id').last().text
+                    else:
+                        rep['question'] = ''
                 else:
                     rep['question'] = ''
                 answer = Reply.objects.filter(field_id=field.id, value=reply.value)
