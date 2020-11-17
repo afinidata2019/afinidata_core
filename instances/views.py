@@ -84,7 +84,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             rep['response'] = reply.created_at
             if reply.type == 'quick_reply':
                 question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1)
-                if question_field.exist():
+                if question_field.exists():
                     question_field.last()
                     ms = Message.objects.filter(field_id=question_field.id)
                     if ms.exists():
