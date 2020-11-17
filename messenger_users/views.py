@@ -69,8 +69,12 @@ class UserView(PermissionRequiredMixin, DetailView):
             rep['session'] = Session.objects.get(id=reply.session_id)
             rep['response'] = reply.created_at
             if reply.type == 'quick_reply':
-                question_field = Field.objects.filter(session_id=field.session_id, position=field.position - 1).last()
-                rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                qfs = Field.objects.filter(session_id=field.session_id, position=field.position - 1)
+                if qfs.exists():
+                    question_field = qfs.last()
+                    qns = Message.objects.filter(field_id=question_field.id).order_by('id')
+                    if qns.exists():
+                        rep['question'] = qns.last().text
                 answer = Reply.objects.filter(field_id=field.id, value=reply.value)
                 if answer.exists():
                     rep['answer'] = answer.first().label
