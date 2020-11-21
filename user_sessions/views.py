@@ -11,6 +11,10 @@ from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.http import Http404, JsonResponse
+from user_sessions.serializers import FieldSerializer
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -806,3 +810,37 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Redirect Session has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+""""
+    Api view para data detail session
+    @author: jose quintero
+"""
+class FieldsData(APIView):
+
+    def get_object(self, pk):
+        try:
+            return models.Field.objects.filter(session_id=pk).order_by('position')
+        except models.Field.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        fields = self.get_object(pk)
+        serializer = FieldSerializer(fields, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, pk, format=None):
+        try:
+            data = request.data
+
+            for val in data['fields']:
+                f = models.Field.objects.get(pk=val['id'])
+                f.position = val['position']
+                f.save()
+
+            return JsonResponse({ 'ok': True, 'message': "success" })
+
+        except DoesNotExist:
+            raise Http404
+        except Exception as err:
+            return JsonResponse({ 'ok': False, 'message': str(err) })
