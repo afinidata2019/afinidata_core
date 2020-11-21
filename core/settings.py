@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'user_sessions.apps.UserSessionsConfig',
     'topics.apps.TopicsConfig',
     'user_passwd_reset',
-    'rest_framework'
+    'rest_framework',
     'schedule_emails'
 ]
 
