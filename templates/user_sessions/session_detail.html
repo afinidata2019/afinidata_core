@@ -98,31 +98,6 @@
                   </div>
                 </div>
 
-                <!-- field type consumer service -->
-                <div v-if="field.field_type == 'consume_service'">
-                    <div v-if="field.service">
-                        <span class="m-0 px-3">[[ field.service.url ]]</span>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.pk}/edit/`"
-                          class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
-                          class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
-                    </div>
-                    <div v-else>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_service/`"
-                          class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
-                          class="btn btn-danger btn-sm">Delete</a>
-                    </div>
-                </div>
-                <!--
-                  TODO: review this part of code
-                  <div v-else>
-                    <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
-                    class="btn btn-danger">Delete</a>
-                  </div>
-                -->
-                <!-- end field type consumer service -->
-
                 <!-- field type text-->
                 <div v-if="field.field_type == 'text'">
                   <table class="table">
@@ -457,15 +432,43 @@
                 <!-- end field type save_values_block-->
 
                 <!-- field type consume service-->
+
+                <!-- field type consumer service -->
+                  <div v-if="field.field_type == 'consume_service'"
+                  class="my-3">
+                    <div v-if="field.service">
+                        <span class="m-0 px-3">[[ field.service.url ]]</span>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.id}/edit/`"
+                          class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
+                          class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
+                    </div>
+                    <div v-else>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_service/`"
+                          class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
+                          class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                  </div>
+                  <!--
+                    TODO: pending review this part of code i don't understand
+                    <div v-else>
+                    <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
+                    class="btn btn-danger">Delete</a>
+                    </div>
+                  -->
+
+                <!-- end field type consumer service -->
+
                 <div v-if="field.field_type == 'consume_service'">
                   <div v-if="field.service">
                       <table class="table">
                         <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
+                          <tr>
+                              <th width="40%">Parameter</th>
+                              <th width="40%">Value</th>
+                              <th width="20%">Actions</th>
+                          </tr>
                         </thead>
                         <tbody>
                             <tr v-for="serviceparam in field.service.serviceparam_set">
