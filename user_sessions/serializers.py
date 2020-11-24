@@ -1,15 +1,22 @@
 from rest_framework import serializers
-from .models import Field, Service
+from .models import Field, Service, ServiceParam
+
+class ServiceParamSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ServiceParam
+        fields = '__all__'
 
 class ServiceSerializer(serializers.ModelSerializer):
 
+    serviceparam_set = ServiceParamSerializer(many=True)
+
     class Meta:
         model = Service
-        fields = ('__all__, serviceparam_set')
+        fields = ['id','url','field','serviceparam_set']
 
 class FieldSerializer(serializers.ModelSerializer):
-
-    service = ServiceSerializer(many=True)
+    service = ServiceSerializer()
 
     class Meta:
         model = Field
