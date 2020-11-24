@@ -20,4 +20,4 @@ class CreateGroup(forms.ModelForm):
 
     class Meta:
         model = models.Group
-        fields = ('name', 'parent', 'country', 'region')
+        fields = ('name', 'parent', 'country', 'region', 'license')

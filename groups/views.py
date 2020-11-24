@@ -12,6 +12,7 @@ from programs.models import Program
 import datetime
 from dateutil.parser import parse
 from django.db.models import Max
+import threading
 
 
 class GroupListView(PermissionRequiredMixin, ListView):
@@ -160,7 +161,8 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super(CreateGroupView, self).get_form(form_class=forms.CreateGroup)
-        form.fields['program'].queryset = self.request.user.program_set.all()
+        if not self.request.user.is_superuser:
+            form.fields['program'].queryset = self.request.user.program_set.all()
         return form
 
 
@@ -173,10 +175,18 @@ class CreateGroupView(PermissionRequiredMixin, CreateView):
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
 
+def change_users_license(group):
+    print(group)
+    for a in group.assignationmessengeruser_set.all():
+        a.user.license = group.license
+        a.user.save()
+        print(a.user.license)
+
+
 class EditGroupView(PermissionRequiredMixin, UpdateView):
     model = models.Group
     permission_required = 'groups.change_group'
-    fields = ('name', 'parent', 'country', 'region')
+    fields = ('name', 'parent', 'country', 'region', 'license')
     login_url = reverse_lazy('pages:login')
     pk_url_kwarg = 'group_id'
 
@@ -186,6 +196,8 @@ class EditGroupView(PermissionRequiredMixin, UpdateView):
         return c
 
     def get_success_url(self):
+        x = threading.Thread(target=change_users_license, args=(self.object, ))
+        x.start()
         messages.success(self.request, 'Grupo con nombre: "%s" ha sido editado.' % self.object.name)
         return reverse_lazy('groups:group', kwargs={'group_id': self.object.pk})
 
