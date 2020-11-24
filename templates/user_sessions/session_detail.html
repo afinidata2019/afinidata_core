@@ -94,7 +94,7 @@
                     class="btn btn-danger"
                     >Delete</a>
                   <div style="float:right">
-                    <button class="btn btn-outline-primary" href=""><i class="fa fa-arrows-alt"></i></button>
+                    <button class="btn btn-outline-primary btn-sm" type="button"><i class="fa fa-arrows-alt"></i></button>
                   </div>
                 </div>
 
@@ -102,16 +102,16 @@
                 <div v-if="field.field_type == 'consume_service'">
                     <div v-if="field.service">
                         <span class="m-0 px-3">[[ field.service.url ]]</span>
-                          <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/services/${field.service.pk}/edit/`"
-                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
-                          <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/delete/`"
-                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.pk}/edit/`"
+                          class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
+                          class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                     </div>
                     <div v-else>
-                          <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/add_service/`"
-                            class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
-                          <a :href="`/sessions/{{object.pk}}/fields/${field.pk}/delete/`"
-                            class="btn btn-danger btn-sm">Delete</a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_service/`"
+                          class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
+                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
+                          class="btn btn-danger btn-sm">Delete</a>
                     </div>
                 </div>
                 <!--
