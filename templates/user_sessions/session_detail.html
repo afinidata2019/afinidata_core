@@ -285,7 +285,7 @@
                       <tr v-for="button in field.button_set">
                         <td>[[ button.button_type ]]</td>
                         <td>
-                          <span>[[ button.title ? button.title : '--'</span>
+                          <span>[[ button.title ? button.title : '--' ]]</span>
                         </td>
                         <td>
                           <span>[[button.url ? button.url : '--' ]]</span>
@@ -369,7 +369,7 @@
                     <tbody>
                       <tr v-for="condition in field.condition_set">
                         <td>[[ condition.attribute.name ]]</td>
-                        <td>[[ condition.condition_display ]]</td>
+                        <td>[[ condition.condition ]]</td>
                         <td>[[ condition.value ]]</td>
                         <td class="text-right">
                           <a
