@@ -65,17 +65,17 @@ class Command(BaseCommand):
                     else:
                         url_referido = "#"
 
-                    # enviar_correo(
-                    #     asunto='Recordatorio de email',
-                    #     template='schedule_emails/professional_reminder.html',
-                    #     recipients=[user[0]],
-                    #     data={
-                    #         'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
-                    #         'total_children':total_children,
-                    #         'group': group.pk,
-                    #         'url_referido': url_referido
-                    #     }
-                    # )
+                    enviar_correo(
+                        asunto='Recordatorio de email',
+                        template='schedule_emails/professional_reminder.html',
+                        recipients=[user[0]],
+                        data={
+                            'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
+                            'total_children':total_children,
+                            'group': group.pk,
+                            'url_referido': url_referido
+                        }
+                    )
 
                     # enviar_correo(
                     #     asunto='Recordatorio de email',
