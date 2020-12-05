@@ -22,6 +22,7 @@ class Command(BaseCommand):
         where grupo_padre.parent_id = 38
         and email is not null
         and email != ''
+        limit 1
         """
         cursor.execute(query)
         users = cursor.fetchall()
@@ -64,22 +65,10 @@ class Command(BaseCommand):
                     else:
                         url_referido = "#"
 
-                    # enviar_correo(
-                    #     asunto='Recordatorio de email',
-                    #     template='schedule_emails/professional_reminder.html',
-                    #     recipients=[user[0]],
-                    #     data={
-                    #         'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
-                    #         'total_children':total_children,
-                    #         'group': group.pk,
-                    #         'url_referido': url_referido
-                    #     }
-                    # )
-
                     enviar_correo(
                         asunto='Recordatorio de email',
                         template='schedule_emails/professional_reminder.html',
-                        recipients=['alejandro.reyna@afinidata.com','lgodoy@afinidata.com','ac@afindata.com'],
+                        recipients=[user[0]],
                         data={
                             'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
                             'total_children':total_children,
@@ -87,3 +76,15 @@ class Command(BaseCommand):
                             'url_referido': url_referido
                         }
                     )
+
+                    # enviar_correo(
+                    #     asunto='Recordatorio de email',
+                    #     template='schedule_emails/professional_reminder.html',
+                    #     recipients=['lgodoy@afinidata.com','ac@afindata.com'],
+                    #     data={
+                    #         'user': {'username':user[2],'first_name': user[3], 'last_name':user[4]},
+                    #         'total_children':total_children,
+                    #         'group': group.pk,
+                    #         'url_referido': url_referido
+                    #     }
+                    # )

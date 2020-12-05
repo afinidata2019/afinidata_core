@@ -67,18 +67,19 @@ class Command(BaseCommand):
     def query_detalle(self, tipo = 'ingreso'):
         query = """
             select
-            count(distinct groups_assignationmessengeruser.user_id) as 'familias'
+            count(distinct groups_assignationmessengeruser.messenger_user_id) as 'familias'
             from groups_group
                 left join groups_group as grupo_padre
                     on groups_group.parent_id = grupo_padre.id
                 left join groups_assignationmessengeruser
                     on groups_assignationmessengeruser.group_id = groups_group.id
                 left join user_sessions_interaction
-                    on user_sessions_interaction.user_id = groups_assignationmessengeruser.user_id
+                    on user_sessions_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                     and user_sessions_interaction.`type` = 'session_init'
                 left join posts_interaction
-                    on posts_interaction.user_id = groups_assignationmessengeruser.user_id
-                    and posts_interaction.`type` = 'dispatched'
+                    on posts_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
+                    and posts_interaction.`type` = 'session'
+                    and posts_interaction.value >= 0
                 left join groups_rolegroupuser
                     on groups_rolegroupuser.group_id = groups_group.id
                 left join auth_user
@@ -101,7 +102,7 @@ class Command(BaseCommand):
         select grupo_padre.name as 'Región',
             groups_group.name as 'Grupo',
             grupo_padre.id,
-            count(distinct groups_assignationmessengeruser.user_id) as 'familias',
+            count(distinct groups_assignationmessengeruser.messenger_user_id) as 'familias',
             count(distinct posts_interaction.id) as 'actividades',
             count(distinct user_sessions_interaction.id) as 'sesiones',
             count(distinct case when auth_user.last_login is null
@@ -114,11 +115,12 @@ class Command(BaseCommand):
             left join groups_assignationmessengeruser
                 on groups_assignationmessengeruser.group_id = groups_group.id
             left join user_sessions_interaction
-                on user_sessions_interaction.user_id = groups_assignationmessengeruser.user_id
+                on user_sessions_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
                 and user_sessions_interaction.`type` = 'session_init'
             left join posts_interaction
-                on posts_interaction.user_id = groups_assignationmessengeruser.user_id
-                and posts_interaction.`type` = 'dispatched'
+                on posts_interaction.user_id = groups_assignationmessengeruser.messenger_user_id
+                and posts_interaction.`type` = 'session'
+                and posts_interaction.value >= 0
             left join groups_rolegroupuser
                 on groups_rolegroupuser.group_id = groups_group.id
             left join auth_user
@@ -142,7 +144,11 @@ class Command(BaseCommand):
         ingreso = sum(row[6] for row in result)
         pendiente = sum(row[7] for row in result)
         total_general_1 = ingreso + pendiente
-        porcentaje_general_1 = (ingreso * 100) / total_general_1
+
+        if total_general_1 > 0:
+            porcentaje_general_1 = (ingreso * 100) / total_general_1
+        else:
+            porcentaje_general_1 = 0
 
         if len(result) > 0:
             totales = [
@@ -150,9 +156,9 @@ class Command(BaseCommand):
                 ('TOTALES GENERALES',),
                 ('',),
                 ('SOBRE USO DE FAMILIAS',),
-                ('Total familias',sum(row[2] for row in result)),
-                ('Actividades totales', sum(row[3] for row in result)),
-                ('Total de sesiones', sum(row[4] for row in result)),
+                ('Total familias',sum(row[3] for row in result)),
+                ('Actividades totales', sum(row[4] for row in result)),
+                ('Total de sesiones', sum(row[5] for row in result)),
                 ('Total niños con riesgos identificados', 0),
                 ('',),
                 ('SOBRE USO DE PROFESIONALES',),
@@ -170,7 +176,6 @@ class Command(BaseCommand):
             acum_pendiente = 0
 
             for i,row in enumerate(result):
-
                 ws.cell(row=ws.max_row+1, column=1, value="REGIÓN {0}".format(row[0]))
 
                 query_ingresaron = self.query_detalle()
@@ -189,9 +194,9 @@ class Command(BaseCommand):
                 data_total = [
                     ('',),
                     ('SOBRE USO DE FAMILIAS',),
-                    ('Total familias',row[2]),
-                    ('Actividades totales', row[3]),
-                    ('Total de sesiones', row[4]),
+                    ('Total familias',row[3]),
+                    ('Actividades totales', row[4]),
+                    ('Total de sesiones', row[5]),
                     ('Total niños con riesgos identificados', 0),
                     ('',),
                     ('',),
@@ -244,17 +249,17 @@ class Command(BaseCommand):
             if len(result) > 0:
                 for user in result:
                     if user[0]:
-                        # enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
-                        #     'user': {
-                        #         'first_name': user[1],
-                        #         'last_name': user[2]
-                        #     }
-                        # }, recipients=[user[0]], attachment_file=archivo)
-
                         enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
                             'user': {
                                 'first_name': user[1],
                                 'last_name': user[2]
                             }
-                        }, recipients=['alejandro.reyna@afinidata.com','lgodoy@afinidata.com','ac@afinidata.com'], attachment_file=archivo)
+                        }, recipients=[user[0]], attachment_file=archivo)
+
+            # enviar_correo(asunto='Población de niños',template='schedule_emails/population_children.html',data={
+            #     'user': {
+            #         'first_name': "prueba",
+            #         'last_name': "prueba"
+            #     }
+            # }, recipients=['lgodoy@afinidata.com','ac@afindata.com'], attachment_file=archivo)
 
