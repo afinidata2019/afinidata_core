@@ -127,7 +127,7 @@ class UserInput(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     text = models.TextField()
     validation = models.CharField(max_length=50, null=True, choices=(('phone', 'Phone'), ('email', 'Email'),
-                                                                     ('date', 'Date')))
+                                                                     ('date', 'Date'), ('number', 'Number')))
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     position = models.IntegerField(default=0)
@@ -236,7 +236,7 @@ class RedirectSession(models.Model):
 
 class Service(models.Model):
     field = models.OneToOneField(Field, on_delete=models.CASCADE)
-    url = models.CharField(max_length=100)
+    url = models.CharField(max_length=200)
     request_type = models.CharField(max_length=5, choices=(('post', 'POST'), ('get', 'GET')), default='post')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

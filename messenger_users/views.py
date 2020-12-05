@@ -12,6 +12,7 @@ from messenger_users import forms
 from dateutil.parser import parse
 from user_sessions.models import Session, Field, Message, Reply, UserInput, Interaction as SessionInteraction
 from bots.models import UserInteraction
+from groups.models import AssignationMessengerUser
 from django.db.models import Max
 
 
@@ -59,14 +60,21 @@ class UserView(PermissionRequiredMixin, DetailView):
         quick_replies = []
         replies = SessionInteraction.objects.filter(user_id=self.object.pk,
                                                     type__in=['quick_reply', 'user_input']).order_by('-id')
+        assignations = AssignationMessengerUser.objects.filter(user_id=self.object.pk)
+        if assignations:
+            c['assignations'] = assignations
         for reply in replies:
             rep = dict()
             field = Field.objects.filter(id=reply.field_id).first()
             rep['session'] = Session.objects.get(id=reply.session_id)
             rep['response'] = reply.created_at
             if reply.type == 'quick_reply':
-                question_field = Field.objects.filter(session_id=field.session_id, position=field.position - 1).last()
-                rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                qfs = Field.objects.filter(session_id=field.session_id, position=field.position - 1)
+                if qfs.exists():
+                    question_field = qfs.last()
+                    qns = Message.objects.filter(field_id=question_field.id).order_by('id')
+                    if qns.exists():
+                        rep['question'] = qns.last().text
                 answer = Reply.objects.filter(field_id=field.id, value=reply.value)
                 if answer.exists():
                     rep['answer'] = answer.first().label

@@ -1,0 +1,26 @@
+{% extends 'user_passwd_reset/email_layout.html' %}
+
+{%block content %}
+
+    <table width="100%">
+        <tr>
+            <td>
+                <h3>Hola,  {{data.user.first_name}} {{ data.user.last_name }}</h3>
+                <br><br>
+                <p>
+                   {{ data.total_children }} niños se han registrado en tu grupo</p>
+                <br><br>
+                <p>Sigue invitando a más niños a unirse a través del siguiente <a href="{{data.url_referido}}">link.</a></p>
+                <br><br>
+                <p>Recuerda que puedes monitorear a  familias en <strong>Afinidata</strong> en el siguiente link: </p>
+                <br><br>
+                <p>
+                    <a href="https://programs.afinidata.com/groups/{{data.group}}">Click aquí</a>
+                </p>
+                <br><br>
+                <p>Apoya y prioriza a los niños que <strong>Afinidata</strong> ha identificado con riesgos Altos.</p>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

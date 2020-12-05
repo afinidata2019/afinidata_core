@@ -1,21 +1,22 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from instances.models import Instance, AttributeValue, Response
-from attributes.models import Attribute
-from django.shortcuts import get_object_or_404
-from messenger_users.models import User, UserData
 from user_sessions.models import Field, Message, Reply, UserInput, Interaction as SessionInteraction
-from django.urls import reverse_lazy
+from instances.models import Instance, AttributeValue, Response
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from groups.models import AssignationMessengerUser
+from messenger_users.models import User, UserData
+from dateutil.relativedelta import relativedelta
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, Http404
+from attributes.models import Attribute
+from django.urls import reverse_lazy
+from programs.models import Program
 from django.contrib import messages
 from django.utils import timezone
 from dateutil.parser import parse
-from dateutil.relativedelta import relativedelta
+from django.db.models import Max
 from areas.models import Area
 from posts.models import Post
 from instances import forms
-from programs.models import Program
-from django.db.models import Max
 import datetime
 import calendar
 
@@ -39,6 +40,11 @@ class InstanceView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(InstanceView, self).get_context_data()
+        if self.object.get_users():
+            user = self.object.get_users().first()
+            assignations = AssignationMessengerUser.objects.filter(user_id=user.pk)
+            if assignations.exists():
+                c['assignations'] = assignations
         c['today'] = timezone.now() + datetime.timedelta(1)
         c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
@@ -77,8 +83,16 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             field = Field.objects.filter(id=reply.field_id).first()
             rep['response'] = reply.created_at
             if reply.type == 'quick_reply':
-                question_field = Field.objects.filter(session_id=field.session_id, position=field.position-1).last()
-                rep['question'] = Message.objects.filter(field_id=question_field.id).order_by('id').last().text
+                questions_field = Field.objects.filter(session_id=field.session_id, position=field.position-1)
+                if questions_field.exists():
+                    question_field = questions_field.last()
+                    ms = Message.objects.filter(field_id=question_field.id)
+                    if ms.exists():
+                        rep['question'] = ms.order_by('id').last().text
+                    else:
+                        rep['question'] = ''
+                else:
+                    rep['question'] = ''
                 answer = Reply.objects.filter(field_id=field.id, value=reply.value)
                 if answer.exists():
                     rep['answer'] = answer.first().label

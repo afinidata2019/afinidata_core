@@ -1,8 +1,10 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from messenger_users.models import User as MessengerUser
+from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from milestones.models import Milestone
 from programs.models import Program
+from licences.models import License
 from django.db import models
 from bots.models import Bot
 
@@ -12,11 +14,14 @@ ROLE_CHOICES = (('administrator', 'Administrator'), ('collaborator', 'Collaborat
 
 class Group(models.Model):
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=100, unique=True)
+    country = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('País'))
+    region = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Región/Departamento/Estado'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     available = models.BooleanField(default=True)
     bots = models.ManyToManyField(Bot, through='BotAssignation')
+    license = models.ForeignKey(License, on_delete=models.SET_NULL, null=True, blank=True)
     programs = models.ManyToManyField(Program, through='ProgramAssignation')
     users = models.ManyToManyField(User, through='RoleGroupUser')
 

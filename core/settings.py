@@ -68,7 +68,8 @@ INSTALLED_APPS = [
     'user_sessions.apps.UserSessionsConfig',
     'topics.apps.TopicsConfig',
     'user_passwd_reset',
-    'rest_framework'
+    'rest_framework',
+    'schedule_emails'
 ]
 
 MIDDLEWARE = [
@@ -200,7 +201,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 

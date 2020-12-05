@@ -18,7 +18,7 @@
                 <form action="." method="post">
                     {% csrf_token %}
                     <div class="form-group"><label for="">Session: </label>
-                        <input type="text" class="form-control" value="{{ session }}" disabled></div>
+                        <input type="text" class="form-control" value="{{ parent_session }}" disabled></div>
                     <div class="form-group"><label for="">Field: </label>
                         <input type="text" class="form-control" value="{{ field }}" disabled></div>
                     {% include 'base/default_form.html' %}
