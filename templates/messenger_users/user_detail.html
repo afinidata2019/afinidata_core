@@ -50,6 +50,15 @@
                 <strong class="text-gray-900">Tipo de Usuario: </strong>{{  user|get_last_value:'user_type' }}<br>
                 <strong class="text-gray-900">Registro de Usuario: </strong>{{  user|get_last_value:'user_reg' }}<br>
                 <strong class="text-gray-900">Idioma: </strong>{{  user.language.name }}<br>
+                {% if assignations %}
+                      <strong class="text-gray-900">Grupos: </strong>
+                        <ul>
+                            {% for assignation in assignations %}
+                                <li><a target="_blank"
+                                        href="{% url 'groups:group' group_id=assignation.group_id %}">{{ assignation.group }}</a></li>
+                            {% endfor %}
+                        </ul>
+                {% endif %}
             </div>
         </div>
     </div>

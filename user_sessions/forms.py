@@ -33,13 +33,13 @@ class SessionForm(forms.ModelForm):
 
 class UserInputForm(forms.ModelForm):
     validation = forms.ChoiceField(choices=(('', '---------'), ('phone', 'Phone'), ('email', 'Email'),
-                                            ('date', 'Date')), required=False)
+                                            ('date', 'Date'), ('number', 'Number')), required=False)
     attribute = forms.ModelChoiceField(queryset=Attribute.objects.all().order_by('name'))
     session = forms.ModelChoiceField(queryset=models.Session.objects.all().order_by('name'), required=False)
 
     class Meta:
         model = models.UserInput
-        fields = ('text', 'validation', 'attribute', 'session')
+        fields = ('text', 'validation', 'attribute', 'session', 'position')
 
 
 class SetAttributeForm(forms.ModelForm):

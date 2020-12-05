@@ -63,7 +63,7 @@
         <img class="card-img" src="{% static 'images/cards_bg_1.jpg' %}" alt="Card image">
         <div class="card-img-overlay">
           <h5 class="card-title">Total usuarios</h5>
-          <h5 class="card-text">{{ object.assignationmessengeruser_set.all.count }}</h5>
+          <h5 class="card-text" id="users"><i class="fas fa-spinner fa-pulse"></i></h5>
         </div>
       </div>
     </div>
@@ -947,6 +947,7 @@
 
         document.querySelector('#assignations').textContent = r.data.count
         document.querySelector('#children').textContent = r.data.children
+        document.querySelector('#users').textContent = r.data.users
         chartsArray = []
 
         for (i = 0; i < r.factores_riesgo.length; i++) {
