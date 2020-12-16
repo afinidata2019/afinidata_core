@@ -39,6 +39,12 @@ class SessionListView(PermissionRequiredMixin, ListView):
                 params['areas__topic'] = self.request.GET['topics']
             if self.request.GET.get('areas'):
                 params['areas'] = self.request.GET['areas']
+            if self.request.GET.get('services'):
+                urls = models.Service.objects.filter(url=self.request.GET['services'])
+                params['id__in'] = [service.field.session.id for service in urls]
+            if self.request.GET.get('set_attributes'):
+                set_attributes = models.SetAttribute.objects.filter(attribute_id=self.request.GET['set_attributes'])
+                params['id__in'] = [set_attribute.field.session.id for set_attribute in set_attributes]
             return models.Session.objects.filter(**params)
         except:
             return models.Session.objects.all()
@@ -53,10 +59,16 @@ class SessionListView(PermissionRequiredMixin, ListView):
         c['types_list'] = models.SessionType.objects.all().order_by('name')
         c['topics_list'] = Topic.objects.all().order_by('name')
         c['areas_list'] = Area.objects.all().order_by('name')
+        c['services_list'] = [x['url'] for x in models.Service.objects.values('url').distinct().order_by('url')]
+        c['set_attributes_list'] = Attribute.objects.\
+            filter(id__in=[x['attribute_id'] for x in models.SetAttribute.objects.values('attribute_id').distinct()])
+
         c['programs'] = ''
         c['types'] = ''
         c['topics'] = ''
         c['areas'] = ''
+        c['services'] = ''
+        c['set_attributes'] = ''
         params = dict()
         if self.request.GET.get('name'):
             params['name__icontains'] = self.request.GET['name']
@@ -79,6 +91,14 @@ class SessionListView(PermissionRequiredMixin, ListView):
         if self.request.GET.get('areas'):
             params['areas'] = self.request.GET['areas']
             c['areas'] = int(self.request.GET['areas'])
+        if self.request.GET.get('services'):
+            urls = models.Service.objects.filter(url=self.request.GET['services'])
+            params['id__in'] = [service.field.session.id for service in urls]
+            c['services'] = self.request.GET['services']
+        if self.request.GET.get('set_attributes'):
+            set_attributes = models.SetAttribute.objects.filter(attribute_id=self.request.GET['set_attributes'])
+            params['id__in'] = [set_attribute.field.session.id for set_attribute in set_attributes]
+            c['set_attributes'] = int(self.request.GET['set_attributes'])
         sessions = sessions.filter(**params)
         for session in c['sessions']:
             session.type = session.session_type.name
@@ -181,16 +201,17 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c['entities_list'] = ', '.join([entity.name for entity in self.object.entities.all()])
         c['licences_list'] = ', '.join([user_license.name for user_license in self.object.licences.all()])
         inbounds = []
-        inbounds = inbounds + [user_input.session.id for user_input
+        inbounds = inbounds + [user_input.field.session.id for user_input
                                in models.UserInput.objects.filter(session_id=self.object.id)
-                               if user_input.session]
-        inbounds = inbounds + [reply.sesison.id for reply
+                               if user_input.field]
+        inbounds = inbounds + [reply.field.session.id for reply
                                in models.Reply.objects.filter(session_id=self.object.id)
-                               if reply.sesison]
-        inbounds = inbounds + [redirect.session.id for redirect
+                               if reply.field]
+        inbounds = inbounds + [redirect.field.session.id for redirect
                                in models.RedirectSession.objects.filter(session_id=self.object.id)
-                               if redirect.session]
-        c['inbounds'] = models.Session.objects.filter(id__in=[inbounds])
+                               if redirect.field]
+        if models.Session.objects.filter(id__in=inbounds).exists():
+            c['inbounds'] = models.Session.objects.filter(id__in=inbounds)
         outbounds = []
         outbounds = outbounds + [user_input.session.id for user_input
                                  in models.UserInput.objects.filter(field__in=self.object.field_set.all())
@@ -201,7 +222,8 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         outbounds = outbounds + [redirect.session.id for redirect
                                  in models.RedirectSession.objects.filter(field__in=self.object.field_set.all())
                                  if redirect.session]
-        c['outbounds'] = models.Session.objects.filter(id__in=[outbounds])
+        if models.Session.objects.filter(id__in=outbounds).exists():
+            c['outbounds'] = models.Session.objects.filter(id__in=outbounds)
         return c
 
 
