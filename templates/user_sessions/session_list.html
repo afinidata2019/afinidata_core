@@ -59,6 +59,26 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
+                        <select class="form-control m-1" name="set_attributes" id="set_attributes" value="{{ set_attributes }}">
+                            <option value="">All Attributes</option>
+                            {% for option in set_attributes_list %}
+                                {% if set_attributes == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <select class="form-control m-1" name="services" id="services" value="{{ services }}">
+                            <option value="">All Services</option>
+                            {% for option in services_list %}
+                                {% if services == option %}
+                                    <option value="{{ option }}" selected="selected">{{ option }}</option>
+                                {% else %}
+                                    <option value="{{ option }}">{{ option }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                         <input type="submit" class="btn btn-primary m-1 mx-4" value="Filter">
 
                         <strong class="float-right total-sessions m-2 mt-3"> Total: {{ total }}</strong>
