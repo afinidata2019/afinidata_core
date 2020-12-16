@@ -36,6 +36,24 @@
       <strong>Max: </strong><span>{{ object.max }}</span><br />
       <strong>Created At: </strong><span>{{ object.created_at }}</span><br />
       <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br />
+      {% if inbounds %}
+            <strong class="text-gray-900">Inbounds: </strong>
+              <ul>
+                  {% for inbound in inbounds %}
+                      <li><a target="_blank"
+                              href="{% url 'sessions:session_detail' session_id=inbound.id %}">{{ inbound.name }}</a></li>
+                  {% endfor %}
+              </ul>
+      {% endif %}
+      {% if outbounds %}
+            <strong class="text-gray-900">Outbounds: </strong>
+              <ul>
+                  {% for outbound in outbounds %}
+                      <li><a target="_blank"
+                              href="{% url 'sessions:session_detail' session_id=outbound.id %}">{{ outbound.name }}</a></li>
+                  {% endfor %}
+              </ul>
+      {% endif %}
       <strong>Actions: </strong>
       <a
         href="{% url 'sessions:session_update' session_id=object.pk %}"
@@ -62,7 +80,6 @@
     >
   </div>
 </div>
-
 <div class="container-fluid" id="sessions">
   <div v-if="loading" class="my-5">
     <div class="d-flex justify-content-center">

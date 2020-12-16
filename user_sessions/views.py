@@ -180,6 +180,28 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c['programs_list'] = ', '.join([program.name.replace('Afini ', '') for program in self.object.programs.all()])
         c['entities_list'] = ', '.join([entity.name for entity in self.object.entities.all()])
         c['licences_list'] = ', '.join([user_license.name for user_license in self.object.licences.all()])
+        inbounds = []
+        inbounds = inbounds + [user_input.session.id for user_input
+                               in models.UserInput.objects.filter(session_id=self.object.id)
+                               if user_input.session]
+        inbounds = inbounds + [reply.sesison.id for reply
+                               in models.Reply.objects.filter(session_id=self.object.id)
+                               if reply.sesison]
+        inbounds = inbounds + [redirect.session.id for redirect
+                               in models.RedirectSession.objects.filter(session_id=self.object.id)
+                               if redirect.session]
+        c['inbounds'] = models.Session.objects.filter(id__in=[inbounds])
+        outbounds = []
+        outbounds = outbounds + [user_input.session.id for user_input
+                                 in models.UserInput.objects.filter(field__in=self.object.field_set.all())
+                                 if user_input.session]
+        outbounds = outbounds + [reply.session.id for reply
+                                 in models.Reply.objects.filter(field__in=self.object.field_set.all())
+                                 if reply.session]
+        outbounds = outbounds + [redirect.session.id for redirect
+                                 in models.RedirectSession.objects.filter(field__in=self.object.field_set.all())
+                                 if redirect.session]
+        c['outbounds'] = models.Session.objects.filter(id__in=[outbounds])
         return c
 
 
