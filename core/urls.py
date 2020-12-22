@@ -14,7 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from rest_framework import routers
 from django.urls import path, include
+from conversations import api_views as conversations_api_views
+
+# api v0.1 router
+router = routers.DefaultRouter()
+router.register(r'conversation_workflow', conversations_api_views.ConversationWorkflow)
 
 urlpatterns = [
     path('', include('pages.urls', namespace='pages')),
@@ -39,5 +45,6 @@ urlpatterns = [
     path('app_services/', include('app.service_urls', namespace='app_services')),
     path('sessions/', include('user_sessions.urls', namespace='sessions')),
     path('topics/', include('topics.urls', namespace='topics')),
-    path('password-reset/', include('user_passwd_reset.urls', namespace='user_passwd_reset'))
+    path('password-reset/', include('user_passwd_reset.urls', namespace='user_passwd_reset')),
+    path('api/0.1/', include(router.urls))
 ]

@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'corsheaders',
     'user_sessions.apps.UserSessionsConfig',
+    'conversations.apps.ConversationsConfig',
     'topics.apps.TopicsConfig',
     'user_passwd_reset',
     'rest_framework',
