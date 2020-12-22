@@ -38,6 +38,12 @@ class ConversationWorkflow(View):
                                        bot_channel_id=bot_channel_id,
                                        user_channel_id=user_channel_id,
                                        user=user)
+            # Get bot default register session:
+            session = 603
+            service_params = dict(user_id=user.id,
+                                  session=session)
+            service_response = requests.post(endpoints['get_session'], data=service_params).json()
+            session_finish = service_response['set_attributes']['session_finish']
         else:
             user = user_channel.last().user
 
