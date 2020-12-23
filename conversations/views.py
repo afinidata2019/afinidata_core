@@ -95,16 +95,50 @@ class ConversationWorkflow(View):
                                              bot_channel_id=bot_channel_id,
                                              type='quick_replies',
                                              content=message['text'],
-                                             quick_replies=[qr['title'] for qr in message['quick_replies']]
-                                             ))
-                    else:
-                        if 'text' in message:
-                            response.append(dict(bot_id=bot_id,
-                                                 channel_id=channel_id,
-                                                 user_channel_id=user_channel_id,
-                                                 bot_channel_id=bot_channel_id,
-                                                 type='text',
-                                                 content=message['text']))
+                                             quick_replies=[qr['title'] for qr in message['quick_replies']]))
+                    elif 'text' in message:
+                        response.append(dict(bot_id=bot_id,
+                                             channel_id=channel_id,
+                                             user_channel_id=user_channel_id,
+                                             bot_channel_id=bot_channel_id,
+                                             type='text',
+                                             content=message['text']))
+                    elif 'attachment' in message:
+                        if 'type' in message['attachment']:
+                            if message['attachment']['type'] == 'image':
+                                response.append(dict(bot_id=bot_id,
+                                                     channel_id=channel_id,
+                                                     user_channel_id=user_channel_id,
+                                                     bot_channel_id=bot_channel_id,
+                                                     type='image',
+                                                     content=message['attachment']['payload']['url']))
+                            elif message['attachment']['type'] == 'template':
+                                if message['attachment']['payload']['template_type'] == 'button':
+                                    buttons = message['attachment']['payload']['buttons']
+                                    response.append(dict(bot_id=bot_id,
+                                                         channel_id=channel_id,
+                                                         user_channel_id=user_channel_id,
+                                                         bot_channel_id=bot_channel_id,
+                                                         type='text',
+                                                         content=message['attachment']['payload']['text']))
+
+                                elif message['attachment']['payload']['template_type'] == 'media':
+                                    buttons = message['attachment']['payload']['elements'][0]['buttons']
+                                    response.append(dict(bot_id=bot_id,
+                                                         channel_id=channel_id,
+                                                         user_channel_id=user_channel_id,
+                                                         bot_channel_id=bot_channel_id,
+                                                         type='image',
+                                                         content=message['attachment']['payload']['elements'][0]['url']))
+                                for button in buttons:
+                                    response.append(dict(bot_id=bot_id,
+                                                         channel_id=channel_id,
+                                                         user_channel_id=user_channel_id,
+                                                         bot_channel_id=bot_channel_id,
+                                                         type='button',
+                                                         content=button['title'],
+                                                         url=button['url']))
+
             if 'set_attributes' in service_response:
                 if 'user_input_text' in service_response['set_attributes']:
                     response.append(dict(bot_id=bot_id,
