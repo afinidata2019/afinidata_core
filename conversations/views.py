@@ -6,6 +6,8 @@ from attributes.models import Attribute
 from entities.models import Entity
 from django.http import JsonResponse, Http404
 from conversations import forms
+from bots.models import Interaction, UserInteraction
+from datetime import datetime
 import requests
 
 
@@ -27,7 +29,7 @@ class ConversationWorkflow(View):
                          get_session='https://contentmanager.afinidata.com/chatfuel/get_session/',
                          save_reply='https://contentmanager.afinidata.com/chatfuel/save_last_reply/',
                          create_user='https://contentmanager.afinidata.com/chatfuel/create_messenger_user/',
-                         get_info='https://5cf04f072931.ngrok.io/bots/9/channel/aa833cba-ee70-4308-8132-e5e0fc907c75/get_user_info/')
+                         get_info='https://5cf04f072931.ngrok.io/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/')
         response = []
         if not user_channel.exists():
             service_response = requests.post(endpoints['create_user'],
@@ -69,6 +71,12 @@ class ConversationWorkflow(View):
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
             session_finish = service_response['set_attributes']['session_finish']
+
+            # Crear interaccion de inicio de registro
+            bot_interaction = Interaction.objects.get(name='start_registration')
+            UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
+                                           interaction=bot_interaction, value=0,
+                                           created_at=datetime.now(), updated_at=datetime.now())
         else:
             user = user_channel.last().user
 
@@ -96,6 +104,12 @@ class ConversationWorkflow(View):
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
             session_finish = service_response['set_attributes']['session_finish']
             first_message = False
+
+            # Crear interaccion de inicio de default
+            bot_interaction = Interaction.objects.get(name='default')
+            UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
+                                           interaction=bot_interaction, value=0,
+                                           created_at=datetime.now(), updated_at=datetime.now())
 
         while session_finish == 'false':
             if not first_message:
