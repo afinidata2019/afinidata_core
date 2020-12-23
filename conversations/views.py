@@ -2,6 +2,8 @@ from django.views.generic import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from messenger_users.models import User, UserData, UserChannel
+from attributes.models import Attribute
+from entities.models import Entity
 from django.http import JsonResponse, Http404
 from conversations import forms
 import requests
@@ -24,20 +26,43 @@ class ConversationWorkflow(View):
         endpoints = dict(get_field='https://contentmanager.afinidata.com/chatfuel/get_session_field/',
                          get_session='https://contentmanager.afinidata.com/chatfuel/get_session/',
                          save_reply='https://contentmanager.afinidata.com/chatfuel/save_last_reply/',
-                         create_user='https://contentmanager.afinidata.com/chatfuel/create_messenger_user/')
+                         create_user='https://contentmanager.afinidata.com/chatfuel/create_messenger_user/',
+                         get_info='https://5cf04f072931.ngrok.io/bots/9/channel/aa833cba-ee70-4308-8132-e5e0fc907c75/get_user_info/')
         response = []
         if not user_channel.exists():
             service_response = requests.post(endpoints['create_user'],
                                              data=dict(channel_id=user_channel_id,
                                                        bot_id=bot_id,
-                                                       first_name='Estuardo',
-                                                       last_name='Díaz')).json()
+                                                       first_name=user_channel_id,
+                                                       last_name='None')).json()
             user = User.objects.get(id=service_response['set_attributes']['user_id'])
             UserChannel.objects.create(bot_id=bot_id,
                                        channel_id=channel_id,
                                        bot_channel_id=bot_channel_id,
                                        user_channel_id=user_channel_id,
                                        user=user)
+            # Get user data from channel
+            service_params = dict(user_channel_id=user_channel_id)
+            service_response = requests.post(endpoints['get_info'], data=service_params).json()
+            if 'request_status' in service_response and service_response['request_status'] == 'done':
+                for data_key in service_response['data']:
+                    if data_key == 'first_name':
+                        user.first_name = service_response['data'][data_key]
+                        user.save()
+                    elif data_key == 'last_name':
+                        user.last_name = service_response['data'][data_key]
+                        user.save()
+                    elif data_key != 'id':
+                        # Crear el atributo si no existe
+                        attribute, created = Attribute.objects.get_or_create(name=data_key)
+                        # Asocial el atributo al usuario Encargado/Pregnant
+                        Entity.objects.get(id=4).attributes.add(attribute)
+                        Entity.objects.get(id=5).attributes.add(attribute)
+                        # Agregar el atributo al usuario
+                        UserData.objects.create(data_key=data_key,
+                                                user_id=user.id,
+                                                data_value=service_response['data'][data_key],
+                                                attribute_id=attribute.id)
             # Get bot default register session:
             session = 603
             service_params = dict(user_id=user.id,
