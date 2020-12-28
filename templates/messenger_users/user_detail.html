@@ -40,7 +40,8 @@
                 <strong class="text-gray-900">ID: </strong>{{ object.pk }}<br>
                 <strong class="text-gray-900">Nombre: </strong>{{ object.first_name }}<br>
                 <strong class="text-gray-900">Apellido: </strong>{{ object.last_name }}<br>
-                <strong class="text-gray-900">Nombre de Usuario: </strong>{{ object.username }}<br>
+                <strong class="text-gray-900">Channel: </strong>{{ channel }}<br>
+                <strong class="text-gray-900">Bot ID: </strong>{{ bot_id }}<br>
                 <strong class="text-gray-900">Fecha de Ingreso: </strong>{{ object.created_at }}<br>
                 <strong class="text-gray-900">ID de Canal: </strong>{{ object.last_channel_id }}<br>
                 <strong class="text-gray-900">Bot: </strong><a href="{% url 'bots:bot_detail' bot_id=object.bot_id %}">{{ object.get_bot.name }}</a><br>

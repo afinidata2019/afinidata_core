@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from messenger_users.models import User, UserData
+from messenger_users.models import User, UserData, UserChannel
+from channels.models import Channel
 from attributes.models import Attribute
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -91,6 +92,16 @@ class UserView(PermissionRequiredMixin, DetailView):
                 rep['attribute'] = UserInput.objects.filter(field_id=field.id).first().attribute.name
             quick_replies.append(rep)
         c['quick_replies'] = quick_replies
+        user_channel = UserChannel.objects.filter(user_id=self.object.pk)
+        if user_channel.exists():
+            c['bot_id'] = user_channel.last().bot_id
+            c['channel'] = user_channel.last().channel_id
+            channel = Channel.objects.filter(id=user_channel.last().channel_id)
+            if channel.exists():
+                c['channel'] = channel.last().name
+        else:
+            c['bot_id'] = ''
+            c['channel'] = ''
         return c
 
 
