@@ -1,5 +1,6 @@
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView, View
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from user_sessions import models, forms
@@ -854,6 +855,28 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Redirect Session has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class AddBotSessionView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('pages:login')
+
+    def get(self, request, *args, **kwargs):
+        form = forms.BotSessionForm(request.POST or None)
+        return render(request, 'sessions/session_form.html', dict(form=form, action='Set Bot to'))
+
+    def post(self, request, *args, **kwargs):
+        session = get_object_or_404(models.Session, id=kwargs['session_id'])
+        form = forms.BotSessionForm(request.POST)
+
+        if form.is_valid():
+            messages.success(request, 'Session has been added to bot')
+            models.BotSessions.objects.create(session=session,
+                                              bot_id=request.POST['bot_id'],
+                                              session_type=request.POST['session_type'])
+            return redirect('sessions:session_detail', session_id=session.pk)
+        else:
+            messages.success(request, 'Invalid params.')
+            return redirect('sessions:session_detail', session_id=session.pk)
 
 
 """"
