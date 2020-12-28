@@ -36,6 +36,14 @@
       <strong>Max: </strong><span>{{ object.max }}</span><br />
       <strong>Created At: </strong><span>{{ object.created_at }}</span><br />
       <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br />
+      {% if bot_sessions %}
+            <strong class="text-gray-900">Bots: </strong>
+              <ul>
+                  {% for bot_session in bot_sessions %}
+                      <li><strong>Bot ID: </strong> {{ bot_session.bot_id }} ({{ bot_session.session_type }})</li>
+                  {% endfor %}
+              </ul>
+      {% endif %}
       {% if inbounds %}
             <strong class="text-gray-900">Inbounds: </strong>
               <ul>

@@ -225,6 +225,8 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
                                  if redirect.session]
         if models.Session.objects.filter(id__in=outbounds).exists():
             c['outbounds'] = models.Session.objects.filter(id__in=outbounds)
+        if models.BotSessions.objects.filter(session_id=self.object.pk).exists():
+            c['bot_sessions'] = models.BotSessions.objects.filter(session_id=self.object.pk)
         return c
 
 
@@ -861,8 +863,8 @@ class AddBotSessionView(LoginRequiredMixin, View):
     login_url = reverse_lazy('pages:login')
 
     def get(self, request, *args, **kwargs):
-        form = forms.BotSessionForm(request.POST or None)
-        return render(request, 'sessions/session_form.html', dict(form=form, action='Set Bot to'))
+        form = forms.BotSessionForm()
+        return render(request, 'user_sessions/session_form.html', dict(form=form, action='Set Bot to'))
 
     def post(self, request, *args, **kwargs):
         session = get_object_or_404(models.Session, id=kwargs['session_id'])

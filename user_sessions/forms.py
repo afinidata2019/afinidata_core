@@ -104,11 +104,5 @@ class InteractionForm(forms.ModelForm):
 
 
 class BotSessionForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        super(BotSessionForm, self).__init__(*args, **kwargs)
-        bots_list = (('1', 'Afini Pilot'),
-                     ('2', 'Afini Pilot Inglés'),
-                     ('3', 'Afini Pilot Perú y Bolivia'))
-        self.fields['bot_id'] = forms.ChoiceField(choices=bots_list)
-        self.fields['session_type'] = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))
+    bot_id = forms.ChoiceField(choices=(('1', 'Afini Pilot'), ('2', 'Afini Pilot Inglés')))
+    session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))
