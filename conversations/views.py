@@ -9,6 +9,7 @@ from conversations import forms
 from bots.models import Interaction, UserInteraction
 from datetime import datetime
 import requests
+import os
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -25,11 +26,11 @@ class ConversationWorkflow(View):
         user_channel_id = form.data['user_channel_id']
         user_message = form.data['message']
         user_channel = UserChannel.objects.filter(user_channel_id=user_channel_id)
-        endpoints = dict(get_field='https://contentmanager.afinidata.com/chatfuel/get_session_field/',
-                         get_session='https://contentmanager.afinidata.com/chatfuel/get_session/',
-                         save_reply='https://contentmanager.afinidata.com/chatfuel/save_last_reply/',
-                         create_user='https://contentmanager.afinidata.com/chatfuel/create_messenger_user/',
-                         get_info='https://5cf04f072931.ngrok.io/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/')
+        endpoints = dict(get_field=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session_field/',
+                         get_session=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session/',
+                         save_reply=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/save_last_reply/',
+                         create_user=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/create_messenger_user/',
+                         get_info=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/')
         response = []
         if not user_channel.exists():
             service_response = requests.post(endpoints['create_user'],
@@ -44,27 +45,30 @@ class ConversationWorkflow(View):
                                        user_channel_id=user_channel_id,
                                        user=user)
             # Get user data from channel
-            service_params = dict(user_channel_id=user_channel_id)
-            service_response = requests.post(endpoints['get_info'], data=service_params).json()
-            if 'request_status' in service_response and service_response['request_status'] == 'done':
-                for data_key in service_response['data']:
-                    if data_key == 'first_name':
-                        user.first_name = service_response['data'][data_key]
-                        user.save()
-                    elif data_key == 'last_name':
-                        user.last_name = service_response['data'][data_key]
-                        user.save()
-                    elif data_key != 'id':
-                        # Crear el atributo si no existe
-                        attribute, created = Attribute.objects.get_or_create(name=data_key)
-                        # Asocial el atributo al usuario Encargado/Pregnant
-                        Entity.objects.get(id=4).attributes.add(attribute)
-                        Entity.objects.get(id=5).attributes.add(attribute)
-                        # Agregar el atributo al usuario
-                        UserData.objects.create(data_key=data_key,
-                                                user_id=user.id,
-                                                data_value=service_response['data'][data_key],
-                                                attribute_id=attribute.id)
+            try:
+                service_params = dict(user_channel_id=user_channel_id)
+                service_response = requests.post(endpoints['get_info'], data=service_params).json()
+                if 'request_status' in service_response and service_response['request_status'] == 'done':
+                    for data_key in service_response['data']:
+                        if data_key == 'first_name':
+                            user.first_name = service_response['data'][data_key]
+                            user.save()
+                        elif data_key == 'last_name':
+                            user.last_name = service_response['data'][data_key]
+                            user.save()
+                        elif data_key != 'id':
+                            # Crear el atributo si no existe
+                            attribute, created = Attribute.objects.get_or_create(name=data_key)
+                            # Asocial el atributo al usuario Encargado/Pregnant
+                            Entity.objects.get(id=4).attributes.add(attribute)
+                            Entity.objects.get(id=5).attributes.add(attribute)
+                            # Agregar el atributo al usuario
+                            UserData.objects.create(data_key=data_key,
+                                                    user_id=user.id,
+                                                    data_value=service_response['data'][data_key],
+                                                    attribute_id=attribute.id)
+            except:
+                pass
             # Get bot default register session:
             session = 603
             service_params = dict(user_id=user.id,
