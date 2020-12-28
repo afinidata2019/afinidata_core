@@ -12,6 +12,7 @@ urlpatterns = [
     path('<int:session_id>/edit/', views.SessionUpdateView.as_view(), name='session_update'),
     path('<int:session_id>/delete/', views.SessionDeleteView.as_view(), name='session_delete'),
     path('<int:session_id>/add_field/', views.FieldCreateView.as_view(), name='field_create'),
+    path('<int:session_id>/add_bot_session/', views.AddBotSessionView.as_view(), name='add_bot_session'),
     path('<int:session_id>/fields/<int:field_id>/delete/', views.FieldDeleteView.as_view(), name='field_delete'),
     path('<int:session_id>/fields/<int:field_id>/up/', views.FieldUpView.as_view(),
          name='field_up'),
