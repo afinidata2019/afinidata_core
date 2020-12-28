@@ -8,6 +8,7 @@ from django.http import JsonResponse, Http404
 from conversations import forms
 from bots.models import Interaction, UserInteraction
 from datetime import datetime
+from user_sessions.models import BotSessions
 import requests
 import os
 
@@ -70,7 +71,11 @@ class ConversationWorkflow(View):
             except:
                 pass
             # Get bot default register session:
-            session = 603
+            session = BotSessions.objects.filter(bot_id=bot_id, session_type='welcome')
+            if session.exists():
+                session = session.last().session_id
+            else:
+                session = 0
             service_params = dict(user_id=user.id,
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
@@ -102,7 +107,11 @@ class ConversationWorkflow(View):
         # If the session is already finished
         if session_finish == 'true':
             # Get bot default session:
-            session = 603
+            session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
+            if session.exists():
+                session = session.last().session_id
+            else:
+                session = 0
             service_params = dict(user_id=user.id,
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
