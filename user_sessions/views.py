@@ -876,8 +876,9 @@ class AddBotSessionView(LoginRequiredMixin, View):
                 filter(bot_id=request.POST['bot_id'],
                        session_type=request.POST['session_type'])
             if bot_session.exists():
-                bot_session.last().session = session
-                bot_session.last().save()
+                bot_session = bot_session.last()
+                bot_session.session = session
+                bot_session.save()
             else:
                 models.BotSessions.objects.create(bot_id=request.POST['bot_id'],
                                                   session_type=request.POST['session_type'],
