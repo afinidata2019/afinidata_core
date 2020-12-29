@@ -872,11 +872,16 @@ class AddBotSessionView(LoginRequiredMixin, View):
 
         if form.is_valid():
             messages.success(request, 'Session has been added to bot')
-            bot_session, created = models.BotSessions.objects.\
-                get_or_create(bot_id=request.POST['bot_id'],
-                              session_type=request.POST['session_type'])
-            bot_session.session = session
-            bot_session.save()
+            bot_session = models.BotSessions.objects.\
+                filter(bot_id=request.POST['bot_id'],
+                       session_type=request.POST['session_type'])
+            if bot_session.exists():
+                bot_session.last().session = session
+                bot_session.last().save()
+            else:
+                models.BotSessions.objects.create(bot_id=request.POST['bot_id'],
+                                                  session_type=request.POST['session_type'],
+                                                  session=session)
             return redirect('sessions:session_detail', session_id=session.pk)
         else:
             messages.success(request, 'Invalid params.')
