@@ -106,10 +106,12 @@ class InteractionForm(forms.ModelForm):
 
 
 class BotSessionForm(forms.Form):
-    bots_list = []
-    response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
-    if response.status_code == 200:
-        for bot in response.json()['results']:
-            bots_list.append((bot['id'], bot['name']))
+    bots_list = [
+        ('','Cargando bots...')
+    ]
+    # response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
+    # if response.status_code == 200:
+    #     for bot in response.json()['results']:
+    #         bots_list.append((bot['id'], bot['name']))
     bot_id = forms.ChoiceField(choices=tuple(bots_list))
     session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))
