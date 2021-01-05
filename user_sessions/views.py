@@ -866,12 +866,11 @@ class AddBotSessionView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = forms.BotSessionForm()
 
-        # def get_context_data(self, **kwargs):
-        #     context = super().get_context_data(**kwargs)
-        #     context['api_enpoint'] = os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
-        #     print(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
-
-        return render(request, 'user_sessions/session_form.html', dict(form=form, action='Set Bot to', api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'))
+        return render(request, 'user_sessions/session_form.html', dict(
+            form=form,
+            action='Set Bot to',
+            api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
+        ))
 
     def post(self, request, *args, **kwargs):
         session = get_object_or_404(models.Session, id=kwargs['session_id'])

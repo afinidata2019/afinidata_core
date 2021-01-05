@@ -30,9 +30,8 @@
 
 
 {% block scripts %}
-
 <script>
-   $(function() {
+    window.addEventListener('load', () => {
         const input = document.getElementById('id_bot_id');
         const endpoint = "{{ api_endpoint }}"
 
@@ -59,9 +58,8 @@
         }
 
         if(input){
-
             getData();
         }
-   });
+    });
 </script>
 {% endblock %}
