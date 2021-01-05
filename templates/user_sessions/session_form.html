@@ -20,7 +20,7 @@
 
                     {% include 'base/default_form.html' %}
                     <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">{{ action }} Session</button>
+                    <button type="submit" class="btn btn-primary" id="submit_button">{{ action }} Session</button>
                 </form>
             </div>
         </div>
@@ -59,6 +59,10 @@
 
         if(input){
             getData();
+            var element = document.getElementById("submit_button");
+            element.onclick = function(event) {
+              return confirm('¿Estas segura de modificar la sesión para este bot?');
+            }
         }
     });
 </script>
