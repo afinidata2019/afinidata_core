@@ -16,7 +16,7 @@
             <div class="card-body">
                 <strong class="text-gray-800">Do you wanna to add child to {{ ms_user }}?</strong><br>
                 <a href="{% url 'messenger_users:user' id=ms_user.pk %}" class="btn btn-light">No</a>
-                <a href="{% url 'messenger_users:add_child' user_id=ms_user.pk %}" class="btn btn-primary">Yes</a>
+                <a href="{% url 'messenger_users:user' id=ms_user.pk %}" class="btn btn-primary">Yes</a>
             </div>
         </div>
     </div>
