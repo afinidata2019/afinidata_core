@@ -334,7 +334,6 @@ class AddChildView(PermissionRequiredMixin, CreateView):
         return c
 
     def form_valid(self, form):
-        form.instance.entity_id = 1
         return super(AddChildView, self).form_valid(form)
 
     def get_success_url(self):
