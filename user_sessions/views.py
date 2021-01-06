@@ -869,7 +869,7 @@ class AddBotSessionView(LoginRequiredMixin, View):
         return render(request, 'user_sessions/session_form.html', dict(
             form=form,
             action='Set Bot to',
-            api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
+            #api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
         ))
 
     def post(self, request, *args, **kwargs):
