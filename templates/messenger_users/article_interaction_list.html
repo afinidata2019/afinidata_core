@@ -31,6 +31,7 @@
                                 <th>Article</th>
                                 <th>Instance</th>
                                 <th>Type</th>
+                                <th>Value</th>
                                 <th>Created</th>
                             </tr>
                             </thead>
@@ -48,6 +49,7 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ interaction.type }}</td>
+                                        <td>{{ interaction.value }}</td>
                                         <td>{{ interaction.created_at }}</td>
                                     </tr>
                                 {% endfor %}
