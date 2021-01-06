@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404, JsonResponse
 from user_sessions.serializers import FieldSerializer
+import requests
 import os
 
 class SessionListView(PermissionRequiredMixin, ListView):
@@ -47,6 +48,8 @@ class SessionListView(PermissionRequiredMixin, ListView):
             if self.request.GET.get('set_attributes'):
                 set_attributes = models.SetAttribute.objects.filter(attribute_id=self.request.GET['set_attributes'])
                 params['id__in'] = [set_attribute.field.session.id for set_attribute in set_attributes]
+            if self.request.GET.get('bots'):
+                params['bots'] = self.request.GET['bots']
             return models.Session.objects.filter(**params)
         except:
             return models.Session.objects.all()
@@ -58,6 +61,11 @@ class SessionListView(PermissionRequiredMixin, ListView):
         c['get_params'] = parameters
         sessions = models.Session.objects.all().order_by('-session_type', 'name')
         c['programs_list'] = Program.objects.all().order_by('name')
+        bots_list = []
+        response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
+        if response.status_code == 200:
+            bots_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
+        c['bots_list'] = bots_list
         c['types_list'] = models.SessionType.objects.all().order_by('name')
         c['topics_list'] = Topic.objects.all().order_by('name')
         c['areas_list'] = Area.objects.all().order_by('name')
@@ -66,6 +74,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
             filter(id__in=[x['attribute_id'] for x in models.SetAttribute.objects.values('attribute_id').distinct()])
 
         c['programs'] = ''
+        c['bots'] = ''
         c['types'] = ''
         c['topics'] = ''
         c['areas'] = ''
@@ -84,6 +93,9 @@ class SessionListView(PermissionRequiredMixin, ListView):
         if self.request.GET.get('programs'):
             params['programs'] = self.request.GET['programs']
             c['programs'] = int(self.request.GET['programs'])
+        if self.request.GET.get('bots'):
+            params['bots'] = self.request.GET['bots']
+            c['bots'] = int(self.request.GET['bots'])
         if self.request.GET.get('types'):
             params['session_type'] = self.request.GET['types']
             c['types'] = int(self.request.GET['types'])

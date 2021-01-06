@@ -69,6 +69,17 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
+                        Bot Welcome/Default:
+                        <select class="form-control m-1" name="bots" id="bots" value="{{ bots }}">
+                            <option value="">All sessions</option>
+                            {% for option in bots_list %}
+                                {% if bots == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                         <select class="form-control m-1" name="services" id="services" value="{{ services }}">
                             <option value="">All Services</option>
                             {% for option in services_list %}
