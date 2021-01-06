@@ -1,6 +1,7 @@
 from messenger_users.models import User
 from instances.models import Instance
 from bots.models import Bot
+from entities.models import Entity
 from django import forms
 
 
@@ -40,10 +41,11 @@ class AfinidataUserForm(forms.ModelForm):
 
 class AfinidataChildForm(forms.ModelForm):
     birthday = forms.CharField(max_length=20)
+    entity = forms.ModelChoiceField(queryset=Entity.objects.filter(id__in=[1, 2]))
 
     class Meta:
         model = Instance
-        fields = ('name',)
+        fields = ('name', 'birthday', 'entity')
 
 
 class InitialUserForm(forms.Form):
