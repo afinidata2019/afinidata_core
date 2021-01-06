@@ -33,32 +33,7 @@
 <script>
     window.addEventListener('load', () => {
         const input = document.getElementById('id_bot_id');
-        const endpoint = "{{ api_endpoint }}"
-
-        const getData = () => {
-            fetch(endpoint)
-            .then( resp =>  resp.json() )
-            .then( data => {
-                input.options.length = 0;
-                if(data.results.length > 0){
-                    data.results.forEach(element => {
-                        let option = document.createElement('option');
-                        option.text =  element.name;
-                        option.value = element.id;
-                        input.appendChild(option);
-                    });
-                } else {
-                    let option = document.createElement('option');
-                    option.text = '-- No hay bots --';
-                    option.value = "";
-                    input.appendChild(option);
-                }
-            })
-            .catch( err => console.log(err) );
-        }
-
         if(input){
-            getData();
             var element = document.getElementById("submit_button");
             element.onclick = function(event) {
               return confirm('¿Estas segura de modificar la sesión para este bot?');
