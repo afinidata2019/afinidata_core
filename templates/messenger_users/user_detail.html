@@ -27,9 +27,6 @@
                 <a href="{% url 'messenger_users:user_last_data_list' user_id=user.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
                 <i class="fas fa-pen fa-sm text-white-50"></i> Editar Datos</a>
                 {% endif %}
-                {% if request.user.is_superuser %}
-                    <a href="{% url 'messenger_users:delete' id=object.pk %}" class="btn btn-danger">Eliminar</a>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -38,6 +35,9 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                {% if request.user.is_superuser %}
+                    <a href="{% url 'messenger_users:delete' id=object.pk %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
             </div>
             <div class="card-body">
                 <strong class="text-gray-900">ID: </strong>{{ object.pk }}<br>
