@@ -46,6 +46,10 @@
                                            class="btn btn-success">
                                             <i class="fas fa-pen"></i>
                                         </a>
+                                        <a href="{% url 'messenger_users:user_delete_data' user_id=user.pk userdata_id=object.pk %}"
+                                           class="btn btn-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

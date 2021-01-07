@@ -49,7 +49,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
                 set_attributes = models.SetAttribute.objects.filter(attribute_id=self.request.GET['set_attributes'])
                 params['id__in'] = [set_attribute.field.session.id for set_attribute in set_attributes]
             if self.request.GET.get('bots'):
-                params['bots'] = self.request.GET['bots']
+                params['id__in'] = [x.session_id for x in models.BotSessions.objects.filter(bot_id=self.request.GET['bots'])]
             return models.Session.objects.filter(**params)
         except:
             return models.Session.objects.all()
@@ -94,7 +94,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
             params['programs'] = self.request.GET['programs']
             c['programs'] = int(self.request.GET['programs'])
         if self.request.GET.get('bots'):
-            params['bots'] = self.request.GET['bots']
+            params['id__in'] = [x.session_id for x in models.BotSessions.objects.filter(bot_id=self.request.GET['bots'])]
             c['bots'] = int(self.request.GET['bots'])
         if self.request.GET.get('types'):
             params['session_type'] = self.request.GET['types']
