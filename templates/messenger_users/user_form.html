@@ -1,0 +1,24 @@
+{% extends 'base/private.html' %}
+
+{% block title %}{{ action }} User{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} User</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('¿Estás segura de borrar el usuario?')">{{ action }} User</button>
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}

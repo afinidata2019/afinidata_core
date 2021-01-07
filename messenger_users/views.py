@@ -105,6 +105,27 @@ class UserView(PermissionRequiredMixin, DetailView):
         return c
 
 
+class DeleteUserView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'messenger_users.delete_user'
+    model = User
+    template_name = 'messenger_users/user_form.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('messenger_users:index')
+    login_url = reverse_lazy('pages:login')
+
+    def get_context_data(self, **kwargs):
+        c = super(DeleteUserView, self).get_context_data()
+        c['action'] = 'Delete'
+        c['delete_message'] = '¿Estás segura de eliminar el usuario con nombre: "%s %s", ID: %s?' %\
+                              (self.object.first_name, self.object.last_name, self.object.id)
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'Usuario con nombre: "%s %s" fue eliminado.' %
+                         (self.object.first_name, self.object.last_name))
+        return super(DeleteUserView, self).get_success_url()
+
+
 class UserInteractionsView(PermissionRequiredMixin, DetailView):
     permission_required = 'messenger_users.view_user'
     model = User
