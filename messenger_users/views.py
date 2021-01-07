@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from messenger_users.models import User, UserData, UserChannel
+from django.db import connection
 from channels.models import Channel
 from attributes.models import Attribute
 from django.shortcuts import redirect
@@ -119,6 +120,32 @@ class DeleteUserView(PermissionRequiredMixin, DeleteView):
         c['delete_message'] = '¿Estás segura de eliminar el usuario con nombre: "%s %s", ID: %s?' %\
                               (self.object.first_name, self.object.last_name, self.object.id)
         return c
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        with connection.cursor() as cursor:
+            # Delete instances
+            cursor.execute("delete from instances_attributevalue where instance_id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
+            cursor.execute("delete from instances_response where instance_id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
+            cursor.execute("delete from user_sessions_interaction where instance_id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
+            cursor.execute("delete from instances_postinteraction where instance_id in (select instance_id from instances_instanceassociationuser where user_id =%s);", [self.object.id])
+            cursor.execute("delete from instances_instance_sessions where instance_id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
+            cursor.execute("delete from instances_instanceassociationuser where user_id = %s", [self.object.id])
+            cursor.execute("delete from instances_instance where id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
+            # Delete user data/interactions
+            cursor.execute("delete from messenger_users_userdata where user_id = %s;", [self.object.id])
+            cursor.execute("delete from bots_userinteraction where user_id = %s;", [self.object.id])
+            cursor.execute("delete from user_sessions_interaction where user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_userchannel where user_id = %s;", [self.object.id])
+            cursor.execute("delete from articles_articlefeedback where user_id = %s;", [self.object.id])
+            cursor.execute("delete from groups_assignationmessengeruser where messenger_user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_child where parent_user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_referral where user_opened_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_useractivitylog where user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_useractivity where user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_childdata where child_id in (select id from messenger_users_child where parent_user_id = %s);", [self.object.id])
+            cursor.execute("delete from messenger_users_child where parent_user_id = %s;", [self.object.id])
+        return super(DeleteUserView, self).delete(*args, **kwargs)
 
     def get_success_url(self):
         messages.success(self.request, 'Usuario con nombre: "%s %s" fue eliminado.' %
