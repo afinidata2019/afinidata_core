@@ -232,6 +232,9 @@ class UserDataCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user_id = self.kwargs['user_id']
+        userdata = form.save()
+        attribute, created = Attribute.objects.get_or_create(name=userdata.data_key)
+        userdata.attribute = attribute
         return super(UserDataCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -300,8 +303,9 @@ class CreateAfinidataUser(PermissionRequiredMixin, TemplateView):
                 for data in user_form.data:
                     if data not in ['first_name', 'last_name', 'channel_id', 'bot_id', 'name', 'birthday',
                                     'csrfmiddlewaretoken']:
-                        print(data, user_form.data[data])
-                        user.userdata_set.create(data_key=data, data_value=user_form.data[data])
+                        attribute, created = Attribute.objects.get_or_create(name=data)
+                        user.userdata_set.create(data_key=data, data_value=user_form.data[data],
+                                                 attribute_id=attribute.id)
 
                 return redirect('messenger_users:want_add_child', user_id=user.pk)
             else:
@@ -365,7 +369,9 @@ class AddUserInitialData(PermissionRequiredMixin, TemplateView):
         for data in request.POST:
             if data not in ['csrfmiddlewaretoken']:
                 if request.POST[data]:
-                    user.userdata_set.create(data_key=data, data_value=request.POST[data])
+                    attribute, created = Attribute.objects.get_or_create(name=data)
+                    user.userdata_set.create(data_key=data, data_value=request.POST[data],
+                                             attribute_id=attribute.id)
                     c = c + 1
         messages.success(request, 'Added %s items in data for %s' % (c, user))
         return redirect('messenger_users:user', id=user.pk)
