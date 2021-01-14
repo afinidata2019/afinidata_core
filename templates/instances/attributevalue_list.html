@@ -41,6 +41,8 @@
                                     <div class="btn-group">
                                         <a href="{% url 'instances:edit_instance_attribute' instance_id=object.instance.id attribute_id=object.id %}" class="btn btn-success">
                                         <i class="fas fa-pen"></i></a>
+                                        <a href="{% url 'instances:delete_instance_attribute' instance_id=object.instance.id attribute_id=object.id %}" class="btn btn-danger">
+                                        <i class="fas fa-times"></i></a>
                                     </div>
                                 </td>
                             </tr>

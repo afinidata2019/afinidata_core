@@ -318,6 +318,24 @@ class AttributeValueEditView(PermissionRequiredMixin, UpdateView):
         return reverse_lazy('instances:instance_attribute_list', kwargs={'instance_id': self.object.instance.pk})
 
 
+class AttributeValueDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'instances.delete_attributevalue'
+    model = AttributeValue
+    template_name = 'instances/attributevalue_delete_form.html'
+    pk_url_kwarg = 'attribute_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(AttributeValueDeleteView, self).get_context_data()
+        c['action'] = 'Delete'
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, 'El atributo "%s" con valor "%s" de la instancia "%s" fue eliminado' % (
+            self.object.attribute.name, self.object.value, self.object.instance
+        ))
+        return reverse_lazy('instances:instance_attribute_list', kwargs={'instance_id': self.object.instance.pk})
+
+
 class AttributeValueListView(PermissionRequiredMixin, ListView):
     model = AttributeValue
     permission_required = 'instances.change_attributevalue'
