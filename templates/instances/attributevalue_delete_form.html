@@ -1,0 +1,40 @@
+{% extends 'base/private.html' %}
+
+{% block title %}
+    {{action}} data for instance
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ action }} attribute value for {{ object.instance }}</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+
+        <p>Are you sure to delete this item?</p>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Instance:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.instance }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Attribute:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.attribute.name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Data value:</label>
+                        <input type="text" class="form-control" disabled value="{{ object.value }}">
+                    </div>
+                    {% include 'base/default_form.html' %}
+                    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('¿Estás segura de borrar el atributo de la instancia?')">{{ action }} Attribute Value</button>
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}
