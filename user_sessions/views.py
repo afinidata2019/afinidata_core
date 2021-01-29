@@ -128,7 +128,7 @@ class TestSessionView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
-    template_name = 'groups/test_sessions.html'
+    template_name = 'user_sessions/test_sessions.html'
 
 
 class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
