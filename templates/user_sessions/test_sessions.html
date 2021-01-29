@@ -3,6 +3,7 @@
 {% block title %}Sessions{% endblock %}
 
 {% block content %}
+{% load static %}
 <link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
 <script>
 var message_id = 0;
@@ -128,9 +129,9 @@ function sendMessage() {
     <div class="padding">
         <div class="form-inline" onsubmit="getSession()">
             <label class="mr-sm-2" for="user_id">User</label>
-          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="user_id" placeholder="User ID" value="1311">
+          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="user_id" placeholder="User ID" value="">
           <label class="mr-sm-2" for="session_id">Session</label>
-          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="session_id" placeholder="Session ID" value="619">
+          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="session_id" placeholder="Session ID" value="">
           <button type="submit" class="btn btn-primary mb-2" onclick="getSession()">Get Session</button>
         </div>
         <div class="row container d-flex justify-content-center">
