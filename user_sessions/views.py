@@ -124,7 +124,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
 
 
 class TestSessionView(PermissionRequiredMixin, DetailView):
-    model = models.Group
+    model = models.Session
     permission_required = 'user_sessions.view_session'
     login_url = reverse_lazy('pages:login')
     permission_denied_message = 'Unauthorized'
