@@ -11,13 +11,13 @@ from messenger_users.models import UserData
 from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404, JsonResponse
 from user_sessions.serializers import FieldSerializer
 import requests
 import os
+
 
 class SessionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -121,6 +121,14 @@ class SessionListView(PermissionRequiredMixin, ListView):
             session.programs_list = ', '.join([program.name.replace('Afini ', '') for program in session.programs.all()])
         c['total'] = sessions.count()
         return c
+
+
+class TestSessionView(PermissionRequiredMixin, DetailView):
+    model = models.Group
+    permission_required = 'user_sessions.view_session'
+    login_url = reverse_lazy('pages:login')
+    permission_denied_message = 'Unauthorized'
+    template_name = 'groups/test_sessions.html'
 
 
 class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
