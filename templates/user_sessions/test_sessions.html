@@ -3,12 +3,14 @@
 {% block title %}Sessions{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="chat_style.css">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
 <script>
 var message_id = 0;
 var save_text_reply = 'false';
 var save_user_input = 'false';
 var session_finish = 'false';
+var request_status = '';
 var url = 'https://contentmanager.afinidata.com/chatfuel/';
 var formdata = new FormData();
 var requestOptions = {};
@@ -46,6 +48,7 @@ function getMessage(){
     .then(response => response.json())
     .then(r => {
         message_id = message_id+1;
+        request_status = '';
         document.getElementById("json").innerHTML = "Respuesta del servicio:\n"+JSON.stringify(r, undefined, 4);
         var bot_message = document.createElement("DIV");
         bot_message.innerHTML = '<div class="media media-chat"> <img class="avatar" src="https://img.icons8.com/color/36/000000/administrator-female.png" alt="..."><div class="media-body" id="bot_message'+message_id+'"></div></div>'
@@ -54,6 +57,7 @@ function getMessage(){
             if('save_text_reply' in r.set_attributes){save_text_reply = r.set_attributes.save_text_reply}
             if('save_user_input' in r.set_attributes){save_user_input = r.set_attributes.save_user_input}
             if('session_finish' in r.set_attributes){session_finish = r.set_attributes.session_finish}
+            if('request_status' in r.set_attributes){request_status = r.set_attributes.request_status}
         }
         if ('messages' in r){
             for(message of r.messages){
@@ -83,7 +87,7 @@ function getMessage(){
             m.innerHTML = '<p>'+r.set_attributes.user_input_text+'</p>'
             document.getElementById('bot_message'+message_id+'').appendChild(m);
         }
-        if(save_text_reply == false && session_finish == 'false' && save_user_input == false){
+        if(save_text_reply == false && session_finish == 'false' && save_user_input == false && request_status != 'error'){
             getMessage();
         }
     })
@@ -128,9 +132,9 @@ function sendMessage() {
     <div class="padding">
         <div class="form-inline" onsubmit="getSession()">
             <label class="mr-sm-2" for="user_id">User</label>
-          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="user_id" placeholder="User ID" value="1311">
+          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="user_id" placeholder="User ID" value="">
           <label class="mr-sm-2" for="session_id">Session</label>
-          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="session_id" placeholder="Session ID" value="619">
+          <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="session_id" placeholder="Session ID" value="">
           <button type="submit" class="btn btn-primary mb-2" onclick="getSession()">Get Session</button>
         </div>
         <div class="row container d-flex justify-content-center">
@@ -147,7 +151,7 @@ function sendMessage() {
                             <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 2px;"></div>
                         </div>
                     </div>
-                    <div class="publisher bt-1 border-light"> <img class="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-female.png" alt="..."> <input class="publisher-input" type="text" id="user_message" placeholder="Write something"> <span class="publisher-btn file-group"> <i class="fa fa-paperclip file-browser"></i> <input type="file"> </span> <a class="publisher-btn" href="#" data-abc="true"><i class="fa fa-smile"></i></a> <button type="button" class="btn btn-outline-primary" onclick="sendMessage()" id="sendButton">Send <i class="fas fa-paper-plane"></i></button></div>
+                    <div class="publisher bt-1 border-light"> <img class="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-female.png" alt="..."> <input class="publisher-input" type="text" id="user_message" placeholder="Write something">  <button type="button" class="btn btn-outline-primary" onclick="sendMessage()" id="sendButton">Send <i class="fas fa-paper-plane"></i></button></div>
                     <script>
                         var input = document.getElementById("user_message");
                         input.addEventListener("keyup", function(event) {
