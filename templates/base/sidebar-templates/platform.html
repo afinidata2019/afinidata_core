@@ -132,6 +132,9 @@
           {% if perms.user_sessions.add_session %}
             <a class="collapse-item" href="{% url 'sessions:session_create' %}">Crear Sesión</a>
           {% endif %}
+          {% if perms.user_sessions.view_session %}
+            <a class="collapse-item" href="{% url 'sessions:test_session' %}">Pruebas de Sesiones</a>
+          {% endif %}
       </div>
     </div>
 </li>
