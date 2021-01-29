@@ -123,7 +123,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
         return c
 
 
-class TestSessionView(PermissionRequiredMixin, DetailView):
+class TestSessionView(PermissionRequiredMixin, ListView):
     model = models.Session
     permission_required = 'user_sessions.view_session'
     login_url = reverse_lazy('pages:login')
