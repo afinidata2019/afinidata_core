@@ -43,7 +43,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
             if self.request.GET.get('areas'):
                 params['areas'] = self.request.GET['areas']
             if self.request.GET.get('services'):
-                urls = models.Service.objects.filter(url=self.request.GET['services'])
+                urls = models.Service.objects.filter(available_service_id=self.request.GET['services'])
                 params['id__in'] = [service.field.session.id for service in urls]
             if self.request.GET.get('set_attributes'):
                 set_attributes = models.SetAttribute.objects.filter(attribute_id=self.request.GET['set_attributes'])
@@ -69,7 +69,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
         c['types_list'] = models.SessionType.objects.all().order_by('name')
         c['topics_list'] = Topic.objects.all().order_by('name')
         c['areas_list'] = Area.objects.all().order_by('name')
-        c['services_list'] = [x['url'] for x in models.Service.objects.values('url').distinct().order_by('url')]
+        c['services_list'] = [dict(id=x.id, name=x.name) for x in models.AvailableService.objects.all()]
         c['set_attributes_list'] = Attribute.objects.\
             filter(id__in=[x['attribute_id'] for x in models.SetAttribute.objects.values('attribute_id').distinct()])
 
@@ -106,7 +106,7 @@ class SessionListView(PermissionRequiredMixin, ListView):
             params['areas'] = self.request.GET['areas']
             c['areas'] = int(self.request.GET['areas'])
         if self.request.GET.get('services'):
-            urls = models.Service.objects.filter(url=self.request.GET['services'])
+            urls = models.Service.objects.filter(available_service_id=self.request.GET['services'])
             params['id__in'] = [service.field.session.id for service in urls]
             c['services'] = self.request.GET['services']
         if self.request.GET.get('set_attributes'):
