@@ -465,7 +465,7 @@
                   <div v-if="field.field_type == 'consume_service'"
                   class="my-3">
                     <div v-if="field.service">
-                        <span class="m-0 px-3">[[ field.service.url ]]</span>
+                        <span class="m-0 px-3">[[ field.service.available_service.name ]]</span>
                         <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.id}/edit/`"
                           class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
                         <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
