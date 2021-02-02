@@ -83,10 +83,10 @@
                         <select class="form-control m-1" name="services" id="services" value="{{ services }}">
                             <option value="">All Services</option>
                             {% for option in services_list %}
-                                {% if services == option %}
-                                    <option value="{{ option }}" selected="selected">{{ option }}</option>
+                                {% if services == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
                                 {% else %}
-                                    <option value="{{ option }}">{{ option }}</option>
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
