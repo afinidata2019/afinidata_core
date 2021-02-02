@@ -68,6 +68,14 @@ class RedirectSessionForm(forms.ModelForm):
         fields = ('session', )
 
 
+class ServiceSessionForm(forms.ModelForm):
+    available_service = forms.ModelChoiceField(queryset=models.AvailableService.objects.all().order_by('name'))
+
+    class Meta:
+        model = models.Service
+        fields = ('available_service', )
+
+
 class InteractionForm(forms.ModelForm):
     session_name = forms.CharField()
     question = forms.CharField()

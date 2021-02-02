@@ -733,8 +733,7 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ServiceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_service'
-    model = models.Service
-    fields = ('url', 'request_type')
+    form_class = forms.ServiceSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(ServiceCreateView, self).get_context_data()
@@ -754,8 +753,7 @@ class ServiceCreateView(PermissionRequiredMixin, CreateView):
 
 class ServiceEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_service'
-    model = models.Service
-    fields = ('url', 'request_type')
+    form_class = forms.ServiceSessionForm
     pk_url_kwarg = 'service_id'
 
     def get_context_data(self, **kwargs):
