@@ -255,7 +255,7 @@ class AvailableService(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.url
+        return self.name
 
 
 class Service(models.Model):
@@ -265,7 +265,7 @@ class Service(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.url
+        return self.available_service.name
 
 
 class ServiceParam(models.Model):

@@ -734,6 +734,7 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
 class ServiceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_service'
     form_class = forms.ServiceSessionForm
+    template_name = 'user_sessions/serviceparam_form.html'
 
     def get_context_data(self, **kwargs):
         c = super(ServiceCreateView, self).get_context_data()
@@ -744,6 +745,12 @@ class ServiceCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.field_id = self.kwargs['field_id']
+        form.instance.save()
+        for param in form.instance.available_service.suggested_params.split(','):
+            print(param)
+            p = models.ServiceParam(service=form.instance, parameter=param, value='')
+            p.save()
+            form.instance.serviceparam_set.add(p)
         return super(ServiceCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -754,6 +761,7 @@ class ServiceCreateView(PermissionRequiredMixin, CreateView):
 class ServiceEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_service'
     form_class = forms.ServiceSessionForm
+    model = models.Service
     pk_url_kwarg = 'service_id'
 
     def get_context_data(self, **kwargs):
