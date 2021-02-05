@@ -75,6 +75,7 @@ FIELD_TYPES = (('text', 'Text'),
                ('condition', 'Condition'),
                ('set_attributes', 'Set Attributes'),
                ('redirect_session', 'Redirect session'),
+               ('assign_sequence', 'Assign user to Sequence'),
                ('consume_service', 'Consume service'))
 
 
@@ -243,6 +244,17 @@ class RedirectSession(models.Model):
 
     def __str__(self):
         return self.session.name
+
+
+class AssignSequence(models.Model):
+    field = models.OneToOneField(Field, on_delete=models.CASCADE)
+    sequence_id = models.IntegerField(default=0)
+    start_position = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.sequence_id
 
 
 class AvailableService(models.Model):
