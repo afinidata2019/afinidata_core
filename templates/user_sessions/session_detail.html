@@ -555,6 +555,45 @@
                   </div>
                 </div>
                 <!-- end field type redirect_session-->
+                
+                <!-- field type assign_sequence-->
+                <div v-if="field.field_type == 'assign_sequence'">
+                  <div v-if="field.assignsequence">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Session</th>
+                          <th>Sequence</th>
+                          <th>Start position</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>[[ field.assignsequence.session.name ]]</td>
+                          <td>[[ field.assignsequence.sequence_id ]]</td>
+                          <td>[[ field.assignsequence.start_position ]]</td>
+                          <td class="text-right">
+                            <a
+                              :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/edit/`"
+                              class="btn btn-success btn-sm"
+                              ><i class="fas fa-pen"></i
+                            ></a>
+                            <a
+                              :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/delete/`"
+                              class="btn btn-danger btn-sm"
+                              ><i class="fas fa-times"></i
+                            ></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div v-else>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_assignsequence/`" >Add Sequence</a>
+                  </div>
+                </div>
+                <!-- end field type assign_sequence-->
               </div>
             </div>
           </div>

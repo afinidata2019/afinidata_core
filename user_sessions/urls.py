@@ -79,5 +79,11 @@ urlpatterns = [
          views.RedirectSessionEditView.as_view(), name='redirectsession_edit'),
     path('<int:session_id>/fields/<int:field_id>/redirectsession/<int:redirectsession_id>/delete/',
          views.RedirectSessionDeleteView.as_view(), name='redirectsession_delete'),
+    path('<int:session_id>/fields/<int:field_id>/add_assignsequence/', views.AssignSequenceCreateView.as_view(),
+         name='assignsequence_create'),
+    path('<int:session_id>/fields/<int:field_id>/assignsequence/<int:assignsequence_id>/edit/',
+         views.AssignSequenceEditView.as_view(), name='assignsequence_edit'),
+    path('<int:session_id>/fields/<int:field_id>/assignsequence/<int:assignsequence_id>/delete/',
+         views.AssignSequenceDeleteView.as_view(), name='assignsequence_delete'),
      path('fields/<int:pk>/', views.FieldsData.as_view(), name="api_fields_data")
 ]

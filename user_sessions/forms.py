@@ -120,12 +120,7 @@ class BotSessionForm(forms.Form):
         super(BotSessionForm, self).__init__(*args, **kwargs)
         response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
         if response.status_code == 200:
-            self.fields['bot_id'].choices = [ (x['id'], x['name']) for x in response.json()['results']]
-
-    # response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
-    # if response.status_code == 200:
-    #     for bot in response.json()['results']:
-    #         bots_list.append((bot['id'], bot['name']))
+            self.fields['bot_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
 
     bot_id = forms.ChoiceField(choices=tuple(bots_list))
     session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))

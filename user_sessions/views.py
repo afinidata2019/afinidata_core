@@ -886,6 +886,55 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class AssignSequenceCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_assignsequence'
+    model = models.AssignSequence
+    fields = ('sequence_id', 'start_position')
+
+    def get_context_data(self, **kwargs):
+        c = super(AssignSequenceCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        return super(AssignSequenceCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Assign to Sequence added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class AssignSequenceEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_assignsequence'
+    model = models.AssignSequence
+    fields = ('sequence_id', 'start_position')
+    pk_url_kwarg = 'assignsequence_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(AssignSequenceEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Assign to Sequence changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class AssignSequenceDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_assignsequence'
+    model = models.AssignSequence
+    pk_url_kwarg = 'assignsequence_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "Assign to Sequence has deleted.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class AddBotSessionView(LoginRequiredMixin, View):
     login_url = reverse_lazy('pages:login')
 
