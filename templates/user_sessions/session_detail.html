@@ -205,6 +205,8 @@
                         <th>Attribute</th>
                         <th>Value</th>
                         <th>Redirect Block</th>
+                        <th>Session</th>
+                        <th>Position</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -222,6 +224,18 @@
                         <td>
                           <span v-if="reply.redirect_block"
                             >[[ reply.redirect_block ]]</span
+                          >
+                          <span v-else>--</span>
+                        </td>
+                        <td>
+                          <span v-if="reply.session"
+                            >[[ reply.session.name ]]</span
+                          >
+                          <span v-else>--</span>
+                        </td>
+                        <td>
+                          <span v-if="reply.position || reply.position == 0"
+                            >[[ reply.position ]]</span
                           >
                           <span v-else>--</span>
                         </td>
