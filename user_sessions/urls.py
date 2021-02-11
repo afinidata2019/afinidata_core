@@ -85,5 +85,11 @@ urlpatterns = [
          views.AssignSequenceEditView.as_view(), name='assignsequence_edit'),
     path('<int:session_id>/fields/<int:field_id>/assignsequence/<int:assignsequence_id>/delete/',
          views.AssignSequenceDeleteView.as_view(), name='assignsequence_delete'),
-     path('fields/<int:pk>/', views.FieldsData.as_view(), name="api_fields_data")
+    path('<int:session_id>/fields/<int:field_id>/add_unsubcribesequence/', views.UnsubscribeSequenceCreateView.as_view(),
+         name='unsubcribesequence_create'),
+    path('<int:session_id>/fields/<int:field_id>/unsubcribesequence/<int:unsubcribesequence_id>/edit/',
+         views.UnsubscribeSequenceEditView.as_view(), name='unsubcribesequence_edit'),
+    path('<int:session_id>/fields/<int:field_id>/unsubcribesequence/<int:unsubcribesequence_id>/delete/',
+         views.UnsubscribeSequenceDeleteView.as_view(), name='unsubcribesequence_delete'),
+    path('fields/<int:pk>/', views.FieldsData.as_view(), name="api_fields_data")
 ]
