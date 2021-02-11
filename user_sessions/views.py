@@ -935,6 +935,55 @@ class AssignSequenceDeleteView(PermissionRequiredMixin, DeleteView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
 
+class UnsubscribeSequenceCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'user_sessions.add_unsubscribesequence'
+    model = models.UnsubscribeSequence
+    fields = ('sequence_id', )
+
+    def get_context_data(self, **kwargs):
+        c = super(UnsubscribeSequenceCreateView, self).get_context_data()
+        c['action'] = 'Create'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def form_valid(self, form):
+        form.instance.field_id = self.kwargs['field_id']
+        return super(UnsubscribeSequenceCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Unsubscribe to Sequence added in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class UnsubscribeSequenceEditView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'user_sessions.change_unsubscribesequence'
+    model = models.UnsubscribeSequence
+    fields = ('sequence_id', )
+    pk_url_kwarg = 'unsubscribesequence_id'
+
+    def get_context_data(self, **kwargs):
+        c = super(UnsubscribeSequenceEditView, self).get_context_data()
+        c['action'] = 'Edit'
+        c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
+        c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        return c
+
+    def get_success_url(self):
+        messages.success(self.request, "Unsubscribe to Sequence changed in field.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
+class UnsubscribeSequenceDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = 'user_sessions.delete_unsubscribesequence'
+    model = models.UnsubscribeSequence
+    pk_url_kwarg = 'unsubscribesequence_id'
+
+    def get_success_url(self):
+        messages.success(self.request, "Unsubscribe to Sequence has deleted.")
+        return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
+
+
 class AddBotSessionView(LoginRequiredMixin, View):
     login_url = reverse_lazy('pages:login')
 
