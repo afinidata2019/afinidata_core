@@ -205,6 +205,8 @@
                         <th>Attribute</th>
                         <th>Value</th>
                         <th>Redirect Block</th>
+                        <th>Session</th>
+                        <th>Position</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -222,6 +224,18 @@
                         <td>
                           <span v-if="reply.redirect_block"
                             >[[ reply.redirect_block ]]</span
+                          >
+                          <span v-else>--</span>
+                        </td>
+                        <td>
+                          <span v-if="reply.session"
+                            >[[ reply.session.name ]]</span
+                          >
+                          <span v-else>--</span>
+                        </td>
+                        <td>
+                          <span v-if="reply.position || reply.position == 0"
+                            >[[ reply.position ]]</span
                           >
                           <span v-else>--</span>
                         </td>
@@ -592,6 +606,40 @@
                   </div>
                 </div>
                 <!-- end field type assign_sequence-->
+                <!-- field type unsubscribe_sequence-->
+                <div v-if="field.field_type == 'unsubscribe_sequence'">
+                  <div v-if="field.unsubscribesequence">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Sequence</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>[[ field.unsubscribesequence.sequence_id ]]</td>
+                          <td class="text-right">
+                            <a
+                              :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/edit/`"
+                              class="btn btn-success btn-sm"
+                              ><i class="fas fa-pen"></i
+                            ></a>
+                            <a
+                              :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/delete/`"
+                              class="btn btn-danger btn-sm"
+                              ><i class="fas fa-times"></i
+                            ></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div v-else>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_unsubscribesequence/`" >Add Sequence</a>
+                  </div>
+                </div>
+                <!-- end field type unsubscribe_sequence-->
               </div>
             </div>
           </div>

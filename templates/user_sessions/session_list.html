@@ -90,6 +90,28 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
+                        <strong class="float-right m-2 mt-3"> Subscribe to Sequence:</strong>
+                        <select class="form-control m-1" name="subscribe_sequence" id="subscribe_sequence" value="{{ subscribe_sequence }}">
+                            <option value="">All sessions</option>
+                            {% for option in sequence_list %}
+                                {% if subscribe_sequence == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <strong class="float-right m-2 mt-3"> Unsubscribe Sequence:</strong>
+                        <select class="form-control m-1" name="unsubscribe_sequence" id="unsubscribe_sequence" value="{{ unsubscribe_sequence }}">
+                            <option value="">All sessions</option>
+                            {% for option in sequence_list %}
+                                {% if unsubscribe_sequence == option.id %}
+                                    <option value="{{ option.id }}" selected="selected">{{ option.name }}</option>
+                                {% else %}
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                         <input type="submit" class="btn btn-primary m-1 mx-4" value="Filter">
 
                         <strong class="float-right total-sessions m-2 mt-3"> Total: {{ total }}</strong>
