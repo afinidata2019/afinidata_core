@@ -905,8 +905,8 @@ class RedirectSessionDeleteView(PermissionRequiredMixin, DeleteView):
 
 class AssignSequenceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_assignsequence'
-    model = models.AssignSequence
-    fields = ('sequence_id', 'start_position')
+    template_name = 'user_sessions/assignsequence_form.html'
+    form_class = forms.SubscribeSequenceSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(AssignSequenceCreateView, self).get_context_data()
@@ -926,8 +926,9 @@ class AssignSequenceCreateView(PermissionRequiredMixin, CreateView):
 
 class AssignSequenceEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_assignsequence'
+    template_name = 'user_sessions/assignsequence_form.html'
+    form_class = forms.SubscribeSequenceSessionForm
     model = models.AssignSequence
-    fields = ('sequence_id', 'start_position')
     pk_url_kwarg = 'assignsequence_id'
 
     def get_context_data(self, **kwargs):
@@ -954,8 +955,8 @@ class AssignSequenceDeleteView(PermissionRequiredMixin, DeleteView):
 
 class UnsubscribeSequenceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_unsubscribesequence'
-    model = models.UnsubscribeSequence
-    fields = ('sequence_id', )
+    template_name = 'user_sessions/unsubscribesequence_form.html'
+    form_class = forms.UnsubscribeSequenceSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(UnsubscribeSequenceCreateView, self).get_context_data()
@@ -975,8 +976,9 @@ class UnsubscribeSequenceCreateView(PermissionRequiredMixin, CreateView):
 
 class UnsubscribeSequenceEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_unsubscribesequence'
+    template_name = 'user_sessions/unsubscribesequence_form.html'
+    form_class = forms.UnsubscribeSequenceSessionForm
     model = models.UnsubscribeSequence
-    fields = ('sequence_id', )
     pk_url_kwarg = 'unsubscribesequence_id'
 
     def get_context_data(self, **kwargs):
