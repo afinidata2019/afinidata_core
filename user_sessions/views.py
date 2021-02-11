@@ -50,6 +50,10 @@ class SessionListView(PermissionRequiredMixin, ListView):
                 params['id__in'] = [set_attribute.field.session.id for set_attribute in set_attributes]
             if self.request.GET.get('bots'):
                 params['id__in'] = [x.session_id for x in models.BotSessions.objects.filter(bot_id=self.request.GET['bots'])]
+            if self.request.GET.get('subscribe_sequence'):
+                params['id__in'] = [x.session_id for x in models.AssignSequence.objects.filter(sequence_id=self.request.GET['subscribe_sequence'])]
+            if self.request.GET.get('unsubscribe_sequence'):
+                params['id__in'] = [x.session_id for x in models.UnsubscribeSequence.objects.filter(sequence_id=self.request.GET['unsubscribe_sequence'])]
             return models.Session.objects.filter(**params)
         except:
             return models.Session.objects.all()
@@ -66,6 +70,11 @@ class SessionListView(PermissionRequiredMixin, ListView):
         if response.status_code == 200:
             bots_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['bots_list'] = bots_list
+        sequence_list = []
+        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        if response.status_code == 200:
+            sequence_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
+        c['sequence_list'] = sequence_list
         c['types_list'] = models.SessionType.objects.all().order_by('name')
         c['topics_list'] = Topic.objects.all().order_by('name')
         c['areas_list'] = Area.objects.all().order_by('name')
@@ -75,6 +84,8 @@ class SessionListView(PermissionRequiredMixin, ListView):
 
         c['programs'] = ''
         c['bots'] = ''
+        c['subscribe_sequence'] = ''
+        c['unsubscribe_sequence'] = ''
         c['types'] = ''
         c['topics'] = ''
         c['areas'] = ''
@@ -96,6 +107,12 @@ class SessionListView(PermissionRequiredMixin, ListView):
         if self.request.GET.get('bots'):
             params['id__in'] = [x.session_id for x in models.BotSessions.objects.filter(bot_id=self.request.GET['bots'])]
             c['bots'] = int(self.request.GET['bots'])
+        if self.request.GET.get('subscribe_sequence'):
+            params['id__in'] = [x.session_id for x in models.AssignSequence.objects.filter(sequence_id=self.request.GET['subscribe_sequence'])]
+            c['subscribe_sequence'] = int(self.request.GET['subscribe_sequence'])
+        if self.request.GET.get('unsubscribe_sequence'):
+            params['id__in'] = [x.session_id for x in models.UnsubscribeSequence.objects.filter(sequence_id=self.request.GET['unsubscribe_sequence'])]
+            c['unsubscribe_sequence'] = int(self.request.GET['unsubscribe_sequence'])
         if self.request.GET.get('types'):
             params['session_type'] = self.request.GET['types']
             c['types'] = int(self.request.GET['types'])
