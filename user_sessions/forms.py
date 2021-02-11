@@ -124,3 +124,35 @@ class BotSessionForm(forms.Form):
 
     bot_id = forms.ChoiceField(choices=tuple(bots_list))
     session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))
+
+
+class SubscribeSequenceSessionForm(forms.ModelForm):
+    sequences_list = []
+
+    def __init__(self, *args, **kwargs):
+        super(SubscribeSequenceSessionForm, self).__init__(*args, **kwargs)
+        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        if response.status_code == 200:
+            self.fields['sequence_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
+
+    sequence_id = forms.ChoiceField(choices=tuple(sequences_list))
+
+    class Meta:
+        model = models.AssignSequence
+        fields = ('sequence_id', 'start_position')
+
+
+class UnsubscribeSequenceSessionForm(forms.ModelForm):
+    sequences_list = []
+
+    def __init__(self, *args, **kwargs):
+        super(UnsubscribeSequenceSessionForm, self).__init__(*args, **kwargs)
+        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        if response.status_code == 200:
+            self.fields['sequence_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
+
+    sequence_id = forms.ChoiceField(choices=tuple(sequences_list))
+
+    class Meta:
+        model = models.UnsubscribeSequence
+        fields = ('sequence_id', )
