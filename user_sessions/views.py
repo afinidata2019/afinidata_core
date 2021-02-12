@@ -489,7 +489,6 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.field_id = self.kwargs['field_id']
-        form.instance.session_id = self.kwargs['session_id']
         return super(ReplyCreateView, self).form_valid(form)
 
     def get_success_url(self):
