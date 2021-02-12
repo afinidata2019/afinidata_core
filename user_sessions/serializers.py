@@ -35,7 +35,8 @@ class SubscribeSequenceSerializer(serializers.ModelSerializer):
         response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/?id=' + str(obj.sequence_id))
         name = obj.sequence_id
         if response.status_code == 200:
-            name = "%s (%s)" % (response.json()['results'][0]['name'], response.json()['results'][0]['description'])
+            if len(response.json()['results']) > 0:
+                name = "%s (%s)" % (response.json()['results'][0]['name'], response.json()['results'][0]['description'])
         return name
 
     class Meta:
@@ -50,7 +51,8 @@ class UnsubscribeSequenceServiceSerializer(serializers.ModelSerializer):
         response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/?id=' + str(obj.sequence_id))
         name = obj.sequence_id
         if response.status_code == 200:
-            name = "%s (%s)" % (response.json()['results'][0]['name'], response.json()['results'][0]['description'])
+            if len(response.json()['results']) > 0:
+                name = "%s (%s)" % (response.json()['results'][0]['name'], response.json()['results'][0]['description'])
         return name
 
     class Meta:
