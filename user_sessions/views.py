@@ -28,6 +28,8 @@ class SessionListView(PermissionRequiredMixin, ListView):
     def get_queryset(self):
         try:
             params = dict()
+            if self.request.GET.get('session_id'):
+                params['id'] = self.request.GET['session_id']
             if self.request.GET.get('name'):
                 params['name__icontains'] = self.request.GET['name']
             if self.request.GET.get('min_range'):
@@ -95,6 +97,9 @@ class SessionListView(PermissionRequiredMixin, ListView):
         if self.request.GET.get('name'):
             params['name__icontains'] = self.request.GET['name']
             c['name'] = self.request.GET['name']
+        if self.request.GET.get('session_id'):
+            params['id'] = self.request.GET['session_id']
+            c['session_id'] = self.request.GET['session_id']
         if self.request.GET.get('min_range'):
             params['min'] = self.request.GET['min_range']
             c['min_range'] = self.request.GET['min_range']
