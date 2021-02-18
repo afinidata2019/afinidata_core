@@ -26,7 +26,10 @@ class ConversationWorkflow(View):
         channel_id = form.data['channel_id']
         user_channel_id = form.data['user_channel_id']
         user_message = form.data['message']
-        user_channel = UserChannel.objects.filter(user_channel_id=user_channel_id)
+        user_channel = UserChannel.objects.filter(user_channel_id=user_channel_id,
+                                                  bot_id=bot_id,
+                                                  channel_id=channel_id,
+                                                  bot_channel_id=bot_channel_id)
         endpoints = dict(get_field=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session_field/',
                          get_session=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session/',
                          save_reply=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/save_last_reply/',
