@@ -102,10 +102,15 @@ class ConversationWorkflow(View):
             pass
 
         first_message = True
+        # Is session finished
+        session_finish = user.userdata_set.filter(attribute__name='session_finish')
+        if session_finish.exists():
+            session_finish = session_finish.last().data_value
+        else:
+            session_finish = 'true'
         # Get the first message
         service_params = dict(user_id=user.id)
         service_response = requests.post(endpoints['get_field'], data=service_params).json()
-        session_finish = service_response['set_attributes']['session_finish']
 
         # If the session is already finished
         if session_finish == 'true':
