@@ -1,7 +1,7 @@
 {% extends 'base/private.html' %}
 
 {% block title %}
-    Session: {{ object.name }}
+Session: {{ object.name }}
 {%endblock %}
 
 {% block content %}
@@ -9,12 +9,8 @@
 <div class="container-fluid">
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Session: {{ object.name }}</h1>
-    <a
-      href="{% url 'sessions:session_list' %}"
-      class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-    >
-      <i class="fas fa-list fa-sm text-white-50"></i> Back to Sessions</a
-    >
+    <a href="{% url 'sessions:session_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <i class="fas fa-list fa-sm text-white-50"></i> Back to Sessions</a>
   </div>
 </div>
 
@@ -37,92 +33,76 @@
       <strong>Created At: </strong><span>{{ object.created_at }}</span><br />
       <strong>Updated At: </strong><span>{{ object.updated_at }}</span><br />
       {% if bot_sessions %}
-            <strong class="text-gray-900">Bots: </strong>
-              <ul>
-                  {% for bot_session in bot_sessions %}
-                      <li><strong>Bot ID: </strong> {{ bot_session.bot_id }} ({{ bot_session.session_type }})</li>
-                  {% endfor %}
-              </ul>
+      <strong class="text-gray-900">Bots: </strong>
+      <ul>
+        {% for bot_session in bot_sessions %}
+        <li><strong>Bot ID: </strong> {{ bot_session.bot_id }} ({{ bot_session.session_type }})</li>
+        {% endfor %}
+      </ul>
       {% endif %}
       {% if inbounds %}
-            <strong class="text-gray-900">Inbounds: </strong>
-              <ul>
-                  {% for inbound in inbounds %}
-                      <li><a target="_blank"
-                              href="{% url 'sessions:session_detail' session_id=inbound.id %}">{{ inbound.name }}</a></li>
-                  {% endfor %}
-              </ul>
+      <strong class="text-gray-900">Inbounds: </strong>
+      <ul>
+        {% for inbound in inbounds %}
+        <li><a target="_blank" href="{% url 'sessions:session_detail' session_id=inbound.id %}">{{ inbound.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
       {% endif %}
       {% if outbounds %}
-            <strong class="text-gray-900">Outbounds: </strong>
-              <ul>
-                  {% for outbound in outbounds %}
-                      <li><a target="_blank"
-                              href="{% url 'sessions:session_detail' session_id=outbound.id %}">{{ outbound.name }}</a></li>
-                  {% endfor %}
-              </ul>
+      <strong class="text-gray-900">Outbounds: </strong>
+      <ul>
+        {% for outbound in outbounds %}
+        <li><a target="_blank" href="{% url 'sessions:session_detail' session_id=outbound.id %}">{{ outbound.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
       {% endif %}
       <strong>Actions: </strong>
       <a href="{% url 'sessions:add_bot_session' session_id=object.pk %}"
-                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Set as bot Welcome or Default</a>
-      <a
-        href="{% url 'sessions:session_update' session_id=object.pk %}"
-        class="btn btn-success"
-        >Edit</a
-      >
-      <a
-        href="{% url 'sessions:session_delete' session_id=object.pk %}"
-        class="btn btn-danger"
-        >Delete</a
-      >
+        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> Set as bot Welcome or Default</a>
+      <a href="{% url 'sessions:session_update' session_id=object.pk %}" class="btn btn-success">Edit</a>
+      <a href="{% url 'sessions:session_delete' session_id=object.pk %}" class="btn btn-danger">Delete</a>
     </div>
   </div>
 </div>
-<style>td {word-break: break-all;}</style>
+<style>
+  td {
+    word-break: break-all;
+  }
+</style>
 <div class="container-fluid">
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Fields:</h1>
-    <a
-      href="{% url 'sessions:field_create' session_id=object.pk %}"
-      class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-    >
-      <i class="fas fa-plus fa-sm text-white-50"></i> Add field</a
-    >
+    <a href="{% url 'sessions:field_create' session_id=object.pk %}"
+      class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <i class="fas fa-plus fa-sm text-white-50"></i> Add field</a>
   </div>
 </div>
 <div class="container-fluid" id="sessions">
   <div v-if="loading" class="my-5">
     <div class="d-flex justify-content-center">
-      <div
-        class="spinner-border text-primary"
-        role="status"
-        style="width: 4rem; height: 4rem"
-      >
+      <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem">
         <span class="sr-only">Cargando...</span>
       </div>
     </div>
   </div>
   <div v-if="!loading">
-    <draggable v-model="fields" @change="updateOrder"
-    :force-fallback="true"
-    :scroll-sensitivity="200"
-    handle=".fa-arrows-alt">
+    <draggable v-model="fields" @change="updateOrder" :force-fallback="true" :scroll-sensitivity="200"
+      handle=".fa-arrows-alt">
       <div v-for="field in fields" :key="field.id">
         <div class="row my-2">
           <div class="col-md-12">
             <div class="card" v-bind:class="{ 'ml-5': field.padding == 1 }">
               <div class="card-body">
                 <div class="card-title">
-                  <span class="m-0 font-weight-bold text-primary"
-                    >([[ field.position ]]) [[ field.field_type_display ]]</span
-                  >
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
-                    class="btn btn-danger"
-                    >Delete</a>
+                  <span class="m-0 font-weight-bold text-primary">([[ field.position ]]) [[ field.field_type_display
+                    ]]</span>
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`" class="btn btn-danger">Delete</a>
                   <div style="float:right">
-                    <button class="btn btn-outline-primary btn-sm" type="button"><i class="fa fa-arrows-alt"></i></button>
+                    <button class="btn btn-outline-primary btn-sm" type="button"><i
+                        class="fa fa-arrows-alt"></i></button>
                   </div>
                 </div>
 
@@ -139,26 +119,53 @@
                       <tr v-for="message in field.message_set">
                         <td>[[ message.text ]]</td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{ object.pk }}/fields/${field.id}/messages/${message.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                          >
+                          <a :href="`/sessions/{{ object.pk }}/fields/${field.id}/messages/${message.id}/edit/`"
+                            class="btn btn-success btn-sm">
                             <i class="fas fa-pen"></i>
                           </a>
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                          >
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
+                            class="btn btn-danger btn-sm">
                             <i class="fas fa-times"></i>
                           </a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`"
-                    >Add message</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`">Add message</a>
+                </div>
+                <!-- end field type text-->
+
+                <!-- field type one_time_notification-->
+                <div v-if="field.field_type == 'one_time_notification'">
+                  <span>[[field]]</span>
+                  <div v-if="field.message_set[0]">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th width="85%">Message</th>
+                          <th width="20%">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="message in field.message_set">
+                          <td>[[ message.text ]]</td>
+                          <td class="text-right">
+                            <a :href="`/sessions/{{ object.pk }}/fields/${field.id}/messages/${message.id}/edit/`"
+                              class="btn btn-success btn-sm">
+                              <i class="fas fa-pen"></i>
+                            </a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
+                              class="btn btn-danger btn-sm">
+                              <i class="fas fa-times"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div v-else>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`">Add message</a>
+                  </div>
                 </div>
                 <!-- end field type text-->
 
@@ -175,24 +182,15 @@
                       <tr v-for="message in field.message_set">
                         <td>[[ message.text ]]</td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/messages/${message.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`"
-                    >Add url</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`">Add url</a>
                 </div>
                 <!-- end field type image -->
 
@@ -222,42 +220,27 @@
                           <span v-else>--</span>
                         </td>
                         <td>
-                          <span v-if="reply.redirect_block"
-                            >[[ reply.redirect_block ]]</span
-                          >
+                          <span v-if="reply.redirect_block">[[ reply.redirect_block ]]</span>
                           <span v-else>--</span>
                         </td>
                         <td>
-                          <span v-if="reply.session"
-                            >[[ reply.session.name ]]</span
-                          >
+                          <span v-if="reply.session">[[ reply.session.name ]]</span>
                           <span v-else>--</span>
                         </td>
                         <td>
-                          <span v-if="reply.position || reply.position == 0"
-                            >[[ reply.position ]]</span
-                          >
+                          <span v-if="reply.position || reply.position == 0">[[ reply.position ]]</span>
                           <span v-else>--</span>
                         </td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
-                          <a
-                            :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                          <a :href="`/sessions/{{ object.pk }}/fields/${field.id}/replies/${reply.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_reply/`"
-                    >Add Reply</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_reply/`">Add Reply</a>
                 </div>
                 <!-- end field type quick replies -->
 
@@ -278,36 +261,23 @@
                         <td>[[ userinput.text ]]</td>
                         <td>[[ userinput.validation ]]</td>
                         <td>
-                          <span
-                            >[[userinput.attribute ? userinput.attribute.name :
-                            '']]</span
-                          >
+                          <span>[[userinput.attribute ? userinput.attribute.name :
+                            '']]</span>
                         </td>
                         <td>
-                          <span
-                            >[[userinput.session ? userinput.session.name :
-                            '']]</span
-                          >
+                          <span>[[userinput.session ? userinput.session.name :
+                            '']]</span>
                         </td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/userinput/${userinput.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_userinput/`"
-                    >Add validation</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_userinput/`">Add validation</a>
                 </div>
                 <!-- end field type user input  -->
 
@@ -333,31 +303,20 @@
                           <span>[[button.url ? button.url : '--' ]]</span>
                         </td>
                         <td>
-                          <span
-                            >[[ button.block_names ? button.block_names : ''
-                            ]]</span
-                          >
+                          <span>[[ button.block_names ? button.block_names : ''
+                            ]]</span>
                         </td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
 
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/buttons/${button.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_button/`"
-                    >Add Button</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_button/`">Add Button</a>
                 </div>
                 <!-- end field type buttons-->
 
@@ -376,24 +335,15 @@
                         <td>[[ setattribute.attribute.name ]]</td>
                         <td>[[ setattribute.value ]]</td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/setattribute/${setattribute.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_setattribute/`"
-                    >Add Attribute</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_setattribute/`">Add Attribute</a>
                 </div>
                 <!-- end field type set_attributes-->
 
@@ -414,24 +364,15 @@
                         <td>[[ condition.condition ]]</td>
                         <td>[[ condition.value ]]</td>
                         <td class="text-right">
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/edit/`"
-                            class="btn btn-success btn-sm"
-                            ><i class="fas fa-pen"></i
-                          ></a>
-                          <a
-                            :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/delete/`"
-                            class="btn btn-danger btn-sm"
-                            ><i class="fas fa-times"></i
-                          ></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/edit/`"
+                            class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                          <a :href="`/sessions/{{object.pk}}/fields/${field.id}/condition/${condition.id}/delete/`"
+                            class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <a
-                    :href="`/sessions/{{object.pk}}/fields/${field.id}/add_condition/`"
-                    >Add Condition</a
-                  >
+                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_condition/`">Add Condition</a>
                 </div>
                 <!-- end field type condition-->
 
@@ -449,26 +390,17 @@
                         <tr>
                           <td>[[ field.redirectblock.block ]]</td>
                           <td class="text-right">
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/edit/`"
-                              class="btn btn-success btn-sm"
-                              ><i class="fas fa-pen"></i
-                            ></a>
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/delete/`"
-                              class="btn btn-danger btn-sm"
-                              ><i class="fas fa-times"></i
-                            ></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/edit/`"
+                              class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/blocks/${field.redirectblock.id}/delete/`"
+                              class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div v-else>
-                    <a
-                      :href="`/sessions/{{object.pk}}/fields/${field.id}/add_block/`"
-                      >Add Block</a
-                    >
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_block/`">Add Block</a>
                   </div>
                 </div>
                 <!-- end field type save_values_block-->
@@ -476,23 +408,23 @@
                 <!-- field type consume service-->
 
                 <!-- field type consumer service -->
-                  <div v-if="field.field_type == 'consume_service'"
-                  class="my-3">
-                    <div v-if="field.service">
-                        <span class="m-0 px-3">[[ field.service.available_service.name ]] ([[ field.service.available_service.description ]])</span>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.id}/edit/`"
-                          class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
-                          class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
-                    </div>
-                    <div v-else>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_service/`"
-                          class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
-                          class="btn btn-danger btn-sm">Delete</a>
-                    </div>
+                <div v-if="field.field_type == 'consume_service'" class="my-3">
+                  <div v-if="field.service">
+                    <span class="m-0 px-3">[[ field.service.available_service.name ]] ([[
+                      field.service.available_service.description ]])</span>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/services/${field.service.id}/edit/`"
+                      class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`" class="btn btn-danger btn-sm"><i
+                        class="fas fa-times"></i></a>
                   </div>
-                  <!--
+                  <div v-else>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_service/`"
+                      class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/delete/`"
+                      class="btn btn-danger btn-sm">Delete</a>
+                  </div>
+                </div>
+                <!--
                     TODO: pending review this part of code i don't understand
                     <div v-else>
                     <a :href="`/sessions/{{ object.pk }}/fields/${field.pk}/delete/`"
@@ -504,28 +436,28 @@
 
                 <div v-if="field.field_type == 'consume_service'">
                   <div v-if="field.service">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                              <th width="40%">Parameter</th>
-                              <th width="40%">Value</th>
-                              <th width="20%">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="serviceparam in field.service.serviceparam_set">
-                                <td>[[ serviceparam.parameter ]]</td>
-                                <td>[[ serviceparam.value ]]</td>
-                                <td class="text-right">
-                                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/edit/`"
-                                    class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
-                                  <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/delete/`"
-                                    class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
-                                </td>
-                            </tr>
-                        </tbody>
-                      </table>
-                        <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_serviceparam/`">Add Parameter</a>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th width="40%">Parameter</th>
+                          <th width="40%">Value</th>
+                          <th width="20%">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="serviceparam in field.service.serviceparam_set">
+                          <td>[[ serviceparam.parameter ]]</td>
+                          <td>[[ serviceparam.value ]]</td>
+                          <td class="text-right">
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/edit/`"
+                              class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/serviceparams/${serviceparam.id}/delete/`"
+                              class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_serviceparam/`">Add Parameter</a>
                   </div>
                 </div>
                 <!-- end field type consume service-->
@@ -546,30 +478,21 @@
                           <td>[[ field.redirectsession.session.name ]]</td>
                           <td>[[ field.redirectsession.position ]]</td>
                           <td class="text-right">
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/edit/`"
-                              class="btn btn-success btn-sm"
-                              ><i class="fas fa-pen"></i
-                            ></a>
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/delete/`"
-                              class="btn btn-danger btn-sm"
-                              ><i class="fas fa-times"></i
-                            ></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/edit/`"
+                              class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/redirectsession/${field.redirectsession.id}/delete/`"
+                              class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div v-else>
-                    <a
-                      :href="`/sessions/{{object.pk}}/fields/${field.id}/add_redirectsession/`"
-                      >Add Session</a
-                    >
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_redirectsession/`">Add Session</a>
                   </div>
                 </div>
                 <!-- end field type redirect_session-->
-                
+
                 <!-- field type assign_sequence-->
                 <div v-if="field.field_type == 'assign_sequence'">
                   <div v-if="field.assignsequence">
@@ -586,23 +509,17 @@
                           <td>[[ field.assignsequence.name ]]</td>
                           <td>[[ field.assignsequence.start_position ]]</td>
                           <td class="text-right">
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/edit/`"
-                              class="btn btn-success btn-sm"
-                              ><i class="fas fa-pen"></i
-                            ></a>
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/delete/`"
-                              class="btn btn-danger btn-sm"
-                              ><i class="fas fa-times"></i
-                            ></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/edit/`"
+                              class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/assignsequence/${field.assignsequence.id}/delete/`"
+                              class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div v-else>
-                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_assignsequence/`" >Add Sequence</a>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_assignsequence/`">Add Sequence</a>
                   </div>
                 </div>
                 <!-- end field type assign_sequence-->
@@ -620,23 +537,17 @@
                         <tr>
                           <td>[[ field.unsubscribesequence.name ]]</td>
                           <td class="text-right">
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/edit/`"
-                              class="btn btn-success btn-sm"
-                              ><i class="fas fa-pen"></i
-                            ></a>
-                            <a
-                              :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/delete/`"
-                              class="btn btn-danger btn-sm"
-                              ><i class="fas fa-times"></i
-                            ></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/edit/`"
+                              class="btn btn-success btn-sm"><i class="fas fa-pen"></i></a>
+                            <a :href="`/sessions/{{object.pk}}/fields/${field.id}/unsubscribesequence/${field.unsubscribesequence.id}/delete/`"
+                              class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div v-else>
-                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_unsubscribesequence/`" >Add Sequence</a>
+                    <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_unsubscribesequence/`">Add Sequence</a>
                   </div>
                 </div>
                 <!-- end field type unsubscribe_sequence-->
@@ -663,21 +574,21 @@
       };
     },
     methods: {
-      updateOrder: function(evt){
-        const fields = this.fields.map( (item, i) => ({...item, position: i}));
-        fetch("/sessions/fields/{{ object.id }}/",{
+      updateOrder: function (evt) {
+        const fields = this.fields.map((item, i) => ({ ...item, position: i }));
+        fetch("/sessions/fields/{{ object.id }}/", {
           method: 'post',
           headers: {
             "X-CSRFToken": '{{ csrf_token }}',
             'Content-Type': "application/json",
           },
-          body: JSON.stringify({fields})
+          body: JSON.stringify({ fields })
         })
-        .then( resp => resp.json() )
-        .then( data => {
-          this.fields = fields;
-        })
-        .catch(err => console.log(err) );
+          .then(resp => resp.json())
+          .then(data => {
+            this.fields = fields;
+          })
+          .catch(err => console.log(err));
       },
       getData: function () {
         fetch("/sessions/fields/{{ object.id }}/")
@@ -686,11 +597,11 @@
             var f = []
             var isCondition = false;
 
-            data.forEach( (item, i) => {
-              if(isCondition){
-                f.push({...item, padding: 1});
+            data.forEach((item, i) => {
+              if (isCondition) {
+                f.push({ ...item, padding: 1 });
               } else {
-                f.push({...item, padding: 0});
+                f.push({ ...item, padding: 0 });
               }
               isCondition = !!(item.field_type === 'condition');
             });
