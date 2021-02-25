@@ -105,7 +105,7 @@ class ConversationWorkflow(View):
         # Is session finished
         session_finish = user.userdata_set.filter(attribute__name='session_finish')
         if session_finish.exists():
-            session_finish = session_finish.last().data_value
+            session_finish = session_finish.last().data_value.lower()
         else:
             session_finish = 'true'
         # Get the first message
@@ -123,7 +123,7 @@ class ConversationWorkflow(View):
             service_params = dict(user_id=user.id,
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
-            session_finish = service_response['set_attributes']['session_finish']
+            session_finish = service_response['set_attributes']['session_finish'].lower()
             first_message = False
 
             # Crear interaccion de inicio de default
@@ -137,7 +137,7 @@ class ConversationWorkflow(View):
                 # Get the next message
                 service_params = dict(user_id=user.id)
                 service_response = requests.post(endpoints['get_field'], data=service_params).json()
-                session_finish = service_response['set_attributes']['session_finish']
+                session_finish = service_response['set_attributes']['session_finish'].lower()
 
             first_message = False
             save_user_input = False
@@ -161,7 +161,7 @@ class ConversationWorkflow(View):
                                              channel_id=channel_id,
                                              user_channel_id=user_channel_id,
                                              bot_channel_id=bot_channel_id,
-                                             type='text',
+                                             type='text' if 'OTN' not in message else 'one_time_notification',
                                              content=message['text']))
                     elif 'attachment' in message:
                         if 'type' in message['attachment']:
