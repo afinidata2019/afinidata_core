@@ -118,7 +118,7 @@ class ConversationWorkflow(View):
         service_response = requests.post(endpoints['get_field'], data=service_params).json()
 
         # If the session is already finished
-        if session_finish == 'true':
+        if session_finish.lower() == 'true':
             # Get bot default session:
             session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
             if session.exists():
