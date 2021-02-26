@@ -13,6 +13,11 @@ import requests
 import os
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ConversationWorkflow(View):
 
@@ -105,7 +110,7 @@ class ConversationWorkflow(View):
         # Is session finished
         session_finish = user.userdata_set.filter(attribute__name='session_finish')
         if session_finish.exists():
-            session_finish = session_finish.last().data_value.lower()
+            session_finish = session_finish.last().data_value
         else:
             session_finish = 'true'
         # Get the first message
@@ -123,7 +128,7 @@ class ConversationWorkflow(View):
             service_params = dict(user_id=user.id,
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
-            session_finish = service_response['set_attributes']['session_finish'].lower()
+            session_finish = service_response['set_attributes']['session_finish']
             first_message = False
 
             # Crear interaccion de inicio de default
@@ -132,12 +137,21 @@ class ConversationWorkflow(View):
                                            interaction=bot_interaction, value=0,
                                            created_at=datetime.now(), updated_at=datetime.now())
 
-        while session_finish == 'false':
+        logger.warning('----------------------->')
+        logger.warning(service_params)
+        logger.warning('----------------------->')
+        logger.warning('***********************>')
+        logger.warning(service_response)
+        logger.warning('***********************>')
+
+        while session_finish.lower() == 'false':
             if not first_message:
                 # Get the next message
                 service_params = dict(user_id=user.id)
                 service_response = requests.post(endpoints['get_field'], data=service_params).json()
-                session_finish = service_response['set_attributes']['session_finish'].lower()
+                if service_response.get('set_attributes', {}).get('request_error'):
+                    return JsonResponse(dict(response={}))
+                session_finish = service_response['set_attributes']['session_finish']
 
             first_message = False
             save_user_input = False

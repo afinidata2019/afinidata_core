@@ -204,8 +204,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 CORS_ALLOW_CREDENTIALS = True
 
 
@@ -244,6 +242,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
@@ -252,3 +251,4 @@ CORS_ORIGIN_WHITELIST = [
     "https://www.twilio.com",
     "https://hottriggers.afinidata.com"
 ]
+CORS_ORIGIN_ALLOW_ALL = True
