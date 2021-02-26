@@ -7,15 +7,10 @@ from entities.models import Entity
 from django.http import JsonResponse, Http404
 from conversations import forms
 from bots.models import Interaction, UserInteraction
-from datetime import datetime
+from django.utils import timezone
 from user_sessions.models import BotSessions
 import requests
 import os
-
-
-import logging
-logger = logging.getLogger(__name__)
-
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -31,6 +26,7 @@ class ConversationWorkflow(View):
         channel_id = form.data['channel_id']
         user_channel_id = form.data['user_channel_id']
         user_message = form.data['message']
+
         user_channel = UserChannel.objects.filter(user_channel_id=user_channel_id,
                                                   bot_id=bot_id,
                                                   channel_id=channel_id,
@@ -93,7 +89,7 @@ class ConversationWorkflow(View):
             bot_interaction = Interaction.objects.get(name='start_registration')
             UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
                                            interaction=bot_interaction, value=0,
-                                           created_at=datetime.now(), updated_at=datetime.now())
+                                           created_at=timezone.now(), updated_at=timezone.now())
         else:
             user = user_channel.last().user
 
@@ -135,22 +131,13 @@ class ConversationWorkflow(View):
             bot_interaction = Interaction.objects.get(name='default')
             UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
                                            interaction=bot_interaction, value=0,
-                                           created_at=datetime.now(), updated_at=datetime.now())
-
-        logger.warning('----------------------->')
-        logger.warning(service_params)
-        logger.warning('----------------------->')
-        logger.warning('***********************>')
-        logger.warning(service_response)
-        logger.warning('***********************>')
+                                           created_at=timezone.now(), updated_at=timezone.now())
 
         while session_finish.lower() == 'false':
             if not first_message:
                 # Get the next message
                 service_params = dict(user_id=user.id)
                 service_response = requests.post(endpoints['get_field'], data=service_params).json()
-                if service_response.get('set_attributes', {}).get('request_error'):
-                    return JsonResponse(dict(response={}))
                 session_finish = service_response['set_attributes']['session_finish']
 
             first_message = False
@@ -223,4 +210,5 @@ class ConversationWorkflow(View):
                                          content=service_response['set_attributes']['user_input_text']))
             if save_user_input or save_text_reply:
                 session_finish = 'true'
+
         return JsonResponse(dict(response=response))

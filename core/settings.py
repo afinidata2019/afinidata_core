@@ -251,4 +251,4 @@ CORS_ORIGIN_WHITELIST = [
     "https://www.twilio.com",
     "https://hottriggers.afinidata.com"
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
