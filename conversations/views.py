@@ -113,7 +113,7 @@ class ConversationWorkflow(View):
         service_response = requests.post(endpoints['get_field'], data=service_params).json()
 
         # If the session is already finished
-        if session_finish == 'true':
+        if session_finish.lower() == 'true':
             # Get bot default session:
             session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
             if session.exists():
@@ -132,7 +132,7 @@ class ConversationWorkflow(View):
                                            interaction=bot_interaction, value=0,
                                            created_at=datetime.now(), updated_at=datetime.now())
 
-        while session_finish == 'false':
+        while session_finish.lower() == 'false':
             if not first_message:
                 # Get the next message
                 service_params = dict(user_id=user.id)
