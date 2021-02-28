@@ -35,7 +35,8 @@ class ConversationWorkflow(View):
                          get_session=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session/',
                          save_reply=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/save_last_reply/',
                          create_user=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/create_messenger_user/',
-                         get_info=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/')
+                         get_info=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/',
+                         get_data=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_data/')
         response = []
         if not user_channel.exists():
             service_response = requests.post(endpoints['create_user'],
@@ -72,6 +73,21 @@ class ConversationWorkflow(View):
                                                     user_id=user.id,
                                                     data_value=service_response['data'][data_key],
                                                     attribute_id=attribute.id)
+                for data_key in ['ref']:
+                    service_params = dict(user_channel_id=user_channel_id,
+                                          attribute_key=data_key)
+                    service_response = requests.post(endpoints['get_data'], data=service_params).json()
+                    if 'request_status' in service_response and service_response['request_status'] == 'done':
+                        # Crear el atributo si no existe
+                        attribute, created = Attribute.objects.get_or_create(name=data_key)
+                        # Asocial el atributo al usuario Encargado/Pregnant
+                        Entity.objects.get(id=4).attributes.add(attribute)
+                        Entity.objects.get(id=5).attributes.add(attribute)
+                        # Agregar el atributo al usuario
+                        UserData.objects.create(data_key=data_key,
+                                                user_id=user.id,
+                                                data_value=service_response['data']['attribute_value'],
+                                                attribute_id=attribute.id)
             except:
                 pass
             # Get bot default register session:
