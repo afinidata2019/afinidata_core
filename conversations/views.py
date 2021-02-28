@@ -52,6 +52,30 @@ class ConversationWorkflow(View):
                                        user=user)
             # Get user data from channel
             try:
+                # Get ref
+                for data_key in ['ref']:
+                    service_params = dict(user_channel_id=user_channel_id,
+                                          attribute_key=data_key)
+                    service_response = requests.post(endpoints['get_data'], data=service_params).json()
+                    if 'request_status' in service_response and service_response['request_status'] == 'done':
+                        # Crear el atributo si no existe
+                        attribute, created = Attribute.objects.get_or_create(name=data_key)
+                        # Asocial el atributo al usuario Encargado/Pregnant
+                        Entity.objects.get(id=4).attributes.add(attribute)
+                        Entity.objects.get(id=5).attributes.add(attribute)
+                        # Agregar el atributo al usuario
+                        UserData.objects.create(data_key=data_key,
+                                                user_id=user.id,
+                                                data_value=service_response['data']['attribute_value'],
+                                                attribute_id=attribute.id)
+                        # Llamar al servicio de creación de usuario nuevamente para que
+                        #  asigne al usuario al grupo y canjee el código
+                        requests.post(endpoints['create_user'],
+                                      data=dict(channel_id=user_channel_id,
+                                                bot_id=bot_id,
+                                                first_name=user.first_name,
+                                                last_name=user.last_name,
+                                                ref=service_response['data']['attribute_value']))
                 service_params = dict(user_channel_id=user_channel_id)
                 service_response = requests.post(endpoints['get_info'], data=service_params).json()
                 if 'request_status' in service_response and service_response['request_status'] == 'done':
@@ -73,21 +97,6 @@ class ConversationWorkflow(View):
                                                     user_id=user.id,
                                                     data_value=service_response['data'][data_key],
                                                     attribute_id=attribute.id)
-                for data_key in ['ref']:
-                    service_params = dict(user_channel_id=user_channel_id,
-                                          attribute_key=data_key)
-                    service_response = requests.post(endpoints['get_data'], data=service_params).json()
-                    if 'request_status' in service_response and service_response['request_status'] == 'done':
-                        # Crear el atributo si no existe
-                        attribute, created = Attribute.objects.get_or_create(name=data_key)
-                        # Asocial el atributo al usuario Encargado/Pregnant
-                        Entity.objects.get(id=4).attributes.add(attribute)
-                        Entity.objects.get(id=5).attributes.add(attribute)
-                        # Agregar el atributo al usuario
-                        UserData.objects.create(data_key=data_key,
-                                                user_id=user.id,
-                                                data_value=service_response['data']['attribute_value'],
-                                                attribute_id=attribute.id)
             except:
                 pass
             # Get bot default register session:
