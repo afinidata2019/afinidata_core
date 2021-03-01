@@ -7,7 +7,7 @@ from entities.models import Entity
 from django.http import JsonResponse, Http404
 from conversations import forms
 from bots.models import Interaction, UserInteraction
-from datetime import datetime
+from django.utils import timezone
 from user_sessions.models import BotSessions
 import requests
 import os
@@ -26,6 +26,7 @@ class ConversationWorkflow(View):
         channel_id = form.data['channel_id']
         user_channel_id = form.data['user_channel_id']
         user_message = form.data['message']
+
         user_channel = UserChannel.objects.filter(user_channel_id=user_channel_id,
                                                   bot_id=bot_id,
                                                   channel_id=channel_id,
@@ -34,7 +35,8 @@ class ConversationWorkflow(View):
                          get_session=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/get_session/',
                          save_reply=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/save_last_reply/',
                          create_user=os.getenv("CONTENT_MANAGER_URL")+'/chatfuel/create_messenger_user/',
-                         get_info=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/')
+                         get_info=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_info/',
+                         get_data=os.getenv("WEBHOOK_DOMAIN_URL")+'/bots/'+str(bot_id)+'/channel/'+str(bot_channel_id)+'/get_user_data/')
         response = []
         if not user_channel.exists():
             service_response = requests.post(endpoints['create_user'],
@@ -50,6 +52,30 @@ class ConversationWorkflow(View):
                                        user=user)
             # Get user data from channel
             try:
+                # Get ref
+                for data_key in ['ref']:
+                    service_params = dict(user_channel_id=user_channel_id,
+                                          attribute_key=data_key)
+                    service_response = requests.post(endpoints['get_data'], data=service_params).json()
+                    if 'request_status' in service_response and service_response['request_status'] == 'done':
+                        # Crear el atributo si no existe
+                        attribute, created = Attribute.objects.get_or_create(name=data_key)
+                        # Asocial el atributo al usuario Encargado/Pregnant
+                        Entity.objects.get(id=4).attributes.add(attribute)
+                        Entity.objects.get(id=5).attributes.add(attribute)
+                        # Agregar el atributo al usuario
+                        UserData.objects.create(data_key=data_key,
+                                                user_id=user.id,
+                                                data_value=service_response['data']['attribute_value'],
+                                                attribute_id=attribute.id)
+                        # Llamar al servicio de creación de usuario nuevamente para que
+                        #  asigne al usuario al grupo y canjee el código
+                        requests.post(endpoints['create_user'],
+                                      data=dict(channel_id=user_channel_id,
+                                                bot_id=bot_id,
+                                                first_name=user.first_name,
+                                                last_name=user.last_name,
+                                                ref=service_response['data']['attribute_value']))
                 service_params = dict(user_channel_id=user_channel_id)
                 service_response = requests.post(endpoints['get_info'], data=service_params).json()
                 if 'request_status' in service_response and service_response['request_status'] == 'done':
@@ -88,7 +114,7 @@ class ConversationWorkflow(View):
             bot_interaction = Interaction.objects.get(name='start_registration')
             UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
                                            interaction=bot_interaction, value=0,
-                                           created_at=datetime.now(), updated_at=datetime.now())
+                                           created_at=timezone.now(), updated_at=timezone.now())
         else:
             user = user_channel.last().user
 
@@ -130,7 +156,7 @@ class ConversationWorkflow(View):
             bot_interaction = Interaction.objects.get(name='default')
             UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
                                            interaction=bot_interaction, value=0,
-                                           created_at=datetime.now(), updated_at=datetime.now())
+                                           created_at=timezone.now(), updated_at=timezone.now())
 
         while session_finish.lower() == 'false':
             if not first_message:
@@ -161,7 +187,7 @@ class ConversationWorkflow(View):
                                              channel_id=channel_id,
                                              user_channel_id=user_channel_id,
                                              bot_channel_id=bot_channel_id,
-                                             type='text',
+                                             type='text' if 'OTN' not in message else 'one_time_notification',
                                              content=message['text']))
                     elif 'attachment' in message:
                         if 'type' in message['attachment']:
@@ -209,4 +235,5 @@ class ConversationWorkflow(View):
                                          content=service_response['set_attributes']['user_input_text']))
             if save_user_input or save_text_reply:
                 session_finish = 'true'
+
         return JsonResponse(dict(response=response))
