@@ -95,12 +95,14 @@ class GroupAssignationsView(View):
                 group_instances = InstanceAssociationUser.objects.filter(instance_id__in=group_instances).all()
             if 'name' in self.request.POST:
                 group_instances = InstanceAssociationUser.objects.filter(user_id__in=group_users).all()
-                if self.request.POST['name'] != '':
+                name = self.request.POST['name']
+                if name != '':
                     instances = Instance.objects.filter(id__in=[x.instance.id for x in group_instances],
-                                                        name__icontains=str(self.request.POST['name']))
+                                                        name__icontains=str(name))
                     usuarios = User.objects.filter(id__in=group_users).\
-                        filter(Q(first_name__icontains=str(self.request.POST['name'])) |
-                               Q(last_name__icontains=str(self.request.POST['name'])))
+                        filter(Q(first_name__icontains=str(name)) |
+                               Q(last_name__icontains=str(name)) |
+                               (Q(userdata__attribute_id=190) & Q(userdata__data_value__icontains=str(name))))
                     group_instances = InstanceAssociationUser.objects.\
                         filter(Q(instance_id__in=instances) | Q(user_id__in=[x.id for x in usuarios]))
             if 'months' in self.request.POST:
