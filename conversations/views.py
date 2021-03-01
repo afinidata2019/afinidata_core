@@ -118,14 +118,15 @@ class ConversationWorkflow(View):
         else:
             user = user_channel.last().user
 
-        try:
-            # Save user message
-            service_params = dict(user_id=user.id,
-                                last_reply=user_message,
-                                bot_id=bot_id)
-            requests.post(endpoints['save_reply'], data=service_params)
-        except:
-            pass
+        if user_message.lower() != 'dont_save':
+            try:
+                # Save user message
+                service_params = dict(user_id=user.id,
+                                    last_reply=user_message,
+                                    bot_id=bot_id)
+                requests.post(endpoints['save_reply'], data=service_params)
+            except:
+                pass
 
         first_message = True
         # Is session finished
