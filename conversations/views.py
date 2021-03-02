@@ -99,7 +99,7 @@ class ConversationWorkflow(View):
                                                     attribute_id=attribute.id)
             except:
                 pass
-            # Get bot default register session:
+            # Get bot Welcome register session:
             session = BotSessions.objects.filter(bot_id=bot_id, session_type='welcome')
             if session.exists():
                 session = session.last().session_id
@@ -127,20 +127,129 @@ class ConversationWorkflow(View):
                 requests.post(endpoints['save_reply'], data=service_params)
             except:
                 pass
+        try:
+            first_message = True
+            # Is session finished
+            session_finish = user.userdata_set.filter(attribute__name='session_finish')
+            if session_finish.exists():
+                session_finish = session_finish.last().data_value
+            else:
+                session_finish = 'true'
+            # Get the first message
+            service_params = dict(user_id=user.id)
+            service_response = requests.post(endpoints['get_field'], data=service_params).json()
 
-        first_message = True
-        # Is session finished
-        session_finish = user.userdata_set.filter(attribute__name='session_finish')
-        if session_finish.exists():
-            session_finish = session_finish.last().data_value
-        else:
-            session_finish = 'true'
-        # Get the first message
-        service_params = dict(user_id=user.id)
-        service_response = requests.post(endpoints['get_field'], data=service_params).json()
+            # If the session is already finished
+            if session_finish.lower() == 'true':
+                # Get bot default session:
+                session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
+                if session.exists():
+                    session = session.last().session_id
+                else:
+                    session = 0
+                service_params = dict(user_id=user.id,
+                                      session=session)
+                service_response = requests.post(endpoints['get_session'], data=service_params).json()
+                session_finish = service_response['set_attributes']['session_finish']
+                first_message = False
 
-        # If the session is already finished
-        if session_finish.lower() == 'true':
+                # Crear interaccion de inicio de default
+                bot_interaction = Interaction.objects.get(name='default')
+                UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
+                                               interaction=bot_interaction, value=0,
+                                               created_at=timezone.now(), updated_at=timezone.now())
+
+            while session_finish.lower() == 'false':
+                if not first_message:
+                    # Get the next message
+                    service_params = dict(user_id=user.id)
+                    service_response = requests.post(endpoints['get_field'], data=service_params).json()
+                    session_finish = service_response['set_attributes']['session_finish']
+
+                first_message = False
+                save_user_input = False
+                if 'save_user_input' in service_response['set_attributes']:
+                    save_user_input = service_response['set_attributes']['save_user_input']
+                save_text_reply = False
+                if 'save_text_reply' in service_response['set_attributes']:
+                    save_text_reply = service_response['set_attributes']['save_text_reply']
+                if 'messages' in service_response:
+                    for message in service_response['messages']:
+                        if 'quick_replies' in message:
+                            response.append(dict(bot_id=bot_id,
+                                                 channel_id=channel_id,
+                                                 user_channel_id=user_channel_id,
+                                                 bot_channel_id=bot_channel_id,
+                                                 type='quick_replies',
+                                                 content=message['text'],
+                                                 quick_replies=[qr['title'] for qr in message['quick_replies']]))
+                        elif 'text' in message:
+                            response.append(dict(bot_id=bot_id,
+                                                 channel_id=channel_id,
+                                                 user_channel_id=user_channel_id,
+                                                 bot_channel_id=bot_channel_id,
+                                                 type='text' if 'OTN' not in message else 'one_time_notification',
+                                                 content=message['text']))
+                            if 'OTN' in message:
+                                session_finish = 'true'
+                        elif 'attachment' in message:
+                            if 'type' in message['attachment']:
+                                if message['attachment']['type'] == 'image':
+                                    response.append(dict(bot_id=bot_id,
+                                                         channel_id=channel_id,
+                                                         user_channel_id=user_channel_id,
+                                                         bot_channel_id=bot_channel_id,
+                                                         type='image',
+                                                         content=message['attachment']['payload']['url']))
+                                elif message['attachment']['type'] == 'template':
+                                    if message['attachment']['payload']['template_type'] == 'button':
+                                        buttons = message['attachment']['payload']['buttons']
+                                        response.append(dict(bot_id=bot_id,
+                                                             channel_id=channel_id,
+                                                             user_channel_id=user_channel_id,
+                                                             bot_channel_id=bot_channel_id,
+                                                             type='text',
+                                                             content=message['attachment']['payload']['text']))
+
+                                    elif message['attachment']['payload']['template_type'] == 'media':
+                                        buttons = message['attachment']['payload']['elements'][0]['buttons']
+                                        response.append(dict(bot_id=bot_id,
+                                                             channel_id=channel_id,
+                                                             user_channel_id=user_channel_id,
+                                                             bot_channel_id=bot_channel_id,
+                                                             type='image',
+                                                             content=message['attachment']['payload']['elements'][0]['url']))
+                                    for button in buttons:
+                                        response.append(dict(bot_id=bot_id,
+                                                             channel_id=channel_id,
+                                                             user_channel_id=user_channel_id,
+                                                             bot_channel_id=bot_channel_id,
+                                                             type='button',
+                                                             content=button['title'],
+                                                             url=button['url']))
+
+                if 'set_attributes' in service_response:
+                    if 'user_input_text' in service_response['set_attributes']:
+                        response.append(dict(bot_id=bot_id,
+                                             channel_id=channel_id,
+                                             user_channel_id=user_channel_id,
+                                             bot_channel_id=bot_channel_id,
+                                             type='text',
+                                             content=service_response['set_attributes']['user_input_text']))
+                if save_user_input or save_text_reply:
+                    session_finish = 'true'
+            if len(response) == 0:
+                # Get bot default session:
+                session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
+                if session.exists():
+                    session = session.last().session_id
+                else:
+                    session = 0
+                service_params = dict(user_id=user.id,
+                                      session=session)
+                service_response = requests.post(endpoints['get_session'], data=service_params).json()
+                return JsonResponse(dict(response=[]))
+        except:
             # Get bot default session:
             session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
             if session.exists():
@@ -150,93 +259,5 @@ class ConversationWorkflow(View):
             service_params = dict(user_id=user.id,
                                   session=session)
             service_response = requests.post(endpoints['get_session'], data=service_params).json()
-            session_finish = service_response['set_attributes']['session_finish']
-            first_message = False
-
-            # Crear interaccion de inicio de default
-            bot_interaction = Interaction.objects.get(name='default')
-            UserInteraction.objects.create(bot_id=bot_id, user_id=user.id,
-                                           interaction=bot_interaction, value=0,
-                                           created_at=timezone.now(), updated_at=timezone.now())
-
-        while session_finish.lower() == 'false':
-            if not first_message:
-                # Get the next message
-                service_params = dict(user_id=user.id)
-                service_response = requests.post(endpoints['get_field'], data=service_params).json()
-                session_finish = service_response['set_attributes']['session_finish']
-
-            first_message = False
-            save_user_input = False
-            if 'save_user_input' in service_response['set_attributes']:
-                save_user_input = service_response['set_attributes']['save_user_input']
-            save_text_reply = False
-            if 'save_text_reply' in service_response['set_attributes']:
-                save_text_reply = service_response['set_attributes']['save_text_reply']
-            if 'messages' in service_response:
-                for message in service_response['messages']:
-                    if 'quick_replies' in message:
-                        response.append(dict(bot_id=bot_id,
-                                             channel_id=channel_id,
-                                             user_channel_id=user_channel_id,
-                                             bot_channel_id=bot_channel_id,
-                                             type='quick_replies',
-                                             content=message['text'],
-                                             quick_replies=[qr['title'] for qr in message['quick_replies']]))
-                    elif 'text' in message:
-                        response.append(dict(bot_id=bot_id,
-                                             channel_id=channel_id,
-                                             user_channel_id=user_channel_id,
-                                             bot_channel_id=bot_channel_id,
-                                             type='text' if 'OTN' not in message else 'one_time_notification',
-                                             content=message['text']))
-                        if 'OTN' in message:
-                            session_finish = 'true'
-                    elif 'attachment' in message:
-                        if 'type' in message['attachment']:
-                            if message['attachment']['type'] == 'image':
-                                response.append(dict(bot_id=bot_id,
-                                                     channel_id=channel_id,
-                                                     user_channel_id=user_channel_id,
-                                                     bot_channel_id=bot_channel_id,
-                                                     type='image',
-                                                     content=message['attachment']['payload']['url']))
-                            elif message['attachment']['type'] == 'template':
-                                if message['attachment']['payload']['template_type'] == 'button':
-                                    buttons = message['attachment']['payload']['buttons']
-                                    response.append(dict(bot_id=bot_id,
-                                                         channel_id=channel_id,
-                                                         user_channel_id=user_channel_id,
-                                                         bot_channel_id=bot_channel_id,
-                                                         type='text',
-                                                         content=message['attachment']['payload']['text']))
-
-                                elif message['attachment']['payload']['template_type'] == 'media':
-                                    buttons = message['attachment']['payload']['elements'][0]['buttons']
-                                    response.append(dict(bot_id=bot_id,
-                                                         channel_id=channel_id,
-                                                         user_channel_id=user_channel_id,
-                                                         bot_channel_id=bot_channel_id,
-                                                         type='image',
-                                                         content=message['attachment']['payload']['elements'][0]['url']))
-                                for button in buttons:
-                                    response.append(dict(bot_id=bot_id,
-                                                         channel_id=channel_id,
-                                                         user_channel_id=user_channel_id,
-                                                         bot_channel_id=bot_channel_id,
-                                                         type='button',
-                                                         content=button['title'],
-                                                         url=button['url']))
-
-            if 'set_attributes' in service_response:
-                if 'user_input_text' in service_response['set_attributes']:
-                    response.append(dict(bot_id=bot_id,
-                                         channel_id=channel_id,
-                                         user_channel_id=user_channel_id,
-                                         bot_channel_id=bot_channel_id,
-                                         type='text',
-                                         content=service_response['set_attributes']['user_input_text']))
-            if save_user_input or save_text_reply:
-                session_finish = 'true'
-
+            return JsonResponse(dict(response=[]))
         return JsonResponse(dict(response=response))
