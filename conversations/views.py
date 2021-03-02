@@ -190,6 +190,8 @@ class ConversationWorkflow(View):
                                              bot_channel_id=bot_channel_id,
                                              type='text' if 'OTN' not in message else 'one_time_notification',
                                              content=message['text']))
+                        if 'OTN' in message:
+                            session_finish = 'true'
                     elif 'attachment' in message:
                         if 'type' in message['attachment']:
                             if message['attachment']['type'] == 'image':
