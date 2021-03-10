@@ -98,7 +98,9 @@ class ConversationWorkflow(View):
 
         # Save last seen datetime
         user_channel.last_seen = datetime.now()
+        user_channel.save()
         user.last_seen = datetime.now()
+        user.save()
 
         try:
             # Get ref
