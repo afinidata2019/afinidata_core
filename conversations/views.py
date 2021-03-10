@@ -9,6 +9,7 @@ from conversations import forms
 from bots.models import Interaction, UserInteraction
 from django.utils import timezone
 from user_sessions.models import BotSessions
+from datetime import datetime
 import requests
 import os
 
@@ -45,37 +46,13 @@ class ConversationWorkflow(View):
                                                        first_name=user_channel_id,
                                                        last_name='None')).json()
             user = User.objects.get(id=service_response['set_attributes']['user_id'])
-            UserChannel.objects.create(bot_id=bot_id,
-                                       channel_id=channel_id,
-                                       bot_channel_id=bot_channel_id,
-                                       user_channel_id=user_channel_id,
-                                       user=user)
+            user_channel = UserChannel.objects.create(bot_id=bot_id,
+                                                      channel_id=channel_id,
+                                                      bot_channel_id=bot_channel_id,
+                                                      user_channel_id=user_channel_id,
+                                                      user=user)
             # Get user data from channel
             try:
-                # Get ref
-                for data_key in ['ref']:
-                    service_params = dict(user_channel_id=user_channel_id,
-                                          attribute_key=data_key)
-                    service_response = requests.post(endpoints['get_data'], data=service_params).json()
-                    if 'request_status' in service_response and service_response['request_status'] == 'done':
-                        # Crear el atributo si no existe
-                        attribute, created = Attribute.objects.get_or_create(name=data_key)
-                        # Asocial el atributo al usuario Encargado/Pregnant
-                        Entity.objects.get(id=4).attributes.add(attribute)
-                        Entity.objects.get(id=5).attributes.add(attribute)
-                        # Agregar el atributo al usuario
-                        UserData.objects.create(data_key=data_key,
-                                                user_id=user.id,
-                                                data_value=service_response['data']['attribute_value'],
-                                                attribute_id=attribute.id)
-                        # Llamar al servicio de creación de usuario nuevamente para que
-                        #  asigne al usuario al grupo y canjee el código
-                        requests.post(endpoints['create_user'],
-                                      data=dict(channel_id=user_channel_id,
-                                                bot_id=bot_id,
-                                                first_name=user.first_name,
-                                                last_name=user.last_name,
-                                                ref=service_response['data']['attribute_value']))
                 service_params = dict(user_channel_id=user_channel_id)
                 service_response = requests.post(endpoints['get_info'], data=service_params).json()
                 if 'request_status' in service_response and service_response['request_status'] == 'done':
@@ -116,8 +93,40 @@ class ConversationWorkflow(View):
                                            interaction=bot_interaction, value=0,
                                            created_at=timezone.now(), updated_at=timezone.now())
         else:
-            user = user_channel.last().user
+            user_channel = user_channel.last()
+            user = user_channel.user
 
+        # Save last seen datetime
+        user_channel.last_seen = datetime.now()
+        user.last_seen = datetime.now()
+
+        try:
+            # Get ref
+            for data_key in ['ref']:
+                service_params = dict(user_channel_id=user_channel_id,
+                                      attribute_key=data_key)
+                service_response = requests.post(endpoints['get_data'], data=service_params).json()
+                if 'request_status' in service_response and service_response['request_status'] == 'done':
+                    # Crear el atributo si no existe
+                    attribute, created = Attribute.objects.get_or_create(name=data_key)
+                    # Asocial el atributo al usuario Encargado/Pregnant
+                    Entity.objects.get(id=4).attributes.add(attribute)
+                    Entity.objects.get(id=5).attributes.add(attribute)
+                    # Agregar el atributo al usuario
+                    UserData.objects.create(data_key=data_key,
+                                            user_id=user.id,
+                                            data_value=service_response['data']['attribute_value'],
+                                            attribute_id=attribute.id)
+                    # Llamar al servicio de creación de usuario nuevamente para que
+                    #  asigne al usuario al grupo y canjee el código
+                    requests.post(endpoints['create_user'],
+                                  data=dict(channel_id=user_channel_id,
+                                            bot_id=bot_id,
+                                            first_name=user.first_name,
+                                            last_name=user.last_name,
+                                            ref=service_response['data']['attribute_value']))
+        except:
+            pass
         if user_message.lower() != 'dont_save':
             try:
                 # Save user message
