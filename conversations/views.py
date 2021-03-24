@@ -173,7 +173,7 @@ class ConversationWorkflow(View):
                                                interaction=bot_interaction, value=0,
                                                created_at=timezone.now(), updated_at=timezone.now())
 
-            while session_finish.lower() == 'false':
+            while session_finish.lower() == 'false' and not user_channel.live_chat:
                 if not first_message:
                     # Get the next message
                     service_params = dict(user_id=user.id)
