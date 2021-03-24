@@ -102,6 +102,9 @@ class ConversationWorkflow(View):
         user.last_seen = datetime.now()
         user.save()
 
+        # If user is in live-chat, don't process message in bot
+        if user_channel.live_chat:
+            return JsonResponse(dict(response=[]))
         try:
             # Get ref
             for data_key in ['ref']:
