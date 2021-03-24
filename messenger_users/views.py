@@ -1,3 +1,5 @@
+import os
+import requests
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from messenger_users.models import User, UserData, UserChannel
@@ -145,6 +147,8 @@ class DeleteUserView(PermissionRequiredMixin, DeleteView):
             cursor.execute("delete from messenger_users_useractivity where user_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_childdata where child_id in (select id from messenger_users_child where parent_user_id = %s);", [self.object.id])
             cursor.execute("delete from messenger_users_child where parent_user_id = %s;", [self.object.id])
+            # delete hottrigers
+            requests.post(os.getenv('HOTTRIGGERS_DOMAIN_URL')+'/scheduler_deleted_user/', data=dict(user_id=self.object.id))
         return super(DeleteUserView, self).delete(*args, **kwargs)
 
     def get_success_url(self):
