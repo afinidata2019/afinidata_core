@@ -173,7 +173,7 @@ class ConversationWorkflow(View):
                                                interaction=bot_interaction, value=0,
                                                created_at=timezone.now(), updated_at=timezone.now())
 
-            user_channel = UserChannel.objects.get(id=user_channel.id)
+            user_channel.refresh_from_db()
             while session_finish.lower() == 'false' and not user_channel.live_chat:
                 if not first_message:
                     # Get the next message
@@ -253,6 +253,8 @@ class ConversationWorkflow(View):
                                              content=service_response['set_attributes']['user_input_text']))
                 if save_user_input or save_text_reply:
                     session_finish = 'true'
+                user_channel.refresh_from_db()
+
             if len(response) == 0:
                 # Get bot default session:
                 session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')
