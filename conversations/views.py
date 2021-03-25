@@ -173,6 +173,7 @@ class ConversationWorkflow(View):
                                                interaction=bot_interaction, value=0,
                                                created_at=timezone.now(), updated_at=timezone.now())
 
+            user_channel = UserChannel.objects.get(id=user_channel.id)
             while session_finish.lower() == 'false' and not user_channel.live_chat:
                 if not first_message:
                     # Get the next message
