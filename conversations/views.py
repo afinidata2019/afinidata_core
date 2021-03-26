@@ -102,6 +102,9 @@ class ConversationWorkflow(View):
         user.last_seen = datetime.now()
         user.save()
 
+        # If user is in live-chat, don't process message in bot
+        if user_channel.live_chat:
+            return JsonResponse(dict(response=[]))
         try:
             # Get ref
             for data_key in ['ref']:
@@ -170,7 +173,8 @@ class ConversationWorkflow(View):
                                                interaction=bot_interaction, value=0,
                                                created_at=timezone.now(), updated_at=timezone.now())
 
-            while session_finish.lower() == 'false':
+            user_channel.refresh_from_db()
+            while session_finish.lower() == 'false' and not user_channel.live_chat:
                 if not first_message:
                     # Get the next message
                     service_params = dict(user_id=user.id)
@@ -249,6 +253,8 @@ class ConversationWorkflow(View):
                                              content=service_response['set_attributes']['user_input_text']))
                 if save_user_input or save_text_reply:
                     session_finish = 'true'
+                user_channel.refresh_from_db()
+
             if len(response) == 0:
                 # Get bot default session:
                 session = BotSessions.objects.filter(bot_id=bot_id, session_type='default')

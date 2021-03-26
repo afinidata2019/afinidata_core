@@ -168,15 +168,25 @@ class UserData(models.Model):
 class UserChannel(models.Model):
     bot_id = models.IntegerField()
     channel_id = models.IntegerField()
-    bot_channel_id = models.CharField(max_length=35)
+    bot_channel_id = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_channel_id = models.CharField(max_length=20)
     last_seen = models.DateTimeField(auto_now=True, blank=True)
+    live_chat = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user_channel_id
+
+
+class LiveChat(models.Model):
+    user_channel = models.ForeignKey(UserChannel, on_delete=models.CASCADE)
+    live_chat = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user_channel
 
 
 class Child(models.Model):
