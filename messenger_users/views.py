@@ -143,12 +143,12 @@ class DeleteUserView(PermissionRequiredMixin, DeleteView):
             cursor.execute("delete from user_sessions_interaction where user_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_userchannel where user_id = %s;", [self.object.id])
             cursor.execute("delete from articles_articlefeedback where user_id = %s;", [self.object.id])
+            cursor.execute("delete from messenger_users_childdata where child_id in (select id from messenger_users_child where parent_user_id = %s);",[self.object.id])
             cursor.execute("delete from groups_assignationmessengeruser where messenger_user_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_child where parent_user_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_referral where user_opened_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_useractivitylog where user_id = %s;", [self.object.id])
             cursor.execute("delete from messenger_users_useractivity where user_id = %s;", [self.object.id])
-            cursor.execute("delete from messenger_users_childdata where child_id in (select id from messenger_users_child where parent_user_id = %s);", [self.object.id])
             cursor.execute("delete from messenger_users_child where parent_user_id = %s;", [self.object.id])
             # delete hottrigers
             requests.post(os.getenv('HOTTRIGGERS_DOMAIN_URL')+'/scheduler_deleted_user/', data=dict(user_id=self.object.id))
