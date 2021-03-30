@@ -166,7 +166,17 @@ Session: {{ object.name }}
                     <a :href="`/sessions/{{object.pk}}/fields/${field.id}/add_message/`">Add message</a>
                   </div>
                 </div>
-                <!-- end field type text-->
+                <!-- end field type one_time_notification-->
+
+                <!-- field type activate_ai-->
+                <div v-if="field.field_type == 'activate_ai'">
+                </div>
+                <!-- end field type activate_ai-->
+
+                <!-- field type deactivate_ai-->
+                <div v-if="field.field_type == 'deactivate_ai'">
+                </div>
+                <!-- end field type deactivate_ai-->
 
                 <!-- field type image -->
                 <div v-if="field.field_type=='image'">
