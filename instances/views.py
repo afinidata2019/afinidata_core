@@ -46,7 +46,8 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             if assignations.exists():
                 c['assignations'] = assignations
         c['today'] = timezone.now() + datetime.timedelta(1)
-        c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
+        # Filter from the 'start' of time, all interactions started at 2019
+        c['first_month'] = '2000-01-01'  # parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
         c['feeds'] = self.object.get_time_feeds(c['first_month'], c['today'])
         c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
