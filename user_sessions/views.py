@@ -1,8 +1,14 @@
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView, View
+import os
+import requests
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView, RedirectView, View
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from user_sessions import models, forms
 from attributes.models import Attribute
 from entities.models import Entity
@@ -11,12 +17,8 @@ from messenger_users.models import UserData
 from areas.models import Area
 from topics.models import Topic
 from programs.models import Program
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.http import Http404, JsonResponse
 from user_sessions.serializers import FieldSerializer
-import requests
-import os
+
 
 
 class SessionListView(PermissionRequiredMixin, ListView):
@@ -288,6 +290,18 @@ class SessionCreateView(PermissionRequiredMixin, CreateView):
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.object.pk))
 
 
+@csrf_exempt
+def set_intents(request):
+    session = get_object_or_404(models.Session, id=request.POST.get('session'))
+    intents = models.Intent.objects.all().filter(session__id=session.id)
+    intents.delete()
+
+    for intent_id in request.POST.getlist('intents'):
+        intent = models.Intent.objects.create(session=session, intent_id=intent_id)
+
+    return redirect('/sessions/{0}/edit'.format(session.pk))
+
+
 class SessionUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_session'
     model = models.Session
@@ -297,6 +311,12 @@ class SessionUpdateView(PermissionRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         c = super(SessionUpdateView, self).get_context_data()
         c['action'] = 'Edit'
+
+        session = get_object_or_404(models.Session, id=self.kwargs['session_id'])
+        intents = list(models.Intent.objects.values_list('intent_id', flat=True).filter(session__id=self.kwargs['session_id']))
+        fintent = forms.IntentForm(initial={'session': session, 'intents': intents})
+        c['intents'] = fintent
+
         return c
 
     def get_success_url(self):

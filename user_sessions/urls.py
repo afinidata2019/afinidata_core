@@ -9,6 +9,7 @@ urlpatterns = [
     path('interactions/', views.ReplyCorrectionListView.as_view(), name='nlu_correction_list'),
     path('interactions/<int:interaction_id>/', views.ReplyCorrectionView.as_view(), name='nlu_correction'),
     path('create/', views.SessionCreateView.as_view(), name='session_create'),
+    path('set_intents', views.set_intents, name='set-intents'),
     path('<int:session_id>/', views.SessionDetailView.as_view(), name='session_detail'),
     path('<int:session_id>/edit/', views.SessionUpdateView.as_view(), name='session_update'),
     path('<int:session_id>/delete/', views.SessionDeleteView.as_view(), name='session_delete'),
