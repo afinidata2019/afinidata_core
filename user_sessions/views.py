@@ -415,6 +415,8 @@ class MessageCreateView(PermissionRequiredMixin, CreateView):
         c = super(MessageCreateView, self).get_context_data()
         c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        if c['field'].field_type == 'one_time_notification':
+            c['field_maxlength'] = 65
         c['action'] = 'Create'
         return c
 
@@ -433,6 +435,8 @@ class MessageEditView(PermissionRequiredMixin, UpdateView):
         c = super(MessageEditView, self).get_context_data()
         c['session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        if c['field'].field_type == 'one_time_notification':
+            c['field_maxlength'] = 65
         c['action'] = 'Update'
         return c
 
