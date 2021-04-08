@@ -152,6 +152,8 @@ class ConversationWorkflow(View):
             # Get the first message
             service_params = dict(user_id=user.id)
             service_response = requests.post(endpoints['get_field'], data=service_params).json()
+            if 'user_id' in service_response['set_attributes']:
+                user = User.objects.get(id=service_response['set_attributes']['user_id'])
 
             # If the session is already finished
             if session_finish.lower() == 'true':
@@ -180,6 +182,8 @@ class ConversationWorkflow(View):
                     service_params = dict(user_id=user.id)
                     service_response = requests.post(endpoints['get_field'], data=service_params).json()
                     session_finish = service_response['set_attributes']['session_finish']
+                    if 'user_id' in service_response['set_attributes']:
+                        user = User.objects.get(id=service_response['set_attributes']['user_id'])
 
                 first_message = False
                 save_user_input = False
