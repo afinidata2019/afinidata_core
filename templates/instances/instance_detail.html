@@ -158,6 +158,8 @@
                                     <th>Estado</th>
                                     <th>Fecha de Asignación</th>
                                     <th>Completada en</th>
+                                    <th>Feedback</th>
+                                    <th>Complexity</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,6 +184,16 @@
                                         <td>
                                             {% if post.last_session %}
                                                 {{ post.last_session.created_at }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.feedback %}
+                                                {{ post.feedback.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.complexity %}
+                                                {{ post.complexity.complexity }}
                                             {% endif %}
                                         </td>
                                     </tr>

@@ -15,7 +15,7 @@ from django.utils import timezone
 from dateutil.parser import parse
 from django.db.models import Max
 from areas.models import Area
-from posts.models import Post
+from posts.models import Post, PostComplexity, Feedback
 from instances import forms
 import datetime
 import calendar
@@ -73,6 +73,18 @@ class InstanceView(PermissionRequiredMixin, DetailView):
                 if post.last_session:
                     if area.pk == post.area_id:
                         area.completed_activities = area.completed_activities + 1
+            # Get feedback
+            feedbacks = Feedback.objects.filter(post=post, user_id=user.id)
+            if feedbacks.exists():
+                post.feedback = feedbacks.last()
+            else:
+                post.feedback = None
+            # Get Complexity
+            complexity = PostComplexity.objects.filter(post=post, user_id=user.id)
+            if complexity.exists():
+                post.complexity = complexity.last()
+            else:
+                post.complexity = None
 
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
