@@ -147,7 +147,7 @@
             <div class="col-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Actividades Asignadas (Este mes)</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Actividades Asignadas</h6>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-responsive-md">
@@ -158,13 +158,17 @@
                                     <th>Estado</th>
                                     <th>Fecha de Asignación</th>
                                     <th>Completada en</th>
+                                    <th>Feedback</th>
+                                    <th>Complexity</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for post in posts %}
                                     <tr>
                                         <td>{{ post.pk }}</td>
-                                        <td>{{ post.name }}</td>
+                                        <td><a target="_blank" href="https://contentmanager.afinidata.com/posts/{{ post.pk }}">
+                                            {{ post.name }}</a>
+                                        </td>
                                         <td>
                                             {% if post.last_session %}
                                                 <i class="fas fa-check-circle fa-2x text-success"></i>
@@ -180,6 +184,16 @@
                                         <td>
                                             {% if post.last_session %}
                                                 {{ post.last_session.created_at }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.feedback %}
+                                                {{ post.feedback.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if post.complexity %}
+                                                {{ post.complexity.complexity }}
                                             {% endif %}
                                         </td>
                                     </tr>

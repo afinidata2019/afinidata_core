@@ -7,6 +7,7 @@ from entities.models import Entity
 from licences.models import License
 import requests
 import os
+import json
 
 
 class SessionForm(forms.ModelForm):
@@ -74,6 +75,16 @@ class ServiceSessionForm(forms.ModelForm):
     class Meta:
         model = models.Service
         fields = ('available_service', )
+
+
+class IntentForm(forms.Form):
+    OPTIONS = []
+    service_response = requests.get(os.getenv('NLU_DOMAIN_URL') + '/api/0.1/intents/?options=True').json()
+    if 'count' in service_response and service_response['count'] > 0:
+        OPTIONS = [ (intent['id'], intent['name']) for intent in service_response['results'] ]
+    
+    intents = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=OPTIONS)
+    session =  forms.ModelChoiceField(widget = forms.HiddenInput(), queryset=models.Session.objects.all())
 
 
 class InteractionForm(forms.ModelForm):

@@ -15,7 +15,7 @@ from django.utils import timezone
 from dateutil.parser import parse
 from django.db.models import Max
 from areas.models import Area
-from posts.models import Post
+from posts.models import Post, PostComplexity, Feedback
 from instances import forms
 import datetime
 import calendar
@@ -46,7 +46,8 @@ class InstanceView(PermissionRequiredMixin, DetailView):
             if assignations.exists():
                 c['assignations'] = assignations
         c['today'] = timezone.now() + datetime.timedelta(1)
-        c['first_month'] = parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
+        # Filter from the 'start' of time, all interactions started at 2019
+        c['first_month'] = '2000-01-01'  # parse("%s-%s-%s" % (c['today'].year, c['today'].month, 1))
         c['interactions'] = self.object.get_time_interactions(c['first_month'], c['today'])
         c['feeds'] = self.object.get_time_feeds(c['first_month'], c['today'])
         c['posts'] = Post.objects.filter(id__in=[x.post_id for x in c['interactions']]).only('id', 'name', 'area_id')
@@ -72,6 +73,18 @@ class InstanceView(PermissionRequiredMixin, DetailView):
                 if post.last_session:
                     if area.pk == post.area_id:
                         area.completed_activities = area.completed_activities + 1
+            # Get feedback
+            feedbacks = Feedback.objects.filter(post=post, user_id=user.id)
+            if feedbacks.exists():
+                post.feedback = feedbacks.last()
+            else:
+                post.feedback = None
+            # Get Complexity
+            complexity = PostComplexity.objects.filter(post=post, user_id=user.id)
+            if complexity.exists():
+                post.complexity = complexity.last()
+            else:
+                post.complexity = None
 
         c['labels'] = [parse("%s-%s-%s" %
                              (c['today'].year, c['today'].month, day)) for day in range(1, c['today'].day + 1)]
