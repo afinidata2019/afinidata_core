@@ -246,6 +246,13 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         c['programs_list'] = ', '.join([program.name.replace('Afini ', '') for program in self.object.programs.all()])
         c['entities_list'] = ', '.join([entity.name for entity in self.object.entities.all()])
         c['licences_list'] = ', '.join([user_license.name for user_license in self.object.licences.all()])
+        
+        intents = list(models.Intent.objects.values_list('intent_id', flat=True).filter(session__id=self.kwargs['session_id']))
+        if intents:
+            nlu_response = requests.post(os.getenv('NLU_DOMAIN_URL') + '/api/0.1/intents/get_names/', json=dict(ids=intents)).json()
+            intents = nlu_response['results'] if 'results' in nlu_response else list()
+        c['intents_list'] = ', '.join(intents)
+        
         inbounds = []
         inbounds = inbounds + [user_input.field.session.id for user_input
                                in models.UserInput.objects.filter(session_id=self.object.id)
@@ -258,6 +265,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
                                if redirect.field]
         if models.Session.objects.filter(id__in=inbounds).exists():
             c['inbounds'] = models.Session.objects.filter(id__in=inbounds)
+        
         outbounds = []
         outbounds = outbounds + [user_input.session.id for user_input
                                  in models.UserInput.objects.filter(field__in=self.object.field_set.all())
