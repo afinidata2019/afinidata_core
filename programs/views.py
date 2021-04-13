@@ -229,6 +229,11 @@ class CreateGroupProgramView(PermissionRequiredMixin, CreateView):
         print(self.object.users.all())
         messages.success(self.request, 'El Programa fue creado')
         return reverse_lazy('programs:program_set_areas', kwargs=dict(program_id=self.object.pk))
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.post_set.set(Post.objects.values_list('id', flat=True))
+        return response
     
     def form_invalid(self, form):
         messages.error(self.request, "Verifica que hayas ingresado al menos un nivel y un lenguaje.")
