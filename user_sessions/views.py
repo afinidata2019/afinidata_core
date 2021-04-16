@@ -514,14 +514,21 @@ class UserInputDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ReplyCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_reply'
-    model = models.Reply
-    fields = ('label', 'attribute', 'value', 'redirect_block', 'session', 'position')
+    form_class = forms.ReplyCreateForm
+    template_name = 'user_sessions/reply_form.html'
 
     def get_context_data(self, **kwargs):
         c = super(ReplyCreateView, self).get_context_data()
         c['action'] = 'Create'
         c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
+        
+        attrs = Attribute.objects.all()
+        attrstmp = "["
+        for attr in attrs:
+            attrstmp = attrstmp + "{" +"label: '{name}', value: '{id}'".format(name=attr.name, id=attr.id)+"},"
+        attrstmp = attrstmp + ']'
+        c['attributes'] = attrstmp
         return c
 
     def form_valid(self, form):
