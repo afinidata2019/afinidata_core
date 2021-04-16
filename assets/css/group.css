@@ -43,3 +43,6 @@
     outline: 1px solid #7B96E4;
 }
 
+[v-cloak] {
+    display:none;
+}
