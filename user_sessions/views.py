@@ -561,7 +561,7 @@ class ButtonCreateView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, "Button added in field.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
-
+# ajuste
 class ReplyEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_reply'
     model = models.Reply
@@ -790,7 +790,7 @@ class RedirectBlockDeleteView(PermissionRequiredMixin, DeleteView):
         messages.success(self.request, "Redirect Block has deleted.")
         return reverse_lazy('sessions:session_detail', kwargs=dict(session_id=self.kwargs['session_id']))
 
-
+# aqui hl
 class ServiceCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_service'
     form_class = forms.ServiceSessionForm

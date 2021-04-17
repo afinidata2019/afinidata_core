@@ -14,7 +14,7 @@
         <div class="form-group">
 
             {{ field.label_tag }}
-            {% if 'Attribute:' in field.label_tag %}
+            {% if attributes is not None and 'Attribute:' in field.label_tag %}
                 <input type="hidden" v-model="attribute" id="id_attribute" class="form-control" name="attribute" >
                 <v-select v-model="attributeTmp" :options="{{attributes}}" @input="setSelected"></v-select>
                 {{ field.errors }}
