@@ -128,6 +128,7 @@ class DeleteUserView(PermissionRequiredMixin, DeleteView):
         # Delete live chat history
         for user_channel in self.object.userchannel_set.all():
             user_channel.livechat_set.all().delete()
+            user_channel.interaction_set.all().delete()
         with connection.cursor() as cursor:
             # Delete instances
             cursor.execute("delete from instances_attributevalue where instance_id in (select instance_id from instances_instanceassociationuser where user_id = %s);", [self.object.id])
