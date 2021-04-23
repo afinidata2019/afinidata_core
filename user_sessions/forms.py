@@ -170,7 +170,7 @@ class UnsubscribeSequenceSessionForm(forms.ModelForm):
 
 
 class ReplyCreateForm(forms.ModelForm):
-    attribute = forms.ModelChoiceField(queryset=Attribute.objects.all().order_by('name'))
+    attribute = forms.ModelChoiceField(queryset=Attribute.objects.all().order_by('name'), required=False)
     
     class Meta:
         model = models.Reply
