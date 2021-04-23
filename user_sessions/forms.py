@@ -170,12 +170,9 @@ class UnsubscribeSequenceSessionForm(forms.ModelForm):
 
 
 class ReplyCreateForm(forms.ModelForm):
+    attribute = forms.ModelChoiceField(queryset=Attribute.objects.all().order_by('name'))
+    
     class Meta:
         model = models.Reply
         fields = ('label', 'attribute', 'value', 'redirect_block', 'session', 'position')
 
-    def clean_attribute(self):
-        attribute = self.cleaned_data['attribute']
-        if attribute is None:
-            self.add_error('attribute', "El atributo no puede estar vacío")
-        return attribute

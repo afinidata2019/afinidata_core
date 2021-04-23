@@ -222,7 +222,7 @@ Session: {{ object.name }}
                       <tr v-for="reply in field.reply_set">
                         <td>[[ reply.label ]]</td>
                         <td>
-                          <span v-if="reply.attribute">[[reply.attribute]]</span>
+                          <span v-if="reply.attribute">[[reply.attribute.name]]</span>
                           <span v-else>--</span>
                         </td>
                         <td>
