@@ -16,13 +16,13 @@
     {{ field.label_tag }}
 
     {% if 'type' in field and field.type == 'checkbox' %}
-    {% render_field field required='required' %}
+        {% render_field field required='required' %}
     {% else %}
-    {% if field_maxlength %}
-    {% render_field field class='form-control' maxlength=field_maxlength %}
-    {% else %}
-    {% render_field field class='form-control' %}
-    {% endif %}
+        {% if field_maxlength %}
+            {% render_field field class='form-control' maxlength=field_maxlength %}
+        {% else %}
+            {% render_field field class='form-control' %}
+        {% endif %}
     {% endif %}
     {{ field.errors }}
     {% if field.help_text %}
