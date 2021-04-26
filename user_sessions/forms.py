@@ -142,7 +142,7 @@ class SubscribeSequenceSessionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SubscribeSequenceSessionForm, self).__init__(*args, **kwargs)
-        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/?has_triggers=True')
         if response.status_code == 200:
             self.fields['sequence_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
 
