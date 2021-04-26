@@ -109,7 +109,7 @@ class InstanceView(PermissionRequiredMixin, DetailView):
                 answer = Reply.objects.filter(field_id=field.id, value=reply.value)
                 if answer.exists():
                     rep['answer'] = answer.first().label
-                    rep['attribute'] = answer.first().attribute
+                    rep['attribute'] = answer.first().attribute.name
                 else:
                     rep['answer'] = reply.text or ''
                     rep['attribute'] = Reply.objects.filter(field_id=field.id).first().attribute

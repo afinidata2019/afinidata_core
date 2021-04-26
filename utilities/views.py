@@ -366,7 +366,7 @@ class GroupInstanceCardView(View):
                     attributevalue = AttributeValue.objects. \
                         filter(instance=instance, attribute_id=program_attribute.attribute_id).order_by('-id')
                 # Obtener solo los fields que tiene ese atribto
-                fields = [x.field_id for x in Reply.objects.filter(attribute=program_attribute.attribute.name)]
+                fields = [x.field_id for x in Reply.objects.filter(attribute=program_attribute.attribute.id)]
                 # Filtrar las interacciones de la instancia con dichos fields
                 interactions = SessionInteraction.objects.filter(instance_id=instance.id,
                                                                  field_id__in=fields,
@@ -375,31 +375,31 @@ class GroupInstanceCardView(View):
                 if interactions.exists():
                     interaction = interactions.first()  # Obtener la ultima sesion
                     possible_replies = [dict(value=r.value, label=r.label)
-                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.id,
                                                                       field_id=interaction.field_id).order_by('-id')]
                 elif months:
                     possible_replies = [dict(value=r['value'], label=r['label'])
-                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.id,
                                                                       field__session__programs=program,
                                                                       field__session__min__lte=months,
                                                                       field__session__max__gte=months).\
                                             values('value', 'label').distinct()]
                 else:
                     possible_replies = [dict(value=r['value'], label=r['label'])
-                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.name,
+                                        for r in Reply.objects.filter(attribute=program_attribute.attribute.id,
                                                                       field__session__programs=program). \
                                             values('value', 'label').distinct()]
                 if attributevalue.exists():
                     attribute = attributevalue.first()
                     if self.request.POST['type'] == 'user':
                         attribute.value = attribute.data_value
-                    fields = [x.field_id for x in Reply.objects.filter(attribute=attribute.attribute.name)]
+                    fields = [x.field_id for x in Reply.objects.filter(attribute=attribute.attribute.id)]
                     interactions = SessionInteraction.objects.filter(instance_id=instance.id,
                                                                      field_id__in=fields,
                                                                      type='quick_reply').order_by('-id')
                     if interactions.exists():
                         interaction = interactions.first()
-                        reply = Reply.objects.filter(attribute=attribute.attribute.name, field_id=interaction.field_id,
+                        reply = Reply.objects.filter(attribute=attribute.attribute.id, field_id=interaction.field_id,
                                                      value=interaction.value).order_by('-id')
                         if reply.exists():
                             value = reply.first().label
@@ -421,13 +421,13 @@ class GroupInstanceCardView(View):
                                 risk = -1
                     else:
                         if months:
-                            reply_value = Reply.objects.filter(attribute=attribute.attribute.name,
+                            reply_value = Reply.objects.filter(attribute=attribute.attribute.id,
                                                                field__session__programs=program,
                                                                field__session__min__lte=months,
                                                                field__session__max__gte=months,
                                                                value=attribute.value)
                         else:
-                            reply_value = Reply.objects.filter(attribute=attribute.attribute.name,
+                            reply_value = Reply.objects.filter(attribute=attribute.attribute.id,
                                                                field__session__programs=program,
                                                                value=attribute.value)
                         if reply_value.exists():

@@ -169,7 +169,7 @@ class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
             interaction.question = ''
             reply = models.Reply.objects.filter(field_id=interaction.field_id)
             if reply.exists():
-                interaction.attribute = reply.last().attribute
+                interaction.attribute = reply.last().attribute.name
             field = models.Field.objects.get(id=interaction.field_id)
             question_field = models.Field.objects.filter(session_id=interaction.session_id, position=field.position-1)
             if question_field.exists():
