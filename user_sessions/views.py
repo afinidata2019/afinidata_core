@@ -232,6 +232,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(SessionDetailView, self).get_context_data()
+        c['NLU_endpoint'] = '{0}/admin/quick_replies/'.format(os.getenv('APP_DOMAIN_URL'))
         c['fields'] = self.object.field_set.order_by('position')
         is_condition = False
         for field in c['fields']:
@@ -534,6 +535,7 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.field_id = self.kwargs['field_id']
+        requests.post('{0}/api/0.1/quick_replies/'.format(os.getenv('NLU_DOMAIN_URL')), json=dict(label=form.cleaned_data['label']))
         return super(ReplyCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -575,6 +577,10 @@ class ReplyEditView(PermissionRequiredMixin, UpdateView):
         c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         return c
+
+    def form_valid(self, form):
+        requests.post('{0}/api/0.1/quick_replies/'.format(os.getenv('NLU_DOMAIN_URL')), json=dict(label=form.cleaned_data['label']))
+        return super(ReplyEditView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Reply changed in field.")
