@@ -89,7 +89,7 @@ class IntentForm(forms.Form):
 
 class InteractionForm(forms.ModelForm):
     session_name = forms.CharField()
-    question = forms.CharField()
+    question = forms.CharField(required=False)
     attribute = forms.CharField()
     options = forms.ChoiceField(choices=[])
 
@@ -118,6 +118,12 @@ class InteractionForm(forms.ModelForm):
         self.fields['attribute'].label = 'Atributo'
         self.fields['text'].label = 'Respuesta del usuario'
         self.fields['options'].label = 'Opciones válidas'
+
+    def get_option_label(self, value=False):
+        choices = dict(self.fields['options'].choices)
+        if value in choices:
+            return choices[value]
+        return ''
 
     class Meta:
         fields = ('session_name', 'question', 'attribute', 'text', 'options')
