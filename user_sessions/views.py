@@ -236,10 +236,17 @@ class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
                                               attribute_id=attribute.last().id,
                                               value=self.object.value)
         
-        if form.cleaned_data['text']:
-            label = form.get_option_label(form.cleaned_data['options'])
-            service_url = '{0}/api/0.1/quick_replies_trainingtext/'.format(os.getenv('NLU_DOMAIN_URL'))
-            requests.post(service_url, json=dict(quick_reply=label, text=form.cleaned_data['text']))
+        # update values for the NLU
+        data = form.cleaned_data
+
+        if data['text']:
+            if data['intents']:
+                service_url = '{0}/api/0.1/trainingtext/'.format(os.getenv('NLU_DOMAIN_URL'))
+                val = requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
+            else:
+                label = form.get_choice_label(field='options', value=data['options'])
+                service_url = '{0}/api/0.1/quick_replies_trainingtext/'.format(os.getenv('NLU_DOMAIN_URL'))
+                requests.post(service_url, json=dict(quick_reply=label, text=data['text']))
         
         return super(ReplyCorrectionView, self).form_valid(form)
 

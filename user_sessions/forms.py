@@ -92,6 +92,7 @@ class InteractionForm(forms.ModelForm):
     question = forms.CharField(required=False)
     attribute = forms.CharField()
     options = forms.ChoiceField(choices=[])
+    intents = forms.ChoiceField(choices=[('','---------')], required=False)
 
     def __init__(self, *args, **kwargs):
         super(InteractionForm, self).__init__(*args, **kwargs)
@@ -100,7 +101,7 @@ class InteractionForm(forms.ModelForm):
                 filter(field_id=self.instance.field_id).values('value', 'label', 'attribute').distinct():
             choices.append((rep['value'], rep['label']))
             self.fields['attribute'].initial = rep['attribute']
-        self.fields['options'].choices = choices
+        self.fields['options'].choices += choices
         self.fields['session_name'].initial = models.Session.objects.get(id=self.instance.session_id).name
         self.fields['question'].initial = ''
         field = models.Field.objects.get(id=self.instance.field_id)
@@ -119,8 +120,15 @@ class InteractionForm(forms.ModelForm):
         self.fields['text'].label = 'Respuesta del usuario'
         self.fields['options'].label = 'Opciones válidas'
 
-    def get_option_label(self, value=False):
-        choices = dict(self.fields['options'].choices)
+        try:
+            response = requests.get('{0}/api/0.1/intents/?options=True'.format(os.getenv('NLU_DOMAIN_URL'))).json()
+            if 'count' in response and response['count'] > 0:
+                self.fields['intents'].choices += [(x['id'], x['name']) for x in response['results']]
+        except Exception as e:
+            pass
+
+    def get_choice_label(self, field, value=False):
+        choices = dict(self.fields[field].choices)
         if value in choices:
             return choices[value]
         return ''
