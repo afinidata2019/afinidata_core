@@ -242,7 +242,7 @@ class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
         if data['text']:
             if data['intents']:
                 service_url = '{0}/api/0.1/trainingtext/'.format(os.getenv('NLU_DOMAIN_URL'))
-                val = requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
+                requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
             else:
                 label = form.get_choice_label(field='options', value=data['options'])
                 service_url = '{0}/api/0.1/quick_replies_trainingtext/'.format(os.getenv('NLU_DOMAIN_URL'))
