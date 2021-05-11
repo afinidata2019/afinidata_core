@@ -259,7 +259,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(SessionDetailView, self).get_context_data()
-        c['NLU_endpoint'] = '{0}/admin/quick_replies/'.format(os.getenv('APP_DOMAIN_URL'))
+        c['NLU_endpoint'] = '{0}/admin/quick-replies/show'.format(os.getenv('APP_DOMAIN_URL'))
         c['fields'] = self.object.field_set.order_by('position')
         is_condition = False
         for field in c['fields']:
