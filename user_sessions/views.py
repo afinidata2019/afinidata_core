@@ -70,12 +70,12 @@ class SessionListView(PermissionRequiredMixin, ListView):
         sessions = models.Session.objects.all().order_by('-session_type', 'name')
         c['programs_list'] = Program.objects.all().order_by('name')
         bots_list = []
-        response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
+        response = requests.get(os.getenv("WEBHOOK_API") + '/bots/')
         if response.status_code == 200:
             bots_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['bots_list'] = bots_list
         sequence_list = []
-        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/')
         if response.status_code == 200:
             sequence_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['sequence_list'] = sequence_list
@@ -250,7 +250,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         
         intents = list(models.Intent.objects.values_list('intent_id', flat=True).filter(session__id=self.kwargs['session_id']))
         if intents:
-            nlu_response = requests.post(os.getenv('NLU_DOMAIN_URL') + '/api/0.1/intents/get_names/', json=dict(ids=intents)).json()
+            nlu_response = requests.post(os.getenv('NLU_API') + '/intents/get_names/', json=dict(ids=intents)).json()
             intents = nlu_response['results'] if 'results' in nlu_response else list()
         c['intents_list'] = ', '.join(intents)
         
@@ -1056,7 +1056,7 @@ class AddBotSessionView(LoginRequiredMixin, View):
         return render(request, 'user_sessions/session_form.html', dict(
             form=form,
             action='Set Bot to',
-            #api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
+            #api_endpoint=os.getenv("WEBHOOK_API") + '/bots/'
         ))
 
     def post(self, request, *args, **kwargs):

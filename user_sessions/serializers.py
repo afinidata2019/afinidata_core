@@ -32,7 +32,7 @@ class SubscribeSequenceSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_name')
 
     def get_name(self, obj):
-        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/?id=' + str(obj.sequence_id))
+        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/?id=' + str(obj.sequence_id))
         name = obj.sequence_id
         if response.status_code == 200:
             if len(response.json()['results']) > 0:
@@ -48,7 +48,7 @@ class UnsubscribeSequenceServiceSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_name')
 
     def get_name(self, obj):
-        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/?id=' + str(obj.sequence_id))
+        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/?id=' + str(obj.sequence_id))
         name = obj.sequence_id
         if response.status_code == 200:
             if len(response.json()['results']) > 0:
