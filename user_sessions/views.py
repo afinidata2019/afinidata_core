@@ -156,6 +156,11 @@ class TestSessionView(PermissionRequiredMixin, ListView):
     permission_denied_message = 'Unauthorized'
     template_name = 'user_sessions/test_sessions.html'
 
+    def get_context_data(self, **kwargs):
+        c = super(TestSessionView, self).get_context_data()
+        c['CM_URL'] = '{0}/chatfuel/'.format(os.getenv('CONTENT_MANAGER_DOMAIN'))
+        return c
+
 
 class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -240,13 +245,16 @@ class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
         data = form.cleaned_data
 
         if data['text']:
-            if data['intents']:
-                service_url = '{0}/trainingtext/'.format(os.getenv('NLU_API'))
-                requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
-            else:
-                label = form.get_choice_label(field='options', value=data['options'])
-                service_url = '{0}/quick_replies_trainingtext/'.format(os.getenv('NLU_API'))
-                requests.post(service_url, json=dict(quick_reply=label, text=data['text']))
+            try:
+                if data['intents']:
+                    service_url = '{0}/trainingtext/'.format(os.getenv('NLU_API'))
+                    requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
+                else:
+                    label = form.get_choice_label(field='options', value=data['options'])
+                    service_url = '{0}/quick_replies_trainingtext/'.format(os.getenv('NLU_API'))
+                    requests.post(service_url, json=dict(quick_reply=label, text=data['text']))
+            except Exception as e:
+                pass
         
         return super(ReplyCorrectionView, self).form_valid(form)
 
