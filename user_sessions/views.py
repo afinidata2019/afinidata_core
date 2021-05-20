@@ -934,7 +934,7 @@ class ServiceParamDeleteView(PermissionRequiredMixin, DeleteView):
 class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_redirectsession'
     model = models.RedirectSession
-    fields = ('session', 'position')
+    form_class = forms.RedirectSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionCreateView, self).get_context_data()
@@ -955,7 +955,7 @@ class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
 class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_redirectsession'
     model = models.RedirectSession
-    fields = ('session', 'position')
+    form_class = forms.RedirectSessionForm
     pk_url_kwarg = 'redirectsession_id'
 
     def get_context_data(self, **kwargs):

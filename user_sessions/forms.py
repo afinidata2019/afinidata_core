@@ -66,7 +66,7 @@ class RedirectSessionForm(forms.ModelForm):
 
     class Meta:
         model = models.RedirectSession
-        fields = ('session', )
+        fields = ('session', 'position')
 
 
 class ServiceSessionForm(forms.ModelForm):
