@@ -244,11 +244,9 @@ EMAIL_USE_SSL = False
 
 
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "https://app.afinidata.com",
-    "https://contentmanager.afinidata.com",
-    "https://www.twilio.com",
-    "https://hottriggers.afinidata.com"
+    os.getenv('APP_DOMAIN'),
+    os.getenv('APP_LOCAL_DOMAIN'),
+    os.getenv('CONTENT_MANAGER_DOMAIN'),
+    os.getenv('HOTTRIGGERS_DOMAIN'),
+    os.getenv('TWILIO_DOMAIN')
 ]
-# CORS_ORIGIN_ALLOW_ALL = True
