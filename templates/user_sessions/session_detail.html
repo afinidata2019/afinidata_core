@@ -219,8 +219,12 @@ Session: {{ object.name }}
                       </tr>
                     </thead>
                     <tbody>
+
                       <tr v-for="reply in field.reply_set">
-                        <td>[[ reply.label ]]</td>
+                        <td>
+                          <a class="link-info" target="_blank" :href="`{{NLU_endpoint}}?label=` + reply.label">[[
+                            reply.label ]]</a>
+                        </td>
                         <td>
                           <span v-if="reply.attribute">[[reply.attribute.name]]</span>
                           <span v-else>--</span>

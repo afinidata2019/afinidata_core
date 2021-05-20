@@ -30,22 +30,22 @@ class ConversationWorkflow(View):
 
         endpoints = dict(
             # NLU
-            nlu_reply=os.getenv('NLU_DOMAIN_URL') + '/get_intended_reply/',
-            nlu_interpret=os.getenv('NLU_DOMAIN_URL') + '/get_intent/',
+            nlu_reply=os.getenv('NLU_DOMAIN') + '/get_intended_reply/',
+            nlu_interpret=os.getenv('NLU_DOMAIN') + '/get_intent/',
             # CM API
-            user=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/messenger_users/',
-            user_channel=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/messenger_users_channels/',
+            user=os.getenv("CONTENT_MANAGER_API") + '/messenger_users/',
+            user_channel=os.getenv("CONTENT_MANAGER_API") + '/messenger_users_channels/',
             # CM
-            create_user_channel=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/create_messenger_user_channel/',
-            get_previous_field=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/get_user_previous_field/',
-            get_field=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/get_session_field/',
-            get_session=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/get_session/',
-            save_reply=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/save_last_reply/',
-            create_user=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/create_messenger_user/',
+            create_user_channel=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/create_messenger_user_channel/',
+            get_previous_field=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/get_user_previous_field/',
+            get_field=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/get_session_field/',
+            get_session=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/get_session/',
+            save_reply=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/save_last_reply/',
+            create_user=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/create_messenger_user/',
             # Webhook
-            get_info=os.getenv("WEBHOOK_DOMAIN_URL") + '/bots/' + str(bot_id) + '/channel/' + str(
+            get_info=os.getenv("WEBHOOK_DOMAIN") + '/bots/' + str(bot_id) + '/channel/' + str(
                 bot_channel_id) + '/get_user_info/',
-            get_data=os.getenv("WEBHOOK_DOMAIN_URL") + '/bots/' + str(bot_id) + '/channel/' + str(
+            get_data=os.getenv("WEBHOOK_DOMAIN") + '/bots/' + str(bot_id) + '/channel/' + str(
                 bot_channel_id) + '/get_user_data/'
         )
         response = []
@@ -308,7 +308,7 @@ class ConversationWorkflow(View):
             url_params += '&{0}={1}'.format(key, value)
 
         user_channel = requests.get(
-            os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/messenger_users_channels/' + url_params).json()
+            os.getenv("CONTENT_MANAGER_API") + '/messenger_users_channels/' + url_params).json()
 
         if 'count' in user_channel and user_channel['count'] > 0:
             return user_channel['results'][0]
@@ -317,7 +317,7 @@ class ConversationWorkflow(View):
 
     def get_user_data_attribute(self, user_id, name, default=False):
 
-        endpoint = os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/messenger_users_data/'
+        endpoint = os.getenv("CONTENT_MANAGER_API") + '/messenger_users_data/'
         url_params = '?user_id={0}&attribute_name={1}'.format(user_id, name)
 
         service_response = requests.get(endpoint + url_params).json()
@@ -328,9 +328,9 @@ class ConversationWorkflow(View):
 
     def create_associate_user_attribute(self, user_id, data_key, data_value):
         endpoints = dict(
-            create_user_data=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/create_messenger_user_data/',
-            entities_add_attribute=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/entities/add_attributes/',
-            attribute=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/attributes/'
+            create_user_data=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/create_messenger_user_data/',
+            entities_add_attribute=os.getenv("CONTENT_MANAGER_API") + '/entities/add_attributes/',
+            attribute=os.getenv("CONTENT_MANAGER_API") + '/attributes/'
         )
 
         # Crear el atributo si no existe
@@ -349,8 +349,8 @@ class ConversationWorkflow(View):
 
     def get_bot_session(self, user_id, bot_id, session_type):
         endpoints = dict(
-            bot_sessions=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/bot_sessions/',
-            get_session=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/chatfuel/get_session/'
+            bot_sessions=os.getenv("CONTENT_MANAGER_API") + '/bot_sessions/',
+            get_session=os.getenv("CONTENT_MANAGER_DOMAIN") + '/chatfuel/get_session/'
         )
         # get the session id defaults to 0
         session = 0
@@ -367,8 +367,8 @@ class ConversationWorkflow(View):
 
     def create_interaction(self, bot_id, user_id, name):
         endpoints = dict(
-            interaction=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/interactions/',
-            user_interaction=os.getenv("CONTENT_MANAGER_DOMAIN_URL") + '/api/0.1/user_interactions/'
+            interaction=os.getenv("CONTENT_MANAGER_API") + '/interactions/',
+            user_interaction=os.getenv("CONTENT_MANAGER_API") + '/user_interactions/'
         )
         # fetches the id of the interaction
         bot_interaction = requests.post(endpoints['interaction'], dict(name=name)).json()

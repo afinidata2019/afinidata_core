@@ -2,6 +2,8 @@ import os
 import requests
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db.models import Q
+from django.db.models.aggregates import Count
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -70,12 +72,12 @@ class SessionListView(PermissionRequiredMixin, ListView):
         sessions = models.Session.objects.all().order_by('-session_type', 'name')
         c['programs_list'] = Program.objects.all().order_by('name')
         bots_list = []
-        response = requests.get(os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/')
+        response = requests.get(os.getenv("WEBHOOK_API") + '/bots/')
         if response.status_code == 200:
             bots_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['bots_list'] = bots_list
         sequence_list = []
-        response = requests.get(os.getenv("HOTTRIGGERS_DOMAIN_URL") + '/api/0.1/sequences/')
+        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/')
         if response.status_code == 200:
             sequence_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['sequence_list'] = sequence_list
@@ -154,6 +156,11 @@ class TestSessionView(PermissionRequiredMixin, ListView):
     permission_denied_message = 'Unauthorized'
     template_name = 'user_sessions/test_sessions.html'
 
+    def get_context_data(self, **kwargs):
+        c = super(TestSessionView, self).get_context_data()
+        c['CM_URL'] = '{0}/chatfuel/'.format(os.getenv('CONTENT_MANAGER_DOMAIN'))
+        return c
+
 
 class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
     permission_required = 'user_sessions.view_session'
@@ -163,21 +170,33 @@ class ReplyCorrectionListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         qs = super(ReplyCorrectionListView, self).get_queryset().filter(type='quick_reply').\
-            exclude(text__isnull=True).filter(value__isnull=True).order_by('-id')
+            exclude(text__isnull=True).filter(value__isnull=True)
+
+        # exclude all quick replies that do not save any attribute
+        qs = qs.annotate(replies=Count('field__reply', filter=Q(field__reply__attribute__isnull=False))).exclude(replies=0)
+        
+        exclude_ids = []
         for interaction in qs:
             interaction.attribute = ''
             interaction.question = ''
             reply = models.Reply.objects.filter(field_id=interaction.field_id)
-            if reply.exists():
-                if reply.last().attribute is not None:
-                    interaction.attribute = reply.last().attribute.name
+            attributes = list(reply.exclude(attribute__isnull=True).values_list('attribute__name', flat=True))
+            if reply.exists() and interaction.text not in list(reply.values_list('label', flat=True)):
+                interaction.attribute = attributes[0]
+            else:
+                exclude_ids.append(interaction.id)
+                continue
             field = models.Field.objects.get(id=interaction.field_id)
             question_field = models.Field.objects.filter(session_id=interaction.session_id, position=field.position-1)
             if question_field.exists():
                 message = models.Message.objects.filter(field_id=question_field.last().id)
                 if message.exists():
                     interaction.question = message.last().text
-        return qs
+        
+        # exclude all the interactions where the text matches the label
+        qs = qs.exclude(id__in=exclude_ids)
+        
+        return qs.order_by('-id')
 
 
 class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
@@ -221,6 +240,22 @@ class ReplyCorrectionView(PermissionRequiredMixin, UpdateView):
                 AttributeValue.objects.create(instance_id=self.object.instance_id,
                                               attribute_id=attribute.last().id,
                                               value=self.object.value)
+        
+        # update values for the NLU
+        data = form.cleaned_data
+
+        if data['text']:
+            try:
+                if data['intents']:
+                    service_url = '{0}/trainingtext/'.format(os.getenv('NLU_API'))
+                    requests.post(service_url, json=dict(text=data['text'], intent=[data['intents']]))
+                else:
+                    label = form.get_choice_label(field='options', value=data['options'])
+                    service_url = '{0}/quick_replies_trainingtext/'.format(os.getenv('NLU_API'))
+                    requests.post(service_url, json=dict(quick_reply=label, text=data['text']))
+            except Exception as e:
+                pass
+        
         return super(ReplyCorrectionView, self).form_valid(form)
 
 
@@ -232,6 +267,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         c = super(SessionDetailView, self).get_context_data()
+        c['NLU_endpoint'] = '{0}/admin/quick-replies/show'.format(os.getenv('APP_DOMAIN'))
         c['fields'] = self.object.field_set.order_by('position')
         is_condition = False
         for field in c['fields']:
@@ -250,7 +286,7 @@ class SessionDetailView(PermissionRequiredMixin, DetailView):
         
         intents = list(models.Intent.objects.values_list('intent_id', flat=True).filter(session__id=self.kwargs['session_id']))
         if intents:
-            nlu_response = requests.post(os.getenv('NLU_DOMAIN_URL') + '/api/0.1/intents/get_names/', json=dict(ids=intents)).json()
+            nlu_response = requests.post(os.getenv('NLU_API') + '/intents/get_names/', json=dict(ids=intents)).json()
             intents = nlu_response['results'] if 'results' in nlu_response else list()
         c['intents_list'] = ', '.join(intents)
         
@@ -534,6 +570,7 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.field_id = self.kwargs['field_id']
+        requests.post('{0}/quick_replies/'.format(os.getenv('NLU_API')), json=dict(label=form.cleaned_data['label']))
         return super(ReplyCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -575,6 +612,10 @@ class ReplyEditView(PermissionRequiredMixin, UpdateView):
         c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         return c
+
+    def form_valid(self, form):
+        requests.post('{0}/quick_replies/'.format(os.getenv('NLU_API')), json=dict(label=form.cleaned_data['label']))
+        return super(ReplyEditView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Reply changed in field.")
@@ -1056,7 +1097,7 @@ class AddBotSessionView(LoginRequiredMixin, View):
         return render(request, 'user_sessions/session_form.html', dict(
             form=form,
             action='Set Bot to',
-            #api_endpoint=os.getenv("WEBHOOK_DOMAIN_URL") + '/api/0.1/bots/'
+            #api_endpoint=os.getenv("WEBHOOK_API") + '/bots/'
         ))
 
     def post(self, request, *args, **kwargs):
