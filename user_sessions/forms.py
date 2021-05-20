@@ -151,7 +151,7 @@ class BotSessionForm(forms.Form):
             self.fields['bot_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
 
     bot_id = forms.ChoiceField(choices=tuple(bots_list))
-    session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default')))
+    session_type = forms.ChoiceField(choices=(('welcome', 'Welcome'), ('default', 'Default'), ('exchange', 'Exchange')))
 
 
 class SubscribeSequenceSessionForm(forms.ModelForm):
