@@ -79,12 +79,9 @@ class ServiceSessionForm(forms.ModelForm):
 
 class IntentForm(forms.Form):
     OPTIONS = []
-    try:
-        service_response = requests.get(os.getenv('NLU_API') + '/intents/?options=True').json()
-        if 'count' in service_response and service_response['count'] > 0:
-            OPTIONS = [ (intent['id'], intent['name']) for intent in service_response['results'] ]
-    except Exception as e:
-        pass
+    service_response = requests.get(os.getenv('NLU_API') + '/intents/?options=True').json()
+    if 'count' in service_response and service_response['count'] > 0:
+        OPTIONS = [ (intent['id'], intent['name']) for intent in service_response['results'] ]
     
     intents = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=OPTIONS)
     session =  forms.ModelChoiceField(widget = forms.HiddenInput(), queryset=models.Session.objects.all())
