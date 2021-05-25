@@ -5,7 +5,8 @@ attribute_types = (
     ('numeric', 'Numeric'),
     ('string', 'String'),
     ('date', 'Date'),
-    ('boolean', 'Boolean')
+    ('boolean', 'Boolean'),
+    ('category', 'Category')
 )
 
 attribute_view = (
