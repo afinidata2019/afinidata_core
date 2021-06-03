@@ -578,9 +578,6 @@
   const DOMAIN = window.location.origin
   const GROUP_ID = document.querySelector('.group-title').dataset.groupId;
 
-  // data for test
-  // const DOMAIN = 'https://core.afinidata.com';
-  // const GROUP_ID = '13';
 
   const URI = `${DOMAIN}/utilities/group_assignations/`
   var requestData = new FormData();
@@ -701,13 +698,13 @@
       .then(r => {
         if (tipo) {
           $("#ficha_header").html('<div class="row justify-content-start">' +
-            '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
-            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + '<a class="px-2" href="https://program.afinidata.com/instances/' + instance_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Edad: ' + edad + ' </span></div></div>');
+            '<div class="col-1"><img class="img-circle rounded-circle" src="' + DOMAIN + '/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
+            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + '<a class="px-2" href="' + DOMAIN + '/instances/' + instance_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Edad: ' + edad + ' </span></div></div>');
         }
         else {
           $("#ficha_header").html('<div class="row justify-content-start">' +
-            '<div class="col-1"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
-            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + ' <a class="px-2" href="https://program.afinidata.com/users/' + user_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Tel: ' + telefono + '. Dir: ' + direccion + '</span></div></div>');
+            '<div class="col-1"><img class="img-circle rounded-circle" src="' + DOMAIN + '/static/images/' + r.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></div>' +
+            '<div class="col-11"><h3 class="modal-title" id="exampleModalCenterTitle">' + r.name + ' <a class="px-2" href="' + DOMAIN + '/users/' + user_id + '/" target="_blank"> <i class="fas fa-info-circle"></i> Ver más información</a></h3><span class="pr-2">Tel: ' + telefono + '. Dir: ' + direccion + '</span></div></div>');
         }
         let html = '';
         r.attributes_types.forEach(function (attributes_type) {
@@ -774,7 +771,7 @@
 
   function writeRow(instance) {
     rowHTML = '<tr id="row_' + instance.id + '">' +
-      '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="https://core.afinidata.com/static/images/' + instance.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
+      '<td style="padding:0px; border:0px;"><img class="img-circle rounded-circle" src="' + DOMAIN + '/static/images/' + instance.image + '" width="50" height="50" style="padding:0px; border:0px;"></img></td>' +
       '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(' + instance.id + ', ' + instance.user_id + ', true, \'' + instance.months + '\', null, null)"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.name + '</td>' +
       '<td><a href="" data-toggle="modal" data-target="#exampleModalCenter" onclick="fichaInstancia(' + instance.id + ', ' + instance.user_id + ', false, null, \'' + instance.tel + '\', \'' + instance.dir + '\')"><i class="fas fa-chevron-circle-down"></i></a> ' + instance.username + '</td>' +
       '<td>' + instance.months + '</td>' +
