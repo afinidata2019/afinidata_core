@@ -222,7 +222,8 @@ Session: {{ object.name }}
 
                       <tr v-for="reply in field.reply_set">
                         <td>
-                          <a class="link-info" target="_blank" :href="`{{NLU_endpoint}}?label=` + reply.label">[[
+                          <a class="link-info" target="_blank"
+                            :href="`{{NLU_endpoint}}?label=` + encodeURIComponent(reply.label) ">[[
                             reply.label ]]</a>
                         </td>
                         <td>

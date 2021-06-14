@@ -560,12 +560,6 @@ class ReplyCreateView(PermissionRequiredMixin, CreateView):
         c['parent_session'] = models.Session.objects.get(id=self.kwargs['session_id'])
         c['field'] = models.Field.objects.get(id=self.kwargs['field_id'])
         
-        attrs = Attribute.objects.all()
-        attrstmp = "["
-        for attr in attrs:
-            attrstmp = attrstmp + "{" +"label: '{name}', value: '{id}'".format(name=attr.name, id=attr.id)+"},"
-        attrstmp = attrstmp + ']'
-        c['attributes'] = attrstmp
         return c
 
     def form_valid(self, form):
@@ -603,7 +597,7 @@ class ButtonCreateView(PermissionRequiredMixin, CreateView):
 class ReplyEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_reply'
     model = models.Reply
-    fields = ('label', 'attribute', 'value', 'redirect_block', 'session', 'position')
+    form_class = forms.ReplyCreateForm
     pk_url_kwarg = 'reply_id'
 
     def get_context_data(self, **kwargs):
@@ -731,7 +725,8 @@ class SetAttributeDeleteView(PermissionRequiredMixin, DeleteView):
 class ConditionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_condition'
     model = models.Condition
-    fields = ('attribute', 'condition', 'value')
+    form_class = forms.ConditionForm
+    # fields = ('attribute', 'condition', 'value')
 
     def get_context_data(self, **kwargs):
         c = super(ConditionCreateView, self).get_context_data()
@@ -754,7 +749,8 @@ class ConditionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_condition'
     pk_url_kwarg = 'condition_id'
     model = models.Condition
-    fields = ('attribute', 'condition', 'value')
+    form_class = forms.ConditionForm
+    # fields = ('attribute', 'condition', 'value')
 
     def get_context_data(self, **kwargs):
         c = super(ConditionEditView, self).get_context_data()
@@ -942,7 +938,8 @@ class ServiceParamDeleteView(PermissionRequiredMixin, DeleteView):
 class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'user_sessions.add_redirectsession'
     model = models.RedirectSession
-    fields = ('session', 'position')
+    # fields = ('session', 'position')
+    form_class = forms.RedirectSessionForm
 
     def get_context_data(self, **kwargs):
         c = super(RedirectSessionCreateView, self).get_context_data()
@@ -963,7 +960,7 @@ class RedirectSessionCreateView(PermissionRequiredMixin, CreateView):
 class RedirectSessionEditView(PermissionRequiredMixin, UpdateView):
     permission_required = 'user_sessions.change_redirectsession'
     model = models.RedirectSession
-    fields = ('session', 'position')
+    # fields = ('session', 'position')
     pk_url_kwarg = 'redirectsession_id'
 
     def get_context_data(self, **kwargs):

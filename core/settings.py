@@ -242,4 +242,13 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-CORS_ORIGIN_WHITELIST = os.getenv('WHITELIST').split(',')
+
+CORS_ORIGIN_WHITELIST = [
+    os.getenv('APP_DOMAIN'),
+    os.getenv('APP_LOCAL_DOMAIN'),
+    os.getenv('CONTENT_MANAGER_DOMAIN'),
+    os.getenv('HOTTRIGGERS_DOMAIN'),
+    os.getenv('TWILIO_DOMAIN')
+]
+
+# CORS_ORIGIN_ALLOW_ALL = True
