@@ -12,7 +12,6 @@ urlpatterns = [
     path('create_group/', views.CreateGroupView.as_view(), name='group_create'),
     path('my_groups/', views.MyGroupsListView.as_view(), name='my_groups'),
     path('<int:group_id>/', views.GroupView.as_view(), name='group'),
-    path('<int:group_id>/dashboard', views.GroupDashboardView.as_view(), name='group_dashboard'),
     path('<int:group_id>/edit/', views.EditGroupView.as_view(), name='group_edit'),
     path('<int:group_id>/add_user/', roles_views.CreateRoleView.as_view(), name='add_user_group'),
     path('<int:group_id>/add_messenger_user/', messenger_users_views.AddMessengerUserView.as_view(),
