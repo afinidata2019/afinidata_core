@@ -159,9 +159,6 @@ class SubscribeSequenceSessionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SubscribeSequenceSessionForm, self).__init__(*args, **kwargs)
-        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/?has_triggers=True')
-        if response.status_code == 200:
-            self.fields['sequence_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
 
     sequence_id = forms.ChoiceField(choices=tuple(sequences_list))
 
@@ -175,9 +172,6 @@ class UnsubscribeSequenceSessionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UnsubscribeSequenceSessionForm, self).__init__(*args, **kwargs)
-        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/')
-        if response.status_code == 200:
-            self.fields['sequence_id'].choices = [(x['id'], x['name']) for x in response.json()['results']]
 
     sequence_id = forms.ChoiceField(choices=tuple(sequences_list))
 

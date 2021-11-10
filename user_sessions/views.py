@@ -72,14 +72,8 @@ class SessionListView(PermissionRequiredMixin, ListView):
         sessions = models.Session.objects.all().order_by('-session_type', 'name')
         c['programs_list'] = Program.objects.all().order_by('name')
         bots_list = []
-        response = requests.get(os.getenv("WEBHOOK_API") + '/bots/')
-        if response.status_code == 200:
-            bots_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['bots_list'] = bots_list
         sequence_list = []
-        response = requests.get(os.getenv("HOTTRIGGERS_API") + '/sequences/')
-        if response.status_code == 200:
-            sequence_list = [dict(id=x['id'], name=x['name']) for x in response.json()['results']]
         c['sequence_list'] = sequence_list
         c['types_list'] = models.SessionType.objects.all().order_by('name')
         c['topics_list'] = Topic.objects.all().order_by('name')
